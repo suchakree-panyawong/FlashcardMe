@@ -1,54 +1,46 @@
-# ⚡ FlashcardMe - Flashcard & Spaced Repetition PWA
+# FlashcardMe
 
-**FlashcardMe** เป็นเว็บแอปพลิเคชันรูปแบบ **Progressive Web App (PWA)** สำหรับสร้างและทบทวนแฟลชการ์ด โดยใช้ระบบทบทวนซ้ำเว้นระยะ (Spaced Repetition System)
+FlashcardMe is a client-side flashcard and spaced-repetition application for desktop and mobile browsers. It can also be installed as a Progressive Web App on supported devices.
 
-ออกแบบด้วยสไตล์ **Minimalist Light Mode** แบบ Mobile-First รองรับการออกเสียงอ่านคำศัพท์ภาษาอังกฤษ (Text-to-Speech) และมีคำอธิบายภาษาไทยในทุกการ์ด
+## Features
 
----
+- Create, edit, delete, and organise flashcards.
+- Review cards using spaced-repetition intervals.
+- Listen to vocabulary with the browser Web Speech API.
+- Import and export complete decks as JSON backups.
+- Install the application as a PWA on supported mobile browsers.
+- Use the application without an account or a central database.
 
-## ✨ ฟีเจอร์หลัก (Features)
+## Privacy Model
 
-- 🔊 **Audio Text-to-Speech (TTS)**: มีปุ่มกดฟังเสียงอ่านออกเสียงคำศัพท์ภาษาอังกฤษสำเนียงเจ้าของภาษา
-- 🇹🇭 **Thai Localization & Dual-Language**: คำอธิบายและจุดสังเกตคีย์เวิร์ดเป็นภาษาไทยสลับอังกฤษเข้าใจง่าย
-- 🧠 **Spaced Repetition System (SRS)**: ระบบคำนวณรอบทบทวนอัตโนมัติ (Hard = 1 วัน, Good = 3 วัน, Easy = 7 วัน)
-- 🔒 **100% Client-Side Privacy**: ข้อมูลทั้งหมดเก็บบน LocalStorage ของเบราว์เซอร์ผู้ใช้ ไม่มี Database Server ไม่เก็บข้อมูลส่วนตัว
-- 📱 **Progressive Web App (PWA)**: สามารถกด "Add to Home Screen" เพื่อติดตั้งลงสมาร์ตโฟน iOS และ Android ได้ฟรี
-- 💾 **Import / Export Backup**: สำรองข้อมูลคำศัพท์ออกมาเป็นไฟล์ JSON หรือโหลดเข้าไฟล์เพื่อแชร์ให้เพื่อนได้ทันที
-- 🔐 **Private-by-Default Decks**: Public starter cards เป็นเพียงตัวอย่างทั่วไป ข้อมูลที่ผู้ใช้เพิ่มหรือ Import จะอยู่ใน LocalStorage ของอุปกรณ์นั้น
+Flashcard data is stored in the browser's LocalStorage under `flashcardme_cards_v8`. The public application contains only a small set of general starter cards. Cards that users create or import remain in that user's browser and are not sent to the application server.
 
-## 🔐 ความเป็นส่วนตัวของการ์ด
+LocalStorage is scoped to a browser, device, and origin. To move a deck to another device, export it as JSON and import the backup there. Keep private backup files outside this repository and never place them in `public/`.
 
-โปรเจกต์ Public นี้ไม่มีชุดการ์ดส่วนตัวฝังอยู่ใน source code ผู้ใช้แต่ละคนสามารถสร้างหรือ Import การ์ดของตัวเองผ่านเมนูสำรองข้อมูลได้ ข้อมูลจะเก็บไว้ใน browser ของอุปกรณ์นั้นและไม่ถูกส่งไปยังเซิร์ฟเวอร์ของแอป
+## Technology
 
-ควร Export เป็นไฟล์ JSON สำรองและเก็บไว้ในพื้นที่ส่วนตัว ไฟล์ backup ส่วนตัวไม่ควร commit ขึ้น GitHub หรือวางไว้ในโฟลเดอร์ `public/`
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Lucide React
+- Web Speech API
+- LocalStorage and Service Worker APIs
 
----
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Audio API**: Web Speech API (`window.speechSynthesis`)
-- **Storage**: LocalStorage (`flashcardme_cards_v8`)
-
----
-
-## 🚀 การเริ่มใช้งานบนเครื่อง (Local Development)
+## Local Development
 
 ```bash
-# 1. ติดตั้ง Dependencies
 npm install
-
-# 2. เปิดใช้งาน Dev Server
 npm run dev
-
-# เปิดเบราว์เซอร์ไปที่ http://localhost:3000
 ```
 
----
+Open `http://localhost:3000` in a browser. Create a production build with:
 
-## 📄 License
+```bash
+npm run build
+npm run start
+```
 
-Open Source under the [MIT License](LICENSE).
+## Deployment
+
+Connect the repository to Vercel. Pushes to `main` trigger a production deployment when the Vercel Git integration is enabled.

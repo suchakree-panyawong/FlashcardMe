@@ -3,7 +3,7 @@ const APP_SHELL = [
   "/",
   "/manifest.json",
   "/flashcardme-logo.jpg",
-  "/flashcardme-logo-mainpage.jpg",
+  "/flashcardme-logo-mainpage-Photoroom.png",
   "/pwa-icon-192.jpg",
   "/pwa-icon-512.jpg",
 ];
