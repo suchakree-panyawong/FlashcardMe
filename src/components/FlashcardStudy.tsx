@@ -1,0 +1,373 @@
+﻿"use client";
+
+import React, { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import confetti from "canvas-confetti";
+import { Flashcard, ReviewRating, CardCategory } from "@/types/flashcard";
+import {
+  Sparkles,
+  AlertCircle,
+  HelpCircle,
+  ArrowLeft,
+  Flame,
+  Award,
+  Zap,
+  Volume2,
+  Star,
+  FileText,
+  Shuffle,
+  ArrowUpDown,
+  RotateCcw,
+  HelpCircle as QuestionIcon,
+} from "lucide-react";
+
+interface FlashcardStudyProps {
+  dueCards: Flashcard[];
+  mode: CardCategory;
+  onReviewCard: (cardId: string, rating: ReviewRating) => void;
+  onFinishStudy: () => void;
+  onBackToMode: () => void;
+  onToggleFavorite?: (cardId: string) => void;
+}
+
+function shuffleList<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
+  dueCards,
+  mode,
+  onReviewCard,
+  onFinishStudy,
+  onBackToMode,
+  onToggleFavorite,
+}) => {
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [studyList, setStudyList] = useState<Flashcard[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [sessionCount, setSessionCount] = useState(0);
+
+  // Initialize or re-sync studyList when dueCards changes
+  useEffect(() => {
+    if (isShuffled) {
+      setStudyList(shuffleList(dueCards));
+    } else {
+      setStudyList([...dueCards]);
+    }
+    setCurrentIndex(0);
+    setIsFlipped(false);
+  }, [dueCards, isShuffled]);
+
+  const handleToggleOrder = (shuffle: boolean) => {
+    if (shuffle === isShuffled) return;
+    setIsShuffled(shuffle);
+    setIsFlipped(false);
+    setCurrentIndex(0);
+  };
+
+  const currentCard = studyList[currentIndex];
+  const isFinished = currentIndex >= studyList.length || !currentCard;
+
+  useEffect(() => {
+    if (isFinished && studyList.length > 0) {
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.5 },
+        colors: ["#6366f1", "#ec4899", "#8b5cf6", "#10b981", "#f59e0b", "#3b82f6"],
+      });
+    }
+  }, [isFinished, studyList.length]);
+
+  const speakVocab = (text: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handleRating = (rating: ReviewRating) => {
+    if (!currentCard) return;
+    onReviewCard(currentCard.id, rating);
+    setIsFlipped(false);
+    setSessionCount((prev) => prev + 1);
+    setCurrentIndex((prev) => prev + 1);
+  };
+
+  if (isFinished) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white rounded-3xl border border-slate-100 p-8 text-center space-y-6 shadow-soft my-6"
+      >
+        <div className="w-20 h-20 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-3xl mx-auto flex items-center justify-center text-white shadow-lg shadow-indigo-200 animate-bounce">
+          <Award className="w-10 h-10" />
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-2xl font-black text-slate-900">เก่งมาก! ทบทวนครบแล้ว 🎉</h2>
+          <p className="text-sm text-slate-500 thai-text">
+            คุณได้ทบทวนการ์ดไปทั้งหมด <strong className="text-indigo-600 font-bold">{sessionCount}</strong> ใบในรอบนี้
+          </p>
+        </div>
+
+        <div className="pt-4 space-y-3">
+          <button
+            onClick={onFinishStudy}
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-sm shadow-md shadow-indigo-200 transition-all active:scale-98"
+          >
+            กลับสู่หน้าหลัก
+          </button>
+          <button
+            onClick={onBackToMode}
+            className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition-all"
+          >
+            เปลี่ยนโหมดการเรียนรู้
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
+
+  const progressPercent = Math.round(((currentIndex + 1) / studyList.length) * 100);
+
+  return (
+    <div className="space-y-5 animate-fadeIn">
+      {/* Top Header Controls, Order Toggle Pills & Progress Bar */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={onFinishStudy}
+            className="flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white px-3 py-1.5 rounded-full border border-slate-200/80 shadow-2xs transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>ออกจากการเรียน</span>
+          </button>
+
+          {/* Sequential vs Shuffle Mode Toggle Pills */}
+          <div className="flex items-center p-1 bg-slate-100 rounded-2xl border border-slate-200/60 shadow-2xs">
+            <button
+              onClick={() => handleToggleOrder(false)}
+              className={`flex items-center space-x-1 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                !isShuffled
+                  ? "bg-white text-indigo-600 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <ArrowUpDown className="w-3.5 h-3.5" />
+              <span>เรียงลำดับ</span>
+            </button>
+            <button
+              onClick={() => handleToggleOrder(true)}
+              className={`flex items-center space-x-1 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                isShuffled
+                  ? "bg-white text-purple-600 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <Shuffle className="w-3.5 h-3.5" />
+              <span>สุ่ม (Shuffle)</span>
+            </button>
+          </div>
+
+          <div className="flex items-center space-x-1.5 text-xs font-extrabold text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-200/80 shadow-2xs">
+            <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
+            <span>
+              {currentIndex + 1} / {studyList.length}
+            </span>
+          </div>
+        </div>
+
+        <div className="w-full bg-slate-200/70 h-2.5 rounded-full overflow-hidden p-0.5 shadow-inner">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"
+          />
+        </div>
+      </div>
+
+      {/* Interactive Card Container */}
+      <div
+        className="w-full min-h-[460px] cursor-pointer select-none"
+        onClick={() => setIsFlipped(!isFlipped)}
+      >
+        <AnimatePresence mode="wait">
+          {!isFlipped ? (
+            /* FRONT CARD (หน้าการ์ด: โจทย์ / คำศัพท์) */
+            <motion.div
+              key="front"
+              initial={{ rotateY: -90, opacity: 0 }}
+              animate={{ rotateY: 0, opacity: 1 }}
+              exit={{ rotateY: 90, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="w-full min-h-[460px] bg-white border-2 border-slate-100 rounded-3xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full max-w-[85%] truncate">
+                  {mode === "cert" ? currentCard.domain || "Personal Deck" : "General Vocabulary"}
+                </span>
+
+                {onToggleFavorite && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleFavorite(currentCard.id);
+                    }}
+                    className="p-1.5 rounded-full hover:bg-slate-100 transition-all text-amber-400"
+                  >
+                    <Star className={`w-4 h-4 ${currentCard.isFavorite ? "fill-amber-400" : ""}`} />
+                  </button>
+                )}
+              </div>
+
+              {/* Center Content: Vocab English + Audio */}
+              <div className="my-auto py-6 text-center space-y-4">
+                <h3 className="text-4xl font-black tracking-tight text-slate-900">
+                  {currentCard.vocab}
+                </h3>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={(e) => speakVocab(currentCard.vocab, e)}
+                  className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold transition-all border border-indigo-100/80"
+                >
+                  <Volume2 className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>ฟังเสียงอ่าน (Audio)</span>
+                </motion.button>
+              </div>
+
+              <div className="text-center pt-3 border-t border-slate-100">
+                <p className="text-xs font-bold text-indigo-600 flex items-center justify-center space-x-1">
+                  <Sparkles className="w-4 h-4 text-indigo-500" />
+                  <span>แตะการ์ดเพื่อดูเฉลยและสถานการณ์ประกอบ</span>
+                </p>
+              </div>
+            </motion.div>
+          ) : (
+            /* BACK CARD (คำแปล รายละเอียด และสถานการณ์ประกอบ) */
+            <motion.div
+              key="back"
+              initial={{ rotateY: 90, opacity: 0 }}
+              animate={{ rotateY: 0, opacity: 1 }}
+              exit={{ rotateY: -90, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="w-full min-h-[460px] bg-white border-2 border-indigo-100 rounded-3xl p-6 shadow-xl flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <span className="text-xs font-black tracking-wider text-indigo-600 uppercase flex items-center space-x-1.5">
+                  <QuestionIcon className="w-4 h-4 text-indigo-600" />
+                  <span>เฉลย & ตัวอย่างบริบทโจทย์ข้อสอบ</span>
+                </span>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={(e) => speakVocab(currentCard.vocab, e)}
+                    className="p-1 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                  </button>
+                  <span className="text-sm font-black text-slate-800">
+                    {currentCard.vocab}
+                  </span>
+                </div>
+              </div>
+
+              {/* Answer Content Section */}
+              <div className="my-auto space-y-3 py-2">
+                {/* 1. ความหมายภาษาไทย */}
+                {currentCard.vocabThai && (
+                  <div className="text-center bg-indigo-50/70 border border-indigo-100 rounded-2xl p-3">
+                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block">
+                      ความหมายภาษาไทย
+                    </span>
+                    <h4 className="text-2xl font-black text-indigo-700 thai-text mt-0.5">
+                      {currentCard.vocabThai}
+                    </h4>
+                  </div>
+                )}
+
+                {/* 2. คำอธิบายภาษาไทย */}
+                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 space-y-0.5">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    คำอธิบาย (Explanation)
+                  </span>
+                  <p className="text-sm text-slate-800 thai-text leading-relaxed font-semibold">
+                    {currentCard.meaning}
+                  </p>
+                </div>
+
+                {/* 3. Example scenario and real application */}
+                {mode === "cert" && currentCard.scenario && (
+                  <div className="bg-gradient-to-r from-amber-50/90 to-orange-50/90 border border-amber-200/90 rounded-2xl p-4 text-left space-y-2">
+                    <span className="text-[10px] font-extrabold text-amber-700 uppercase tracking-wider flex items-center space-x-1">
+                      <FileText className="w-3.5 h-3.5 text-amber-600" />
+                      <span>สถานการณ์ตัวอย่าง (Example Scenario)</span>
+                    </span>
+                    <div className="text-xs font-medium text-slate-800 leading-relaxed bg-white/80 p-3 rounded-xl border border-amber-200/60 space-y-2 whitespace-pre-line">
+                      {currentCard.scenario}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-2 border-t border-slate-100" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Spaced Repetition Rating Buttons */}
+      <AnimatePresence>
+        {isFlipped && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="grid grid-cols-3 gap-2.5 pt-2"
+          >
+            <button
+              onClick={() => handleRating("hard")}
+              className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 transition-all active:scale-95 shadow-sm"
+            >
+              <AlertCircle className="w-5 h-5 text-rose-500 mb-1" />
+              <span className="font-extrabold text-xs">ยังจำไม่ได้</span>
+              <span className="text-[10px] text-rose-400 font-medium">ทบทวนเร็วๆ นี้</span>
+            </button>
+
+            <button
+              onClick={() => handleRating("good")}
+              className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-700 transition-all active:scale-95 shadow-sm"
+            >
+              <HelpCircle className="w-5 h-5 text-amber-500 mb-1" />
+              <span className="font-extrabold text-xs">พอจำได้</span>
+              <span className="text-[10px] text-amber-500 font-medium">เว้น 2-3 วัน</span>
+            </button>
+
+            <button
+              onClick={() => handleRating("easy")}
+              className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 transition-all active:scale-95 shadow-sm"
+            >
+              <Zap className="w-5 h-5 text-emerald-500 mb-1" />
+              <span className="font-extrabold text-xs">จำได้แม่น</span>
+              <span className="text-[10px] text-emerald-500 font-medium">เว้น 5-7 วัน</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
