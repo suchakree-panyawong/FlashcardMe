@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ================================================
-   FlashcardMe - Global Styles
-   Clean White Theme · Mobile-First · Thai Friendly
-   ================================================ */
-
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
@@ -38,52 +33,107 @@ a {
   -webkit-touch-callout: none;
 }
 
-/* Shadows */
+* {
+  box-sizing: border-box;
+}
+
 .shadow-soft {
   box-shadow: 0 2px 8px -1px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04);
 }
+
 .shadow-card {
   box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.10), 0 2px 8px -2px rgba(15, 23, 42, 0.06);
 }
 
-/* No Scrollbar */
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-/* Animations */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
+
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.animate-slideUp { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-slideDown { animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-fadeIn { animation: fadeIn 0.25s ease-out both; }
-.animate-scaleIn { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-slideUp {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.10s; }
-.stagger-3 { animation-delay: 0.15s; }
+.animate-slideDown {
+  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
-/* Progress bar smooth transition */
-.progress-bar { transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out both;
+}
 
-/* Thai font line height boost */
-.thai-text { line-height: 1.85; }
+.animate-scaleIn {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
-/* Safe area for bottom nav on iOS */
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+
+.stagger-2 {
+  animation-delay: 0.10s;
+}
+
+.stagger-3 {
+  animation-delay: 0.15s;
+}
+
+.progress-bar {
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.thai-text {
+  line-height: 1.85;
+}
+
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4rem); }
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 4rem);
+  }
 }
