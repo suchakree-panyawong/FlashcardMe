@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Flashcard, ReviewRating, CardCategory } from "@/types/flashcard";
+import { getDomainTagClassName } from "@/lib/domainTags";
 import {
   Sparkles,
   AlertCircle,
@@ -215,9 +216,9 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="w-full min-h-[460px] bg-white border-2 border-slate-100 rounded-3xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full max-w-[85%] truncate">
-                  {mode === "cert" ? currentCard.domain || "Personal Deck" : "General Vocabulary"}
+              <div className="flex items-center justify-between gap-3">
+                <span className={`inline-flex max-w-[85%] truncate rounded-full border px-2.5 py-0.5 text-[10px] font-bold tracking-wide ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
+                  {currentCard.domain || "General Vocabulary"}
                 </span>
 
                 {onToggleFavorite && (
@@ -267,10 +268,13 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="w-full min-h-[460px] bg-white border-2 border-indigo-100 rounded-3xl p-6 shadow-xl flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <span className="text-xs font-black tracking-wider text-indigo-600 uppercase flex items-center space-x-1.5">
+              <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                <span className={`inline-flex max-w-[58%] items-center truncate rounded-full border px-2.5 py-0.5 text-[10px] font-bold tracking-wide ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
+                  <span className="truncate">{currentCard.domain || "General Vocabulary"}</span>
+                </span>
+                <span className="flex items-center space-x-1.5 text-xs font-black uppercase tracking-wider text-indigo-600">
                   <QuestionIcon className="w-4 h-4 text-indigo-600" />
-                  <span>เฉลย & ตัวอย่างบริบทโจทย์ข้อสอบ</span>
+                  <span>เฉลยและบริบท</span>
                 </span>
 
                 <div className="flex items-center space-x-2">

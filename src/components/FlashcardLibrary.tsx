@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Flashcard, CardCategory } from "@/types/flashcard";
 import { speakText } from "@/lib/speech";
 import { Search, Plus, Trash2, Edit3, Volume2, BookOpen, ShieldCheck, Filter } from "lucide-react";
+import { getDomainTagClassName } from "@/lib/domainTags";
 
 interface FlashcardLibraryProps {
   cards: Flashcard[];
@@ -129,11 +130,9 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
                 {/* Top Header */}
                 <div className="flex items-center justify-between">
                   <span
-                    className={`px-2.5 py-0.5 text-[10px] font-bold rounded-lg ${
-                      isGen ? "bg-blue-50 text-blue-600" : "bg-purple-50 text-purple-600"
-                    }`}
+                    className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${getDomainTagClassName(card.domain || (isGen ? "General Vocab" : "Personal Deck"))}`}
                   >
-                    {isGen ? "ศัพท์ทั่วไป" : (card.domain || "คลังส่วนตัว")}
+                    {card.domain || (isGen ? "General Vocab" : "Personal Deck")}
                   </span>
 
                   <div className="flex items-center space-x-1">

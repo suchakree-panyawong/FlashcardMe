@@ -44,7 +44,7 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
       vocab: vocab.trim(),
       vocabThai: typeof vocabThai === 'string' ? vocabThai.trim() : '',
       meaning: meaning.trim(),
-      domain: typeof domain === 'string' ? domain : 'Security Principles',
+      domain: typeof domain === 'string' && domain.trim() ? domain.trim() : 'Domain 1: Security Principles',
       pattern: typeof pattern === 'string' ? pattern : '',
       scenario: typeof scenario === 'string' ? scenario : '',
       nextReviewDate: typeof nextReviewDate === 'string' ? nextReviewDate : new Date().toISOString(),

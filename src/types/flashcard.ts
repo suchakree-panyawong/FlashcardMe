@@ -1,11 +1,16 @@
-export type DomainCategory = 'Security Principles' | 'Business Continuity, Disaster Recovery & Risk Management' | 'Access Controls' | 'Network Security' | 'Security Operations';
+export type DomainCategory =
+  | 'Domain 1: Security Principles'
+  | 'Domain 2: Security Governance'
+  | 'Domain 3: Identity and Access Management (IAM) Concepts'
+  | 'Domain 4: Networking and Cloud Security Concepts'
+  | 'Domain 5: Security Operations and Incident Response';
 
 export const DOMAIN_OPTIONS: DomainCategory[] = [
-  'Security Principles',
-  'Business Continuity, Disaster Recovery & Risk Management',
-  'Access Controls',
-  'Network Security',
-  'Security Operations',
+  'Domain 1: Security Principles',
+  'Domain 2: Security Governance',
+  'Domain 3: Identity and Access Management (IAM) Concepts',
+  'Domain 4: Networking and Cloud Security Concepts',
+  'Domain 5: Security Operations and Incident Response',
 ];
 
 export type CardCategory = 'general' | 'cert';

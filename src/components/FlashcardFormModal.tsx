@@ -21,7 +21,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
   const [vocab, setVocab] = useState("");
   const [vocabThai, setVocabThai] = useState("");
   const [meaning, setMeaning] = useState("");
-  const [domain, setDomain] = useState<string>("Security Principles");
+  const [domain, setDomain] = useState<string>("Domain 1: Security Principles");
   const [pattern, setPattern] = useState("");
   const [scenario, setScenario] = useState("");
   const [category, setCategory] = useState<CardCategory>(defaultCategory);
@@ -31,7 +31,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
       setVocab(editingCard.vocab || "");
       setVocabThai(editingCard.vocabThai || "");
       setMeaning(editingCard.meaning || "");
-      setDomain(editingCard.domain || "Security Principles");
+      setDomain(editingCard.domain || "Domain 1: Security Principles");
       setPattern(editingCard.pattern || "");
       setScenario(editingCard.scenario || "");
       setCategory(editingCard.category || "cert");
@@ -39,7 +39,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
       setVocab("");
       setVocabThai("");
       setMeaning("");
-      setDomain("Security Principles");
+      setDomain("Domain 1: Security Principles");
       setPattern("");
       setScenario("");
       setCategory(defaultCategory);

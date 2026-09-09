@@ -31,17 +31,23 @@ function shuffleArray<T>(arr: T[]): T[] {
 }
 
 const DOMAIN_COLORS: Record<string, string> = {
-  "Security Principles": "from-violet-600 to-indigo-700",
-  "Business Continuity, Disaster Recovery & Risk Management": "from-rose-600 to-pink-700",
-  "Access Controls": "from-emerald-600 to-teal-700",
-  "Network Security": "from-sky-600 to-blue-700",
-  "Security Operations": "from-amber-600 to-orange-700",
+  "Domain 1: Security Principles": "from-violet-600 to-indigo-700",
+  "Domain 2: Security Governance": "from-rose-600 to-pink-700",
+  "Domain 3: Identity and Access Management (IAM) Concepts": "from-emerald-600 to-teal-700",
+  "Domain 4: Networking and Cloud Security Concepts": "from-sky-600 to-blue-700",
+  "Domain 5: Security Operations and Incident Response": "from-amber-600 to-orange-700",
   "General Vocab": "from-purple-600 to-violet-700",
   default: "from-indigo-600 to-purple-700",
 };
 
 function getDomainGradient(domain: string): string {
-  return DOMAIN_COLORS[domain] ?? DOMAIN_COLORS.default;
+  if (DOMAIN_COLORS[domain]) return DOMAIN_COLORS[domain];
+  if (domain.includes("Security Principles")) return DOMAIN_COLORS["Domain 1: Security Principles"];
+  if (domain.includes("Security Governance")) return DOMAIN_COLORS["Domain 2: Security Governance"];
+  if (domain.includes("IAM")) return DOMAIN_COLORS["Domain 3: Identity and Access Management (IAM) Concepts"];
+  if (domain.includes("Networking") || domain.includes("Network Security")) return DOMAIN_COLORS["Domain 4: Networking and Cloud Security Concepts"];
+  if (domain.includes("Security Operations")) return DOMAIN_COLORS["Domain 5: Security Operations and Incident Response"];
+  return DOMAIN_COLORS.default;
 }
 
 export const AudioLearn: React.FC<AudioLearnProps> = ({ cards, activeMode }) => {
