@@ -67,7 +67,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
   return (
     <div className="space-y-4 animate-fadeIn">
       {/* Header Card */}
-      <div className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-soft">
+      <div className="surface-lift bg-white border border-slate-200/80 rounded-3xl p-5 shadow-soft">
         <div className="flex items-center space-x-2 mb-1">
           <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
             <ShieldCheck className="w-4 h-4 text-indigo-600" />
@@ -80,7 +80,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
       </div>
 
       {/* Stats */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-soft flex items-center space-x-3">
+      <div className="surface-lift bg-white border border-slate-200/80 rounded-2xl p-4 shadow-soft flex items-center space-x-3">
         <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
           <Database className="w-5 h-5 text-slate-500" />
         </div>
@@ -91,28 +91,28 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
       </div>
 
       {/* Export / Import Buttons */}
-      <div className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-soft space-y-3">
+      <div className="surface-lift bg-white border border-slate-200/80 rounded-3xl p-5 shadow-soft space-y-3">
         <h4 className="text-sm font-bold text-slate-700">{t('exportImport')}</h4>
         <div className="grid grid-cols-2 gap-3">
           <button
-            onClick={handleExportJSON}
-            className="flex flex-col items-center justify-center p-5 rounded-2xl bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-center space-y-2 transition-all active:scale-95"
+            onClick={() => fileInputRef.current?.click()}
+            className="backup-action backup-action-import flex flex-col items-center justify-center p-5 rounded-2xl bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 text-center space-y-2 transition-all active:scale-95"
           >
             <FileDown className="w-6 h-6 text-indigo-600" />
             <div>
-              <span className="font-bold text-indigo-700 text-sm block">{t('exportJson')}</span>
-              <span className="text-[10px] text-indigo-400">{t('exportData')}</span>
+              <span className="font-bold text-emerald-700 text-sm block">{t('importJson')}</span>
+              <span className="text-[10px] text-emerald-400">{t('importData')}</span>
             </div>
           </button>
 
           <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex flex-col items-center justify-center p-5 rounded-2xl bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 text-center space-y-2 transition-all active:scale-95"
+            onClick={handleExportJSON}
+            className="backup-action backup-action-export flex flex-col items-center justify-center p-5 rounded-2xl bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-center space-y-2 transition-all active:scale-95"
           >
             <FileUp className="w-6 h-6 text-emerald-600" />
             <div>
-              <span className="font-bold text-emerald-700 text-sm block">{t('importJson')}</span>
-              <span className="text-[10px] text-emerald-400">{t('importData')}</span>
+              <span className="font-bold text-indigo-700 text-sm block">{t('exportJson')}</span>
+              <span className="text-[10px] text-indigo-400">{t('exportData')}</span>
             </div>
           </button>
 

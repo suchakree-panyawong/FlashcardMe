@@ -216,7 +216,7 @@ function FlashcardApp() {
 
   // ── Main App (with Header + Bottom Nav) ─────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-indigo-100">
+    <div className="app-shell min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-indigo-100">
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
 
       <HeaderNav
