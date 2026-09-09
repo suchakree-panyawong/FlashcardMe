@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Flashcard } from '@/types/flashcard';
 import { isDueToday } from '@/lib/spacedRepetition';
 import { BookOpen, ArrowRight, Layers, Plus, Trophy, Flame } from 'lucide-react';
+import { useLanguage } from '@/lib/language';
 
 interface StatsOverviewProps {
   cards: Flashcard[];
@@ -15,6 +16,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   onStartStudy,
   onOpenAddModal,
 }) => {
+  const { t } = useLanguage();
   const totalCards = cards.length;
   const dueCards = cards.filter((c) => isDueToday(c.nextReviewDate));
   const dueCount = dueCards.length;
@@ -39,19 +41,19 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           {dueCount > 0 && (
             <span className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 text-xs font-bold border border-rose-100">
               <Flame className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
-              <span>{dueCount} ใบต้องทบทวน</span>
+              <span>{dueCount} {t('dueNeedReview')}</span>
             </span>
           )}
         </div>
 
         <div className="relative z-10">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-            การ์ดคงค้าง {dueCount} ใบ
+            {t('dueCards')} {dueCount} {t('cardCount')}
           </h2>
           <p className="text-sm text-slate-500 mt-1 thai-text leading-relaxed">
             {dueCount > 0
-              ? 'ได้เวลาทบทวนสมองเพื่อย้ายข้อมูลเข้าความจำระยะยาว (Long-Term Memory) กันแล้ว!'
-              : 'เยี่ยมมาก! คุณทบทวนการ์ดที่มีทั้งหมดในรอบนี้ครบเรียบร้อยแล้ว 🏆'}
+              ? t('reviewPrompt')
+              : `${t('allReviewed')} 🏆`}
           </p>
         </div>
 
@@ -68,7 +70,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         >
           <BookOpen className="w-5 h-5" />
           <span>
-            {dueCount > 0 ? `เริ่มทบทวนตอนนี้ (${dueCount} ใบ)` : 'ทบทวนครบทั้งหมดแล้ว 🎉'}
+            {dueCount > 0 ? `${t('startReviewNow')} (${dueCount} ${t('cardCount')})` : `${t('allReviewedShort')} 🎉`}
           </span>
           {dueCount > 0 && <ArrowRight className="w-4 h-4" />}
         </motion.button>
@@ -81,7 +83,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           className="bg-white border border-slate-200/80 rounded-2xl p-4 text-center shadow-soft"
         >
           <span className="text-2xl font-black text-rose-500 block">{dueCount}</span>
-          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide block mt-0.5">ต้องทบทวน</span>
+          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide block mt-0.5">{t('dueToReview')}</span>
         </motion.div>
 
         <motion.div
@@ -89,7 +91,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           className="bg-white border border-slate-200/80 rounded-2xl p-4 text-center shadow-soft"
         >
           <span className="text-2xl font-black text-slate-900 block">{totalCards}</span>
-          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide block mt-0.5">การ์ดทั้งหมด</span>
+          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide block mt-0.5">{t('totalCards')}</span>
         </motion.div>
 
         <motion.div
@@ -97,7 +99,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           className="bg-white border border-slate-200/80 rounded-2xl p-4 text-center shadow-soft"
         >
           <span className="text-2xl font-black text-emerald-500 block">{masteredCount}</span>
-          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide block mt-0.5">จำได้แม่นยำ</span>
+          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide block mt-0.5">{t('mastered')}</span>
         </motion.div>
       </div>
 
@@ -107,7 +109,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-1.5">
               <Trophy className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-bold text-slate-700">ระดับความเชี่ยวชาญ (Mastery)</span>
+              <span className="text-xs font-bold text-slate-700">{t('masteryLevel')}</span>
             </div>
             <span className="text-xs font-black text-indigo-600">
               {masteryPercentage}%
@@ -124,7 +126,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           </div>
 
           <p className="text-[10px] text-slate-400 font-semibold mt-2 thai-text">
-            {masteredCount} จาก {totalCards} ใบอยู่นอกรอบทบทวนระยะสั้น (ทบทวนเว้นมากกว่า 7 วัน)
+            {masteredCount} / {totalCards} {t('masteryNote')} (7+ days)
           </p>
         </div>
       )}
@@ -134,21 +136,21 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
             <Layers className="w-4 h-4 text-indigo-600" />
-            <span>หมวดหมู่เนื้อหาในคลัง</span>
+            <span>{t('categories')}</span>
           </h3>
           <button
             onClick={onOpenAddModal}
             className="flex items-center space-x-1 text-xs font-bold text-indigo-600 px-2.5 py-1.5 rounded-xl hover:bg-indigo-50 transition-all"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>เพิ่มการ์ดใหม่</span>
+            <span>{t('addNewCard')}</span>
           </button>
         </div>
 
         {cards.length === 0 ? (
           <div className="text-center py-6 space-y-2">
             <p className="text-3xl">📭</p>
-            <p className="text-sm text-slate-500 font-medium thai-text">ยังไม่มีการ์ดคำศัพท์ในคลัง!</p>
+            <p className="text-sm text-slate-500 font-medium thai-text">{t('noCards')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -165,7 +167,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
                       </span>
                     )}
                     <span className="px-2.5 py-0.5 rounded-full bg-slate-100 font-bold text-slate-700 text-[10px]">
-                      {count} ใบ
+                      {count} {t('cardCount')}
                     </span>
                   </div>
                 </div>

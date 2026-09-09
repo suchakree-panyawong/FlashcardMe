@@ -1,6 +1,7 @@
 ﻿import React from "react";
 import { motion } from "framer-motion";
 import { CardCategory } from "@/types/flashcard";
+import { useLanguage } from "@/lib/language";
 import { BookOpen, ShieldCheck, Home, Repeat, Grid, Database, ArrowLeftRight, Headphones } from "lucide-react";
 
 export type NavTab = "home" | "study" | "library" | "listen" | "backup";
@@ -20,6 +21,8 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   onSwitchMode,
   dueCount,
 }) => {
+  const { language, setLanguage, t } = useLanguage();
+  const labels = { home: t("home"), study: t("study"), library: t("library"), listen: t("listen"), backup: t("backup") };
   return (
     <>
       {/* Top Sticky Glassmorphism Header */}
@@ -50,12 +53,12 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
               {activeMode === "general" ? (
                 <>
                   <BookOpen className="w-3.5 h-3.5 text-blue-500" />
-                  <span>ทั่วไป</span>
+                  <span>{t("general")}</span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
-                  <span>Cert</span>
+                  <span>{t("personal")}</span>
                 </>
               )}
               <ArrowLeftRight className="w-3 h-3 opacity-50 ml-0.5" />
@@ -63,6 +66,14 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           )}
         </div>
       </header>
+
+      <div className="fixed right-3 top-[4.5rem] z-40 flex rounded-full border border-slate-200 bg-white/90 p-1 shadow-sm backdrop-blur-xl" aria-label="Language selector">
+        {(["th", "en"] as const).map((option) => (
+          <button key={option} type="button" onClick={() => setLanguage(option)} className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase transition-colors ${language === option ? "bg-slate-900 text-white" : "text-slate-400 hover:text-slate-700"}`}>
+            {option}
+          </button>
+        ))}
+      </div>
 
       {/* Bottom Floating Glass Navigation Bar */}
       <nav className="fixed inset-x-0 bottom-0 z-40 bg-white/90 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl border-t border-slate-100/80 shadow-2xl">
@@ -81,7 +92,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
             <Home className="w-5 h-5" />
-            <span className="text-[10px] mt-1 thai-text">หน้าหลัก</span>
+            <span className="text-[10px] mt-1">{labels.home}</span>
           </button>
 
           {/* Tab 2: Study */}
@@ -97,7 +108,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
             <Repeat className="w-5 h-5" />
-            <span className="text-[10px] mt-1 thai-text">เรียน</span>
+            <span className="text-[10px] mt-1">{labels.study}</span>
             {dueCount > 0 && (
               <span className="absolute top-1 right-3 w-4 h-4 bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold text-[9px] rounded-full flex items-center justify-center shadow-md animate-pulse">
                 {dueCount > 99 ? "99+" : dueCount}
@@ -118,7 +129,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
             <Grid className="w-5 h-5" />
-            <span className="text-[10px] mt-1 thai-text">คลัง</span>
+            <span className="text-[10px] mt-1">{labels.library}</span>
           </button>
 
           {/* Tab 4: Listen & Learn */}
@@ -134,7 +145,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
             <Headphones className="w-5 h-5" />
-            <span className="text-[10px] mt-1 thai-text">ฟัง</span>
+            <span className="text-[10px] mt-1">{labels.listen}</span>
           </button>
 
           {/* Tab 5: Backup */}
@@ -150,7 +161,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
             <Database className="w-5 h-5" />
-            <span className="text-[10px] mt-1 thai-text">สำรอง</span>
+            <span className="text-[10px] mt-1">{labels.backup}</span>
           </button>
 
         </div>

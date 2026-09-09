@@ -1,0 +1,224 @@
+"use client";
+
+import { createContext, useContext, useEffect, useState } from "react";
+
+export type Language = "th" | "en";
+
+const LANGUAGE_KEY = "flashcardme_language";
+
+const translations = {
+  th: {
+    home: "หน้าหลัก",
+    study: "เรียน",
+    library: "คลัง",
+    listen: "ฟัง",
+    backup: "สำรอง",
+    general: "ทั่วไป",
+    personal: "ส่วนตัว",
+    spacedRepetition: "Spaced Repetition",
+    cards: "การ์ด",
+    privateDeck: "คลังส่วนตัว",
+    generalVocabulary: "คำศัพท์ทั่วไป",
+    managePersonalCards: "นำเข้าและจัดการการ์ดของคุณ",
+    generalEnglish: "General English",
+    install: "ติดตั้ง FlashcardMe",
+    addToHome: "เพิ่มไปยังหน้าจอโฮม",
+    backupTitle: "ความเป็นส่วนตัวและสำรองข้อมูล",
+    storedInBrowser: "ข้อมูลทั้งหมดเก็บไว้ในเบราว์เซอร์ของคุณ ไม่มีเซิร์ฟเวอร์กลาง",
+    storedInLocalStorage: "เก็บอยู่ใน LocalStorage ของคุณ",
+    exportImport: "Export / Import ข้อมูล",
+    exportData: "สำรองข้อมูลออก",
+    importData: "นำเข้าข้อมูล",
+    importReplaces: "การ Import จะแทนที่ข้อมูลปัจจุบันทั้งหมด ควร Export สำรองไว้ก่อน",
+    resetCards: "รีเซ็ตการ์ดเริ่มต้น",
+    publicStarterCards: "คืนค่า starter cards สาธารณะ",
+    resetConfirm: "รีเซ็ตกลับไปใช้ starter cards สาธารณะ? ข้อมูลปัจจุบันจะถูกแทนที่",
+    resetDone: "คืนค่า starter cards สาธารณะเรียบร้อย",
+    security: "ระบบความปลอดภัย",
+    invalidFile: "ไฟล์ไม่ถูกต้อง",
+    invalidJson: "ไม่ใช่ไฟล์ JSON ที่ถูกต้อง",
+    exportJson: "ส่งออก JSON",
+    importJson: "นำเข้า JSON",
+    cardsStored: "การ์ดที่เก็บไว้",
+    reset: "รีเซ็ต",
+    exportSuccess: "ส่งออกข้อมูลสำเร็จ",
+    importSuccess: "นำเข้าข้อมูลสำเร็จ",
+    exportFailed: "ส่งออกไม่สำเร็จ",
+    exportFailedMessage: "ไม่สามารถส่งออกไฟล์ได้",
+    invalidData: "ข้อมูลไม่ถูกต้อง",
+    invalidDataMessage: "ไฟล์ JSON ไม่ผ่านการตรวจสอบ",
+    resetSuccess: "รีเซ็ตแล้ว",
+    modeSelected: "โหมดที่เลือก",
+    changeMode: "เปลี่ยน",
+    startReview: "เริ่มทบทวนวันนี้",
+    reviewComplete: "ทบทวนครบแล้ววันนี้",
+    loading: "กำลังโหลด FlashcardMe...",
+    reviewSaved: "บันทึกผลการทบทวนแล้ว",
+    enterWord: "กรุณาใส่คำศัพท์",
+    cardUpdated: "แก้ไขการ์ดสำเร็จ",
+    cardAdded: "เพิ่มการ์ดใหม่สำเร็จ",
+    cardDeleted: "ลบการ์ดแล้ว",
+    homeModeGeneral: "คำศัพท์ทั่วไป (ภาษาอังกฤษ)",
+    homeModePersonal: "คลังส่วนตัว",
+    dueNeedReview: "ใบต้องทบทวน",
+    dueCards: "การ์ดคงค้าง",
+    reviewPrompt: "ได้เวลาทบทวนเพื่อย้ายข้อมูลเข้าความจำระยะยาวแล้ว",
+    allReviewed: "เยี่ยมมาก! คุณทบทวนการ์ดครบแล้ว",
+    startReviewNow: "เริ่มทบทวนตอนนี้",
+    allReviewedShort: "ทบทวนครบทั้งหมดแล้ว",
+    dueToReview: "ต้องทบทวน",
+    totalCards: "การ์ดทั้งหมด",
+    mastered: "จำได้แม่นยำ",
+    masteryLevel: "ระดับความเชี่ยวชาญ",
+    masteryNote: "ใบอยู่นอกรอบทบทวนระยะสั้น",
+    categories: "หมวดหมู่เนื้อหาในคลัง",
+    addNewCard: "เพิ่มการ์ดใหม่",
+    noCards: "ยังไม่มีการ์ดคำศัพท์ในคลัง",
+    cardCount: "ใบ",
+    libraryTitle: "คลังการ์ดทั้งหมด",
+    manageCards: "จัดการ เพิ่ม แก้ไข หรือลบการ์ดคำศัพท์ของคุณ",
+    addCard: "เพิ่มการ์ด",
+    searchPlaceholder: "ค้นหาคำศัพท์ คำแปล หรือความหมาย...",
+    all: "ทั้งหมด",
+    generalShort: "ศัพท์ทั่วไป",
+    noSearchResults: "ไม่พบการ์ดคำศัพท์ที่คุณค้นหา",
+    createFirst: "สร้างการ์ดใบแรกเลย",
+    listenEmpty: "ไม่มีการ์ดสำหรับโหมดนี้",
+    editCard: "แก้ไขการ์ดคำศัพท์",
+    createCard: "สร้างการ์ดใหม่",
+    chooseCardType: "เลือกประเภทการ์ด",
+    generalMinimal: "ศัพท์ทั่วไป (มินิมอล)",
+    wordLabel: "คำศัพท์ (ภาษาอังกฤษ / คำหลัก)",
+    thaiTranslation: "คำแปลภาษาไทย (คำสั้นๆ)",
+    meaningLabel: "คำอธิบายความหมาย (ภาษาไทย)",
+    saveEdit: "บันทึกการแก้ไข",
+    saveCard: "บันทึกการ์ดใหม่",
+  },
+  en: {
+    home: "Home",
+    study: "Study",
+    library: "Library",
+    listen: "Listen",
+    backup: "Backup",
+    general: "General",
+    personal: "Personal",
+    spacedRepetition: "Spaced Repetition",
+    cards: "cards",
+    privateDeck: "Personal Deck",
+    generalVocabulary: "General Vocabulary",
+    managePersonalCards: "Import and manage your cards",
+    generalEnglish: "General English",
+    install: "Install FlashcardMe",
+    addToHome: "Add to Home Screen",
+    backupTitle: "Privacy and Backup",
+    storedInBrowser: "Your data stays in this browser. There is no central database.",
+    storedInLocalStorage: "Stored in your LocalStorage",
+    exportImport: "Export / Import Data",
+    exportData: "Export backup",
+    importData: "Import data",
+    importReplaces: "Import replaces all current cards. Export a backup first.",
+    resetCards: "Reset starter cards",
+    publicStarterCards: "Restore public starter cards",
+    resetConfirm: "Reset to public starter cards? Current data will be replaced.",
+    resetDone: "Public starter cards restored",
+    security: "Security",
+    invalidFile: "Invalid file",
+    invalidJson: "This is not a valid JSON file",
+    exportJson: "Export JSON",
+    importJson: "Import JSON",
+    cardsStored: "cards stored",
+    reset: "Reset",
+    exportSuccess: "Backup exported",
+    importSuccess: "Import complete",
+    exportFailed: "Export failed",
+    exportFailedMessage: "The file could not be exported",
+    invalidData: "Invalid data",
+    invalidDataMessage: "The JSON file failed validation",
+    resetSuccess: "Reset complete",
+    modeSelected: "Selected mode",
+    changeMode: "Change",
+    startReview: "Start today's review",
+    reviewComplete: "Review complete for today",
+    loading: "Loading FlashcardMe...",
+    reviewSaved: "Review result saved",
+    enterWord: "Please enter a word",
+    cardUpdated: "Card updated",
+    cardAdded: "New card added",
+    cardDeleted: "Card deleted",
+    homeModeGeneral: "General English vocabulary",
+    homeModePersonal: "Personal deck",
+    dueNeedReview: "due for review",
+    dueCards: "Cards due",
+    reviewPrompt: "It is time to move today's learning into long-term memory.",
+    allReviewed: "Great! You have reviewed all cards for this round.",
+    startReviewNow: "Start review now",
+    allReviewedShort: "All reviewed",
+    dueToReview: "Due to review",
+    totalCards: "Total cards",
+    mastered: "Mastered",
+    masteryLevel: "Mastery level",
+    masteryNote: "cards are outside the short review cycle",
+    categories: "Content categories",
+    addNewCard: "Add new card",
+    noCards: "No vocabulary cards in this deck",
+    cardCount: "cards",
+    libraryTitle: "All cards",
+    manageCards: "Add, edit, or delete your vocabulary cards",
+    addCard: "Add card",
+    searchPlaceholder: "Search words, translations, or meanings...",
+    all: "All",
+    generalShort: "General vocabulary",
+    noSearchResults: "No cards match your search",
+    createFirst: "Create the first card",
+    listenEmpty: "No cards for this mode",
+    editCard: "Edit vocabulary card",
+    createCard: "Create new card",
+    chooseCardType: "Choose card type",
+    generalMinimal: "General vocabulary",
+    wordLabel: "Word (English / keyword)",
+    thaiTranslation: "Thai translation (short)",
+    meaningLabel: "Meaning and explanation",
+    saveEdit: "Save changes",
+    saveCard: "Save new card",
+  },
+} as const;
+
+type TranslationKey = keyof typeof translations.th;
+
+interface LanguageContextValue {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  t: (key: TranslationKey) => string;
+}
+
+const LanguageContext = createContext<LanguageContextValue | null>(null);
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguage] = useState<Language>("th");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem(LANGUAGE_KEY);
+    if (saved === "th" || saved === "en") setLanguage(saved);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
+  const changeLanguage = (nextLanguage: Language) => {
+    setLanguage(nextLanguage);
+    window.localStorage.setItem(LANGUAGE_KEY, nextLanguage);
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage: changeLanguage, t: (key) => translations[language][key] }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (!context) throw new Error("useLanguage must be used inside LanguageProvider");
+  return context;
+}

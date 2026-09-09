@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Download, Share } from "lucide-react";
+import { useLanguage } from "@/lib/language";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -9,6 +10,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPWA() {
+  const { language, t } = useLanguage();
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -39,7 +41,9 @@ export function InstallPWA() {
     }
 
     if (isIOS) {
-      window.alert("เปิดเมนู Share แล้วเลือก Add to Home Screen เพื่อเพิ่ม FlashcardMe ลงหน้าจอหลัก");
+      window.alert(language === "th"
+        ? "เปิดเมนู Share แล้วเลือก Add to Home Screen เพื่อเพิ่ม FlashcardMe ลงหน้าจอหลัก"
+        : "Open Share and choose Add to Home Screen to add FlashcardMe.");
     }
   };
 
@@ -56,8 +60,8 @@ export function InstallPWA() {
         <img src="/flashcardme-logo.jpg" alt="" className="h-full w-full object-contain" />
       </span>
       <span className="relative flex-1">
-        <span className="block text-sm font-extrabold tracking-tight">{isIOS ? "เพิ่มไปยังหน้าจอโฮม" : "ติดตั้ง FlashcardMe"}</span>
-        <span className="mt-0.5 block text-[11px] font-medium text-white/55">เปิดจากหน้าจอหลักได้เหมือนแอป</span>
+        <span className="block text-sm font-extrabold tracking-tight">{isIOS ? t("addToHome") : t("install")}</span>
+        <span className="mt-0.5 block text-[11px] font-medium text-white/55">{language === "th" ? "เปิดจากหน้าจอหลักได้เหมือนแอป" : "Open it from your home screen like an app"}</span>
       </span>
       <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-teal-200 transition-colors group-hover:bg-teal-300/15">
         {isIOS ? <Share className="h-4 w-4" /> : <Download className="h-4 w-4" />}

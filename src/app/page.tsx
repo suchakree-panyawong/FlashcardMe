@@ -18,6 +18,7 @@ import { DataImportExport } from "@/components/DataImportExport";
 import { FlashcardFormModal } from "@/components/FlashcardFormModal";
 import { ToastContainer } from "@/components/Toast";
 import { InstallPWA } from "@/components/InstallPWA";
+import { LanguageProvider, useLanguage } from "@/lib/language";
 import { Sparkles, Play } from "lucide-react";
 
 // ─── Toast helper ─────────────────────────────────────────────────────────────
@@ -46,6 +47,14 @@ function useToasts() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  return (
+    <LanguageProvider>
+      <FlashcardApp />
+    </LanguageProvider>
+  );
+}
+
+function FlashcardApp() {
   const [cards, setCards] = useState<Flashcard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeMode, setActiveMode] = useState<CardCategory | null>(null);
@@ -54,6 +63,7 @@ export default function Home() {
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
 
   const { toasts, addToast, removeToast } = useToasts();
+  const { t } = useLanguage();
 
   // Load cards from localStorage
   useEffect(() => {
@@ -94,7 +104,7 @@ export default function Home() {
         saveStoredFlashcards(updated);
         return updated;
       });
-      addToast("บันทึกผลการทบทวนแล้ว ✓");
+      addToast(t("reviewSaved"));
     },
     [addToast]
   );
@@ -102,7 +112,7 @@ export default function Home() {
   const handleSaveCard = useCallback(
     (cardData: Omit<Flashcard, "id" | "nextReviewDate" | "interval" | "createdAt">) => {
       if (!cardData.vocab.trim()) {
-        addToast("กรุณาใส่คำศัพท์", undefined, "error");
+        addToast(t("enterWord"), undefined, "error");
         return;
       }
 
@@ -110,7 +120,7 @@ export default function Home() {
         let updated: Flashcard[];
         if (editingCard) {
           updated = prev.map((c) => (c.id === editingCard.id ? { ...c, ...cardData } : c));
-          addToast("แก้ไขการ์ดสำเร็จ ✓");
+          addToast(t("cardUpdated"));
         } else {
           const newCard: Flashcard = {
             ...cardData,
@@ -120,7 +130,7 @@ export default function Home() {
             createdAt: new Date().toISOString(),
           };
           updated = [newCard, ...prev];
-          addToast("เพิ่มการ์ดใหม่สำเร็จ ✓", `เพิ่มคำ "${newCard.vocab}" แล้ว`);
+          addToast(t("cardAdded"), `${newCard.vocab}`);
         }
         saveStoredFlashcards(updated);
         return updated;
@@ -138,7 +148,7 @@ export default function Home() {
         saveStoredFlashcards(updated);
         return updated;
       });
-      addToast("ลบการ์ดแล้ว", undefined, "info");
+      addToast(t("cardDeleted"), undefined, "info");
     },
     [addToast]
   );
@@ -147,18 +157,16 @@ export default function Home() {
     (importedCards: Flashcard[]) => {
       setCards(importedCards);
       saveStoredFlashcards(importedCards);
-      addToast("นำเข้าข้อมูลสำเร็จ ✓", `นำเข้าการ์ดทั้งหมด ${importedCards.length} ใบ`);
+      addToast(t("importSuccess"), `${importedCards.length} ${t("cards")}`);
     },
     [addToast]
   );
 
   const handleResetCards = useCallback(() => {
-    if (confirm("รีเซ็ตข้อมูลทั้งหมดกลับเป็นค่าเริ่มต้น? การดำเนินการนี้ไม่สามารถยกเลิกได้")) {
-      const resetCards = resetToDefaultFlashcards();
-      setCards(resetCards);
-      addToast("รีเซ็ตข้อมูลสำเร็จแล้ว");
-    }
-  }, [addToast]);
+    const resetCards = resetToDefaultFlashcards();
+    setCards(resetCards);
+    addToast(t("resetDone"));
+  }, [addToast, t]);
 
   const handleSelectMode = (mode: CardCategory) => {
     setActiveMode(mode);
@@ -173,7 +181,7 @@ export default function Home() {
           <div className="w-14 h-14 rounded-2xl bg-indigo-600 mx-auto flex items-center justify-center text-white shadow-lg shadow-indigo-200">
             <Sparkles className="w-7 h-7" />
           </div>
-          <p className="text-slate-400 font-bold text-sm">กำลังโหลด FlashcardMe...</p>
+          <p className="text-slate-400 font-bold text-sm">{t("loading")}</p>
         </div>
       </div>
     );
@@ -230,17 +238,17 @@ export default function Home() {
             <div className="flex items-center justify-between bg-white border border-slate-100 rounded-3xl p-5 shadow-xs">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
-                  โหมดที่เลือก
+                  {t("modeSelected")}
                 </span>
                 <h2 className="text-xl font-black text-slate-900 mt-1 thai-text">
-                  {activeMode === "general" ? "📚 คำศัพท์ทั่วไป (ภาษาอังกฤษ)" : "🛡️ คลังส่วนตัว"}
+                  {activeMode === "general" ? `📚 ${t("homeModeGeneral")}` : `🛡️ ${t("homeModePersonal")}`}
                 </h2>
               </div>
               <button
                 onClick={() => setActiveMode(null)}
                 className="text-xs font-bold text-slate-500 hover:text-indigo-600 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-indigo-50 transition-colors"
               >
-                เปลี่ยน
+                {t("changeMode")}
               </button>
             </div>
 
@@ -266,8 +274,8 @@ export default function Home() {
                 <Play className="w-5 h-5 fill-current" />
                 <span>
                   {activeModeDueCards.length > 0
-                    ? `เริ่มทบทวนวันนี้ (${activeModeDueCards.length} ใบ)`
-                    : "ทบทวนครบแล้ววันนี้ 🎉"}
+                    ? `${t("startReview")} (${activeModeDueCards.length} ${t("cards")})`
+                    : `${t("reviewComplete")} 🎉`}
                 </span>
               </button>
             </div>

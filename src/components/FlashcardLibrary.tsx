@@ -3,6 +3,7 @@ import { Flashcard, CardCategory } from "@/types/flashcard";
 import { speakText } from "@/lib/speech";
 import { Search, Plus, Trash2, Edit3, Volume2, BookOpen, ShieldCheck, Filter } from "lucide-react";
 import { getDomainTagClassName } from "@/lib/domainTags";
+import { useLanguage } from "@/lib/language";
 
 interface FlashcardLibraryProps {
   cards: Flashcard[];
@@ -19,6 +20,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
   onEditCard,
   onDeleteCard,
 }) => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<"all" | CardCategory>(activeMode || "all");
 
@@ -41,9 +43,9 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
       {/* Header & Action */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-black text-slate-900 tracking-tight">คลังการ์ดทั้งหมด</h2>
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">{t("libraryTitle")}</h2>
           <p className="text-xs text-slate-500 font-medium">
-            จัดการ เพิ่ม แก้ไข หรือลบการ์ดคำศัพท์ของคุณ ({cards.length} ใบ)
+            {t("manageCards")} ({cards.length} {t("cardCount")})
           </p>
         </div>
         <button
@@ -51,7 +53,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
           className="flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-200 active:scale-95 transition-all"
         >
           <Plus className="w-4 h-4" />
-          <span>เพิ่มการ์ด</span>
+          <span>{t("addCard")}</span>
         </button>
       </div>
 
@@ -60,7 +62,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
         <Search className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
         <input
           type="text"
-          placeholder="ค้นหาคำศัพท์ คำแปล หรือความหมาย..."
+          placeholder={t("searchPlaceholder")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-medium text-slate-900 placeholder:text-slate-400 text-sm outline-none transition-all thai-text"
@@ -78,7 +80,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
           }`}
         >
           <Filter className="w-3 h-3" />
-          <span>ทั้งหมด ({cards.length})</span>
+          <span>{t("all")} ({cards.length})</span>
         </button>
 
         <button
@@ -90,7 +92,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
           }`}
         >
           <BookOpen className="w-3 h-3" />
-          <span>ศัพท์ทั่วไป</span>
+          <span>{t("generalShort")}</span>
         </button>
 
         <button
@@ -102,19 +104,19 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
           }`}
         >
           <ShieldCheck className="w-3 h-3" />
-          <span>ส่วนตัว</span>
+          <span>{t("personal")}</span>
         </button>
       </div>
 
       {/* Cards List */}
       {filteredCards.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-3xl border border-slate-100 space-y-3">
-          <p className="text-slate-400 text-sm font-medium">ไม่พบการ์ดคำศัพท์ที่คุณค้นหา</p>
+          <p className="text-slate-400 text-sm font-medium">{t("noSearchResults")}</p>
           <button
             onClick={onAddCard}
             className="text-xs font-bold text-indigo-600 bg-indigo-50 px-4 py-2 rounded-xl hover:bg-indigo-100 transition-colors inline-block"
           >
-            + สร้างการ์ดใบแรกเลย
+            {t("createFirst")}
           </button>
         </div>
       ) : (

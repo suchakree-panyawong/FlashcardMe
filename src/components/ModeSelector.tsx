@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CardCategory, Flashcard } from "@/types/flashcard";
 import { ShieldCheck, BookOpenCheck, ChevronRight } from "lucide-react";
 import { InstallPWA } from "@/components/InstallPWA";
+import { useLanguage } from "@/lib/language";
 
 interface ModeSelectorProps {
   cards: Flashcard[];
@@ -17,6 +18,7 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
   onSelectMode,
   onOpenAddModal,
 }) => {
+  const { language, setLanguage, t } = useLanguage();
   return (
     <div className="min-h-[100svh] w-full bg-[#050507] text-white flex flex-col justify-between px-5 py-[max(2.5rem,env(safe-area-inset-top))] pb-[max(2.5rem,calc(2.5rem+env(safe-area-inset-bottom)))] sm:px-8 sm:py-16 lg:max-w-3xl lg:px-20 mx-auto relative overflow-hidden font-sans select-none">
       {/* Subtle Dynamic Ambient Backlight (Apple / Arc style) */}
@@ -27,7 +29,14 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
       <div className="w-full flex items-center justify-between z-10 pt-2">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[11px] font-medium tracking-wide text-neutral-300">Spaced Repetition</span>
+          <span className="text-[11px] font-medium tracking-wide text-neutral-300">{t("spacedRepetition")}</span>
+        </div>
+        <div className="flex rounded-full border border-white/10 bg-white/[0.04] p-0.5" aria-label="Language selector">
+          {(["th", "en"] as const).map((option) => (
+            <button key={option} type="button" onClick={() => setLanguage(option)} className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${language === option ? "bg-white text-slate-900" : "text-neutral-500"}`}>
+              {option}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -80,11 +89,11 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
               <div>
                 <div className="flex items-center space-x-2">
                   <span className="font-semibold text-[15px] text-white tracking-tight">
-                    คลังส่วนตัว
+                    {t("privateDeck")}
                   </span>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">ส่วนตัว</span>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">{t("personal")}</span>
                 </div>
-                <div className="text-xs text-neutral-400 font-normal mt-0.5">นำเข้าและจัดการการ์ดของคุณ</div>
+                <div className="text-xs text-neutral-400 font-normal mt-0.5">{t("managePersonalCards")}</div>
               </div>
             </div>
             <ChevronRight className="w-4 h-4 text-neutral-500 group-hover:text-purple-300 group-hover:translate-x-0.5 transition-all" />
@@ -103,9 +112,9 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
               </div>
               <div>
                 <div className="font-semibold text-[15px] text-white tracking-tight">
-                  คำศัพท์ทั่วไป
+                  {t("generalVocabulary")}
                 </div>
-                <div className="text-xs text-neutral-400 font-normal mt-0.5">General English</div>
+                <div className="text-xs text-neutral-400 font-normal mt-0.5">{t("generalEnglish")}</div>
               </div>
             </div>
             <ChevronRight className="w-4 h-4 text-neutral-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />

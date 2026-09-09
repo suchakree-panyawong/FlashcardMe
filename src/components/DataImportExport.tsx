@@ -1,7 +1,8 @@
 ﻿import React, { useRef } from 'react';
 import { Flashcard } from '@/types/flashcard';
 import { validateImportData } from '@/lib/security';
-import { Download, Upload, RotateCcw, ShieldCheck, Database } from 'lucide-react';
+import { FileDown, FileUp, RotateCcw, ShieldCheck, Database } from 'lucide-react';
+import { useLanguage } from '@/lib/language';
 
 interface DataImportExportProps {
   cards: Flashcard[];
@@ -17,6 +18,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
   showToast,
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { language, t } = useLanguage();
 
   const handleExportJSON = () => {
     try {
@@ -31,9 +33,9 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
-      showToast('📥 ดาวน์โหลดแล้ว', `Export ${cards.length} การ์ด เป็น JSON`, 'success');
+      showToast(t('exportSuccess'), `${cards.length} ${t('cards')} JSON`, 'success');
     } catch {
-      showToast('ส่งออกไม่สำเร็จ', 'ไม่สามารถส่งออกไฟล์ได้', 'error');
+      showToast(t('exportFailed'), t('exportFailedMessage'), 'error');
     }
   };
 
@@ -48,14 +50,14 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
         const { isValid, cards: validatedCards, error } = validateImportData(json);
 
         if (!isValid) {
-          showToast('⚠️ ข้อมูลไม่ถูกต้อง', error || 'ไฟล์ JSON ไม่ผ่านการตรวจสอบ', 'error');
+          showToast(t('invalidData'), error || t('invalidDataMessage'), 'error');
           return;
         }
 
         onImportCards(validatedCards);
-        showToast('✅ นำเข้าสำเร็จ', `นำเข้า ${validatedCards.length} การ์ด เรียบร้อย`, 'success');
+        showToast(t('importSuccess'), `${validatedCards.length} ${t('cards')}`, 'success');
       } catch {
-        showToast('ไฟล์ไม่ถูกต้อง', 'ไม่ใช่ไฟล์ JSON ที่ถูกต้อง', 'error');
+        showToast(t('invalidFile'), t('invalidJson'), 'error');
       }
     };
     reader.readAsText(file);
@@ -70,10 +72,10 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
           <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
             <ShieldCheck className="w-4 h-4 text-indigo-600" />
           </div>
-          <h3 className="text-base font-black text-slate-900">ความเป็นส่วนตัว & สำรองข้อมูล</h3>
+          <h3 className="text-base font-black text-slate-900">{t('backupTitle')}</h3>
         </div>
         <p className="text-sm text-slate-500 leading-relaxed thai-text mt-2">
-          ข้อมูลทั้งหมดเก็บไว้ที่เบราว์เซอร์ของคุณ (LocalStorage) ไม่มีเซิร์ฟเวอร์ ไม่มีการส่งข้อมูลไปไหน 🔒
+          {t('storedInBrowser')}
         </p>
       </div>
 
@@ -83,23 +85,23 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
           <Database className="w-5 h-5 text-slate-500" />
         </div>
         <div>
-          <p className="text-xl font-black text-slate-900">{cards.length} การ์ด</p>
-          <p className="text-xs text-slate-500 font-medium thai-text">เก็บอยู่ใน LocalStorage ของคุณ</p>
+          <p className="text-xl font-black text-slate-900">{cards.length} {t('cardsStored')}</p>
+          <p className="text-xs text-slate-500 font-medium">{t('storedInLocalStorage')}</p>
         </div>
       </div>
 
       {/* Export / Import Buttons */}
       <div className="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-soft space-y-3">
-        <h4 className="text-sm font-bold text-slate-700">📂 Export / Import ข้อมูล</h4>
+        <h4 className="text-sm font-bold text-slate-700">{t('exportImport')}</h4>
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={handleExportJSON}
             className="flex flex-col items-center justify-center p-5 rounded-2xl bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-center space-y-2 transition-all active:scale-95"
           >
-            <Download className="w-6 h-6 text-indigo-600" />
+            <FileDown className="w-6 h-6 text-indigo-600" />
             <div>
-              <span className="font-bold text-indigo-700 text-sm block">Export JSON</span>
-              <span className="text-[10px] text-indigo-400 thai-text">สำรองข้อมูลออก</span>
+              <span className="font-bold text-indigo-700 text-sm block">{t('exportJson')}</span>
+              <span className="text-[10px] text-indigo-400">{t('exportData')}</span>
             </div>
           </button>
 
@@ -107,10 +109,10 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
             onClick={() => fileInputRef.current?.click()}
             className="flex flex-col items-center justify-center p-5 rounded-2xl bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 text-center space-y-2 transition-all active:scale-95"
           >
-            <Upload className="w-6 h-6 text-emerald-600" />
+            <FileUp className="w-6 h-6 text-emerald-600" />
             <div>
-              <span className="font-bold text-emerald-700 text-sm block">Import JSON</span>
-              <span className="text-[10px] text-emerald-400 thai-text">นำเข้าข้อมูล</span>
+              <span className="font-bold text-emerald-700 text-sm block">{t('importJson')}</span>
+              <span className="text-[10px] text-emerald-400">{t('importData')}</span>
             </div>
           </button>
 
@@ -123,7 +125,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
           />
         </div>
         <p className="text-[11px] text-slate-400 leading-relaxed thai-text">
-          ⚠️ การ Import จะแทนที่ข้อมูลปัจจุบันทั้งหมด — แนะนำให้ Export สำรองไว้ก่อน
+          {t('importReplaces')}
         </p>
       </div>
 
@@ -131,20 +133,20 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
       <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-soft">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-bold text-slate-700">รีเซ็ตการ์ดเริ่มต้น</p>
-            <p className="text-xs text-slate-400 thai-text mt-0.5">คืนค่า starter cards สาธารณะ</p>
+            <p className="text-sm font-bold text-slate-700">{t('resetCards')}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{t('publicStarterCards')}</p>
           </div>
           <button
             onClick={() => {
-              if (confirm('รีเซ็ตกลับไปใช้ starter cards สาธารณะ? ข้อมูลปัจจุบันจะถูกแทนที่')) {
+              if (confirm(t('resetConfirm'))) {
                 onResetToDefault();
-                showToast('รีเซ็ตแล้ว', 'คืนค่า starter cards สาธารณะเรียบร้อย', 'info');
+                showToast(language === 'th' ? 'รีเซ็ตแล้ว' : 'Reset complete', t('resetDone'), 'info');
               }
             }}
             className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all active:scale-95"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>รีเซ็ต</span>
+            <span>{t('reset')}</span>
           </button>
         </div>
       </div>
@@ -153,7 +155,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 space-y-1">
         <p className="text-xs font-bold text-emerald-700 flex items-center space-x-1.5">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>ระบบความปลอดภัย</span>
+            <span>{t('security')}</span>
         </p>
         <p className="text-[11px] text-emerald-600 leading-relaxed thai-text">
           XSS Protection · Input Sanitization · Zero Server DB · Client-Side Isolation

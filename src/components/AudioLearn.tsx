@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Flashcard, CardCategory } from "@/types/flashcard";
 import { speakFlashcard, getBestEnglishVoice } from "@/lib/speech";
+import { useLanguage } from "@/lib/language";
 
 interface AudioLearnProps {
   cards: Flashcard[];
@@ -51,6 +52,7 @@ function getDomainGradient(domain: string): string {
 }
 
 export const AudioLearn: React.FC<AudioLearnProps> = ({ cards, activeMode }) => {
+  const { t } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [playMode, setPlayMode] = useState<PlayMode>("loop");
@@ -141,7 +143,7 @@ export const AudioLearn: React.FC<AudioLearnProps> = ({ cards, activeMode }) => 
         <div className="flex h-28 w-40 items-center justify-center">
           <img src="/cat-listening-Photoroom.png" alt="แมวกำลังฟังเสียง" className="h-full w-full object-contain" />
         </div>
-        <p className="text-slate-500 font-semibold thai-text">ไม่มีการ์ดสำหรับ mode นี้</p>
+        <p className="text-slate-500 font-semibold thai-text">{t("listenEmpty")}</p>
       </div>
     );
   }

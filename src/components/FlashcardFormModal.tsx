@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CardCategory, Flashcard, DOMAIN_OPTIONS } from "@/types/flashcard";
 import { sanitizeText } from "@/lib/security";
 import { X, Plus, Sparkles, BookOpen, ShieldCheck } from "lucide-react";
+import { useLanguage } from "@/lib/language";
 
 interface FlashcardFormModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
   editingCard = null,
   defaultCategory = "general",
 }) => {
+  const { language, t } = useLanguage();
   const [vocab, setVocab] = useState("");
   const [vocabThai, setVocabThai] = useState("");
   const [meaning, setMeaning] = useState("");
@@ -56,7 +58,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
     const cleanMeaning = sanitizeText(meaning);
 
     if (!cleanVocab || !cleanMeaning) {
-      alert("กรุณากรอกคำศัพท์และความหมายภาษาไทย");
+      alert(language === "th" ? "กรุณากรอกคำศัพท์และความหมาย" : "Please enter a word and its meaning");
       return;
     }
 
@@ -83,7 +85,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
               <Sparkles className="w-4 h-4" />
             </div>
             <h2 className="text-lg font-black text-slate-900">
-              {editingCard ? "แก้ไขการ์ดคำศัพท์" : "สร้างการ์ดใหม่"}
+              {editingCard ? t("editCard") : t("createCard")}
             </h2>
           </div>
           <button
@@ -99,7 +101,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
           {/* Category Toggle */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-              เลือกประเภทการ์ด
+              {t("chooseCardType")}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -112,7 +114,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
                 }`}
               >
                 <BookOpen className="w-4 h-4" />
-                <span>ศัพท์ทั่วไป (มินิมอล)</span>
+                <span>{t("generalMinimal")}</span>
               </button>
 
               <button
@@ -125,7 +127,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
                 }`}
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>คลังส่วนตัว</span>
+                <span>{t("personal")}</span>
               </button>
             </div>
           </div>
@@ -133,7 +135,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
           {/* Vocab English */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-slate-700 block">
-              คำศัพท์ (ภาษาอังกฤษ / คำหลัก) <span className="text-rose-500">*</span>
+              {t("wordLabel")} <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -148,7 +150,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
           {/* Thai Vocab Translation */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-slate-700 block">
-              คำแปลภาษาไทย (คำสั้นๆ)
+              {t("thaiTranslation")}
             </label>
             <input
               type="text"
@@ -162,7 +164,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
           {/* Meaning / Explanation */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-slate-700 block">
-              คำอธิบายความหมาย (ภาษาไทย) <span className="text-rose-500">*</span>
+              {t("meaningLabel")} <span className="text-rose-500">*</span>
             </label>
             <textarea
               required
@@ -216,7 +218,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
               className="w-full py-3.5 px-6 rounded-2xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 active:scale-98 transition-all flex items-center justify-center space-x-2"
             >
               <Plus className="w-4 h-4" />
-              <span>{editingCard ? "บันทึกการแก้ไข" : "บันทึกการ์ดใหม่"}</span>
+              <span>{editingCard ? t("saveEdit") : t("saveCard")}</span>
             </button>
           </div>
         </form>
