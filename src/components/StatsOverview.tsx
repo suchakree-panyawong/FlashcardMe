@@ -24,6 +24,10 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   const dueCount = dueCards.length;
   const masteredCount = cards.filter((c) => (c.interval || 0) >= 7).length;
   const masteryPercentage = totalCards > 0 ? Math.round((masteredCount / totalCards) * 100) : 0;
+  const correctCount = cards.reduce((sum, card) => sum + (card.correctCount ?? 0), 0);
+  const incorrectCount = cards.reduce((sum, card) => sum + (card.incorrectCount ?? 0), 0);
+  const answeredCount = correctCount + incorrectCount;
+  const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
 
   return (
     <div className="space-y-4 animate-fadeIn">
@@ -110,6 +114,21 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
       <div className="flex items-center justify-between rounded-2xl border border-indigo-100 bg-indigo-50/70 px-4 py-3 text-xs font-bold text-indigo-700">
         <span>{t('totalReviews')}: {studyStats.totalReviews}</span>
         <span>{t('streak')}: {studyStats.currentStreak} {t('days')}</span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3 text-center">
+          <strong className="block text-xl text-emerald-600">{correctCount}</strong>
+          <span className="text-[10px] font-bold text-emerald-700">{t('correctAnswers')}</span>
+        </div>
+        <div className="rounded-2xl border border-rose-100 bg-rose-50 p-3 text-center">
+          <strong className="block text-xl text-rose-600">{incorrectCount}</strong>
+          <span className="text-[10px] font-bold text-rose-700">{t('incorrectAnswers')}</span>
+        </div>
+        <div className="rounded-2xl border border-sky-100 bg-sky-50 p-3 text-center">
+          <strong className="block text-xl text-sky-600">{accuracy}%</strong>
+          <span className="text-[10px] font-bold text-sky-700">{t('accuracy')}</span>
+        </div>
       </div>
 
       {/* Animated Progress Bar */}

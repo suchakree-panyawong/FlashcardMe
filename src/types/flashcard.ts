@@ -28,6 +28,9 @@ export interface Flashcard {
   interval: number;
   createdAt?: string;
   isFavorite?: boolean; // ✨ NEW: Favorite / Bookmark Option
+  reviewCount?: number;
+  correctCount?: number;
+  incorrectCount?: number;
 }
 
 export type ReviewRating = 'hard' | 'good' | 'easy';

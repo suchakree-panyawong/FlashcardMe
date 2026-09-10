@@ -24,7 +24,14 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
 }) => {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<"all" | "favorites" | CardCategory>(activeMode || "all");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | CardCategory>(activeMode || "all");
+  const [domainFilter, setDomainFilter] = useState("all");
+  const [favoriteOnly, setFavoriteOnly] = useState(false);
+  const [neverStudiedOnly, setNeverStudiedOnly] = useState(false);
+  const domains = useMemo(
+    () => Array.from(new Set(cards.map((card) => card.domain).filter((domain): domain is string => Boolean(domain)))),
+    [cards]
+  );
 
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
@@ -35,11 +42,13 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
 
       const cardCat = card.category || (card.domain === "General Vocab" ? "general" : "cert");
       const matchCategory = categoryFilter === "all" || cardCat === categoryFilter;
-      const matchFavorite = categoryFilter !== "favorites" || card.isFavorite === true;
+      const matchDomain = domainFilter === "all" || card.domain === domainFilter;
+      const matchFavorite = !favoriteOnly || card.isFavorite === true;
+      const matchNeverStudied = !neverStudiedOnly || (card.reviewCount ?? 0) === 0;
 
-      return matchSearch && matchCategory && matchFavorite;
+      return matchSearch && matchCategory && matchDomain && matchFavorite && matchNeverStudied;
     });
-  }, [cards, searchTerm, categoryFilter]);
+  }, [cards, searchTerm, categoryFilter, domainFilter, favoriteOnly, neverStudiedOnly]);
 
   return (
     <div className="space-y-5 animate-fadeIn pb-6">
@@ -62,14 +71,29 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
 
       <div className="flex items-center space-x-2 overflow-x-auto pb-1">
         <button
-          onClick={() => setCategoryFilter("favorites")}
+          onClick={() => setFavoriteOnly((value) => !value)}
           className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center space-x-1 ${
-            categoryFilter === "favorites" ? "bg-amber-500 text-white" : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+            favoriteOnly ? "bg-amber-500 text-white" : "bg-amber-50 text-amber-700 hover:bg-amber-100"
           }`}
         >
           <Star className="w-3 h-3" />
           <span>{t("favorite")}</span>
         </button>
+        <button
+          onClick={() => setNeverStudiedOnly((value) => !value)}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${neverStudiedOnly ? "bg-sky-600 text-white" : "bg-sky-50 text-sky-700 hover:bg-sky-100"}`}
+        >
+          {t("neverStudied")}
+        </button>
+        <select
+          value={domainFilter}
+          onChange={(event) => setDomainFilter(event.target.value)}
+          aria-label={t("domainFilter")}
+          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 outline-none"
+        >
+          <option value="all">{t("allDomains")}</option>
+          {domains.map((domain) => <option key={domain} value={domain}>{domain}</option>)}
+        </select>
       </div>
 
       {/* Search Input */}

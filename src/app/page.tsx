@@ -103,7 +103,16 @@ function FlashcardApp() {
       const updated = cards.map((card) => {
         if (card.id === cardId) {
           const { nextReviewDate, interval } = calculateNextReview(card, rating);
-          return { ...card, nextReviewDate, interval };
+          const reviewCount = (card.reviewCount ?? 0) + 1;
+          const isCorrect = rating !== "hard";
+          return {
+            ...card,
+            nextReviewDate,
+            interval,
+            reviewCount,
+            correctCount: (card.correctCount ?? 0) + (isCorrect ? 1 : 0),
+            incorrectCount: (card.incorrectCount ?? 0) + (isCorrect ? 0 : 1),
+          };
         }
         return card;
       });
