@@ -46,6 +46,13 @@ function shuffleList<T>(arr: T[]): T[] {
   return copy;
 }
 
+function createPromptDirections(cards: Flashcard[]): Record<string, boolean> {
+  return cards.reduce<Record<string, boolean>>((directions, card) => {
+    directions[card.id] = Math.random() >= 0.5;
+    return directions;
+  }, {});
+}
+
 export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   dueCards,
   hasCards = dueCards.length > 0,
@@ -63,10 +70,11 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [resumePrompt, setResumePrompt] = useState<StudySession | null>(null);
   const [studyList, setStudyList] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isShuffled, setIsShuffled] = useState(false);
+  const [isShuffled, setIsShuffled] = useState(true);
   const [showExample, setShowExample] = useState(false);
   const [retryQueue, setRetryQueue] = useState<string[]>([]);
   const [isChunkComplete, setIsChunkComplete] = useState(false);
+  const [promptDirections, setPromptDirections] = useState<Record<string, boolean>>({});
   const sessionInitialized = useRef(false);
 
   const playPositiveFeedback = () => {
@@ -90,7 +98,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     oscillator.addEventListener("ended", () => { void context.close(); });
   };
 
-  const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean, nextRetryCards: Flashcard[] = []) => {
+  const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean, nextRetryCards: Flashcard[] = [], nextPromptDirections: Record<string, boolean> = promptDirections) => {
     if (nextList.length === 0) {
       clearStudySession();
       return;
@@ -99,6 +107,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       mode,
       cardIds: nextList.map((card) => card.id),
       retryCards: nextRetryCards,
+      promptDirections: nextPromptDirections,
       sessionCount: nextSessionCount,
       isShuffled: shuffled,
       savedAt: new Date().toISOString(),
@@ -110,6 +119,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     if (!sessionInitialized.current) {
       const savedSession = getStudySession();
       const savedRetryCards = savedSession?.mode === mode ? savedSession.retryCards ?? [] : [];
+      const savedPromptDirections = savedSession?.mode === mode ? savedSession.promptDirections ?? {} : {};
       const savedCards = savedSession?.mode === mode
         ? savedSession.cardIds
           .map((id) => dueCards.find((card) => card.id === id) || savedRetryCards.find((card) => card.id === id))
@@ -120,13 +130,15 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         sessionInitialized.current = true;
         return;
       }
-      const nextList = savedCards.length > 0 ? savedCards : (isShuffled ? shuffleList(dueCards) : [...dueCards]);
-      const nextShuffled = savedCards.length > 0 ? Boolean(savedSession?.isShuffled) : isShuffled;
+      const nextList = savedCards.length > 0 ? savedCards : shuffleList(dueCards.slice(0, 20));
+      const nextShuffled = savedCards.length > 0 ? Boolean(savedSession?.isShuffled) : true;
+      const nextPromptDirections = savedCards.length > 0 ? savedPromptDirections : createPromptDirections(nextList);
       setStudyList(nextList);
       setRetryQueue(savedRetryCards.map((card) => card.id));
+      setPromptDirections(nextPromptDirections);
       setIsShuffled(nextShuffled);
       setSessionCount(savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0);
-      persistSession(nextList, savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0, nextShuffled, savedRetryCards);
+      persistSession(nextList, savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0, nextShuffled, savedRetryCards, nextPromptDirections);
       sessionInitialized.current = true;
       return;
     }
@@ -153,9 +165,10 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         .map((id) => dueCards.find((card) => card.id === id) || savedSession.retryCards?.find((card) => card.id === id))
         .filter((card): card is Flashcard => Boolean(card))
       : [];
-    const nextShuffled = resume && savedSession ? savedSession.isShuffled : false;
-    const nextList = restoredCards.length > 0 ? restoredCards : dueCards.slice(0, 20);
+    const nextShuffled = resume && savedSession ? savedSession.isShuffled : true;
+    const nextList = restoredCards.length > 0 ? restoredCards : shuffleList(dueCards.slice(0, 20));
     const nextCount = resume && savedSession ? savedSession.sessionCount : 0;
+    const nextPromptDirections = resume && savedSession ? savedSession.promptDirections ?? createPromptDirections(nextList) : createPromptDirections(nextList);
 
     if (!resume) clearStudySession();
     setResumePrompt(null);
@@ -164,24 +177,31 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setSessionCount(nextCount);
     setCurrentIndex(0);
     setIsFlipped(false);
-    setRetryQueue([]);
+    setRetryQueue(resume && savedSession ? savedSession.retryCards?.map((card) => card.id) ?? [] : []);
+    setPromptDirections(nextPromptDirections);
     setIsChunkComplete(false);
-    persistSession(nextList, nextCount, nextShuffled, resume && savedSession ? savedSession.retryCards ?? [] : []);
+    persistSession(nextList, nextCount, nextShuffled, resume && savedSession ? savedSession.retryCards ?? [] : [], nextPromptDirections);
   };
 
   const startNextChunk = () => {
     const nextList = isShuffled ? shuffleList(dueCards.slice(0, 20)) : dueCards.slice(0, 20);
+    const nextPromptDirections = createPromptDirections(nextList);
     setStudyList(nextList);
     setCurrentIndex(0);
     setIsFlipped(false);
     setShowExample(false);
     setRetryQueue([]);
+    setPromptDirections(nextPromptDirections);
     setIsChunkComplete(false);
-    persistSession(nextList, sessionCount, isShuffled);
+    persistSession(nextList, sessionCount, isShuffled, [], nextPromptDirections);
   };
 
   const currentCard = studyList[currentIndex];
   const isFinished = currentIndex >= studyList.length || !currentCard;
+  const isTranslationPrompt = currentCard ? promptDirections[currentCard.id] === true : false;
+  const promptText = currentCard && isTranslationPrompt
+    ? currentCard.vocabThai || currentCard.meaning
+    : currentCard?.vocab;
 
   useEffect(() => {
     if (isFinished && studyList.length > 0) {
@@ -226,7 +246,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       clearStudySession();
       setIsChunkComplete(true);
     } else {
-      persistSession(remainingCards, sessionCount + 1, isShuffled, remainingCards.filter((card) => nextRetryQueue.includes(card.id)));
+      persistSession(remainingCards, sessionCount + 1, isShuffled, remainingCards.filter((card) => nextRetryQueue.includes(card.id)), promptDirections);
     }
     setShowExample(false);
     setCanUndo(Boolean(onUndoReview));
@@ -486,15 +506,17 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               <div className="my-auto py-6 text-center space-y-5">
                 <div className="flex items-center justify-center gap-2">
                   <h3 className="text-4xl font-black tracking-tight text-slate-900">
-                    {currentCard.vocab}
+                    {promptText}
                   </h3>
-                  <button
-                    onClick={(e) => speakVocab(currentCard.vocab, e)}
-                    className="rounded-full bg-indigo-50 p-2 text-indigo-600 transition hover:bg-indigo-100"
-                    aria-label="Listen"
-                  >
-                    <Volume2 className="w-4 h-4" />
-                  </button>
+                  {!isTranslationPrompt && (
+                    <button
+                      onClick={(e) => speakVocab(currentCard.vocab, e)}
+                      className="rounded-full bg-indigo-50 p-2 text-indigo-600 transition hover:bg-indigo-100"
+                      aria-label="Listen"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
 

@@ -39,6 +39,7 @@ export interface StudySession {
   mode: 'general' | 'cert';
   cardIds: string[];
   retryCards?: Flashcard[];
+  promptDirections?: Record<string, boolean>;
   sessionCount: number;
   isShuffled: boolean;
   savedAt: string;
