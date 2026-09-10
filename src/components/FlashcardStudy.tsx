@@ -19,9 +19,11 @@ import {
   ArrowUpDown,
   RotateCcw,
   HelpCircle as QuestionIcon,
-  ThumbsDown,
-  Minus,
-  ThumbsUp,
+  BrainCircuit,
+  CircleDot,
+  BadgeCheck,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 interface FlashcardStudyProps {
@@ -62,6 +64,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [studyList, setStudyList] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isShuffled, setIsShuffled] = useState(false);
+  const [showExample, setShowExample] = useState(false);
   const sessionInitialized = useRef(false);
 
   const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean) => {
@@ -112,6 +115,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setStudyList(nextList);
     persistSession(nextList, sessionCount, shuffle);
     setIsFlipped(false);
+    setShowExample(false);
     setCurrentIndex(0);
   };
 
@@ -170,6 +174,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setStudyList(remainingCards);
     setCurrentIndex(0);
     persistSession(remainingCards, sessionCount + 1, isShuffled);
+    setShowExample(false);
     setCanUndo(Boolean(onUndoReview));
   };
 
@@ -397,7 +402,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
 
               <div className="border-t border-slate-100 pt-3 text-center">
                 <p className="text-[11px] font-bold text-indigo-600">
-                  แตะการ์ดเพื่อดูเฉลย
+                  {t("tapToReveal")}
                 </p>
               </div>
             </motion.div>
@@ -453,14 +458,27 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                 </div>
 
                 {mode === "cert" && currentCard.scenario && (
-                  <div className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 text-left">
-                    <div className="mb-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-amber-700">
-                      <FileText className="w-3.5 h-3.5 text-amber-600" />
-                      <span>Example</span>
-                    </div>
-                    <div className="rounded-xl border border-amber-200/80 bg-white/80 p-3 text-xs font-medium leading-relaxed text-slate-700 whitespace-pre-line">
-                      {currentCard.scenario}
-                    </div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left">
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setShowExample((previous) => !previous);
+                      }}
+                      className="flex w-full items-center justify-between gap-2 text-xs font-bold text-slate-600 transition-colors hover:text-slate-900"
+                      aria-expanded={showExample}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <FileText className="h-3.5 w-3.5 text-slate-500" />
+                        {showExample ? t("hideExample") : t("showExample")}
+                      </span>
+                      {showExample ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </button>
+                    {showExample && (
+                      <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs font-medium leading-relaxed text-slate-700 whitespace-pre-line">
+                        {currentCard.scenario}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -482,38 +500,38 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           >
             <button
               onClick={() => handleRating("hard")}
-              aria-label="ยังจำไม่ได้"
-              className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-rose-200/80 bg-gradient-to-b from-rose-50 to-white p-2.5 text-rose-700 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-300 hover:shadow-lg hover:shadow-rose-100 active:translate-y-0 active:scale-95"
+              aria-label={t("reviewAgain")}
+              className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-100 to-white p-2.5 text-slate-700 shadow-sm transition-all hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-200 active:translate-y-0 active:scale-95"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 transition-transform group-hover:scale-110">
-                <ThumbsDown className="h-5 w-5" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-200 text-slate-600 transition-transform group-hover:scale-110">
+                <BrainCircuit className="h-5 w-5" />
               </span>
-              <span className="text-[11px] font-extrabold">ยังจำไม่ได้</span>
-              <span className="text-[9px] font-medium text-rose-400">เร็ว</span>
+              <span className="text-[11px] font-extrabold">{t("reviewAgain")}</span>
+              <span className="text-[9px] font-medium text-slate-500">{t("quickReview")}</span>
             </button>
 
             <button
               onClick={() => handleRating("good")}
-              aria-label="พอจำได้"
-              className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-amber-200/80 bg-gradient-to-b from-amber-50 to-white p-2.5 text-amber-700 shadow-sm transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-100 active:translate-y-0 active:scale-95"
+              aria-label={t("gettingThere")}
+              className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-sky-200/80 bg-gradient-to-b from-sky-50 to-white p-2.5 text-sky-700 shadow-sm transition-all hover:-translate-y-1 hover:border-sky-300 hover:shadow-lg hover:shadow-sky-100 active:translate-y-0 active:scale-95"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 transition-transform group-hover:scale-110">
-                <Minus className="h-5 w-5" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 text-sky-600 transition-transform group-hover:scale-110">
+                <CircleDot className="h-5 w-5" />
               </span>
-              <span className="text-[11px] font-extrabold">พอจำได้</span>
-              <span className="text-[9px] font-medium text-amber-500">2-3 วัน</span>
+              <span className="text-[11px] font-extrabold">{t("gettingThere")}</span>
+              <span className="text-[9px] font-medium text-sky-500">{t("reviewInDays")}</span>
             </button>
 
             <button
               onClick={() => handleRating("easy")}
-              aria-label="จำได้แม่น"
+              aria-label={t("gotIt")}
               className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-emerald-200/80 bg-gradient-to-b from-emerald-50 to-white p-2.5 text-emerald-700 shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100 active:translate-y-0 active:scale-95"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 transition-transform group-hover:scale-110">
-                <ThumbsUp className="h-5 w-5" />
+                <BadgeCheck className="h-5 w-5" />
               </span>
-              <span className="text-[11px] font-extrabold">จำได้แม่น</span>
-              <span className="text-[9px] font-medium text-emerald-500">5-7 วัน</span>
+              <span className="text-[11px] font-extrabold">{t("gotIt")}</span>
+              <span className="text-[9px] font-medium text-emerald-500">{t("reviewInLongerDays")}</span>
             </button>
           </motion.div>
         )}

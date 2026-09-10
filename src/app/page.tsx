@@ -67,6 +67,7 @@ function FlashcardApp() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [lastReviewSnapshot, setLastReviewSnapshot] = useState<Flashcard[] | null>(null);
+  const [lastStudyStatsSnapshot, setLastStudyStatsSnapshot] = useState<StudyStats | null>(null);
   const [studyStats, setStudyStats] = useState<StudyStats>(() => getStudyStats());
   const [studyFocus, setStudyFocus] = useState<StudyFocus>("all");
 
@@ -123,6 +124,7 @@ function FlashcardApp() {
         return card;
       });
       setLastReviewSnapshot(cards);
+      setLastStudyStatsSnapshot(studyStats);
       setCards(updated);
       saveStoredFlashcards(updated);
       const today = new Date().toISOString().slice(0, 10);
@@ -152,9 +154,14 @@ function FlashcardApp() {
     if (!lastReviewSnapshot) return;
     setCards(lastReviewSnapshot);
     saveStoredFlashcards(lastReviewSnapshot);
+    if (lastStudyStatsSnapshot) {
+      setStudyStats(lastStudyStatsSnapshot);
+      saveStudyStats(lastStudyStatsSnapshot);
+    }
     setLastReviewSnapshot(null);
+    setLastStudyStatsSnapshot(null);
     addToast(t("reviewUndone"), undefined, "info");
-  }, [lastReviewSnapshot, addToast, t]);
+  }, [lastReviewSnapshot, lastStudyStatsSnapshot, addToast, t]);
 
   const handleSaveCard = useCallback(
     (cardData: Omit<Flashcard, "id" | "nextReviewDate" | "interval" | "createdAt">) => {
