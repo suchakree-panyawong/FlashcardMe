@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Flashcard, ReviewRating, CardCategory } from "@/types/flashcard";
 import { getDomainTagClassName } from "@/lib/domainTags";
+import { useLanguage } from "@/lib/language";
 import {
   Sparkles,
   AlertCircle,
@@ -24,6 +25,7 @@ import {
 
 interface FlashcardStudyProps {
   dueCards: Flashcard[];
+  hasCards?: boolean;
   mode: CardCategory;
   onReviewCard: (cardId: string, rating: ReviewRating) => void;
   onFinishStudy: () => void;
@@ -42,12 +44,14 @@ function shuffleList<T>(arr: T[]): T[] {
 
 export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   dueCards,
+  hasCards = dueCards.length > 0,
   mode,
   onReviewCard,
   onFinishStudy,
   onBackToMode,
   onToggleFavorite,
 }) => {
+  const { t } = useLanguage();
   const [isShuffled, setIsShuffled] = useState(false);
   const [studyList, setStudyList] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -105,6 +109,30 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setCurrentIndex((prev) => prev + 1);
   };
 
+  if (studyList.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-3xl border border-slate-100 p-8 text-center space-y-5 shadow-soft my-6"
+      >
+        <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center">
+          <Sparkles className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-black text-slate-900">{hasCards ? t("noDueTitle") : t("emptyDeckTitle")}</h2>
+          <p className="text-sm text-slate-500 thai-text">{hasCards ? t("noDueMessage") : t("emptyDeckMessage")}</p>
+        </div>
+        <button
+          onClick={onFinishStudy}
+          className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition-all active:scale-95"
+        >
+          {t("backToHome")}
+        </button>
+      </motion.div>
+    );
+  }
+
   if (isFinished) {
     return (
       <motion.div
@@ -147,7 +175,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     <div className="space-y-5 animate-fadeIn">
       {/* Top Header Controls, Order Toggle Pills & Progress Bar */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <button
             onClick={onFinishStudy}
             className="flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white px-3 py-1.5 rounded-full border border-slate-200/80 shadow-2xs transition-colors"

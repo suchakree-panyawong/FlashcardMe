@@ -48,12 +48,14 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
 
         <div className="relative z-10">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-            {t('dueCards')} {dueCount} {t('cardCount')}
+            {totalCards === 0 ? t('emptyDeckTitle') : dueCount > 0 ? `${t('dueCards')} ${dueCount} ${t('cardCount')}` : t('noDueTitle')}
           </h2>
           <p className="text-sm text-slate-500 mt-1 thai-text leading-relaxed">
-            {dueCount > 0
+            {totalCards === 0
+              ? t('emptyDeckMessage')
+              : dueCount > 0
               ? t('reviewPrompt')
-              : `${t('allReviewed')} 🏆`}
+              : `${t('noDueMessage')} 🏆`}
           </p>
         </div>
 
@@ -61,16 +63,16 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           whileHover={{ scale: dueCount > 0 ? 1.02 : 1 }}
           whileTap={{ scale: dueCount > 0 ? 0.98 : 1 }}
           onClick={onStartStudy}
-          disabled={dueCount === 0}
+          disabled={totalCards > 0 && dueCount === 0}
           className={`w-full py-4 px-5 rounded-2xl font-black text-base flex items-center justify-center space-x-2.5 transition-all relative z-10 ${
-            dueCount > 0
+            dueCount > 0 || totalCards === 0
               ? 'bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-200'
               : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
           }`}
         >
           <BookOpen className="w-5 h-5" />
           <span>
-            {dueCount > 0 ? `${t('startReviewNow')} (${dueCount} ${t('cardCount')})` : `${t('allReviewedShort')} 🎉`}
+            {dueCount > 0 ? `${t('startReviewNow')} (${dueCount} ${t('cardCount')})` : totalCards === 0 ? t('addNewCard') : `${t('allReviewedShort')} 🎉`}
           </span>
           {dueCount > 0 && <ArrowRight className="w-4 h-4" />}
         </motion.button>

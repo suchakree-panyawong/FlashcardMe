@@ -76,7 +76,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="flashcard-form-title">
       <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto animate-scaleIn">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -84,12 +84,14 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
             <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <Sparkles className="w-4 h-4" />
             </div>
-            <h2 className="text-lg font-black text-slate-900">
+            <h2 id="flashcard-form-title" className="text-lg font-black text-slate-900">
               {editingCard ? t("editCard") : t("createCard")}
             </h2>
           </div>
           <button
             onClick={onClose}
+            type="button"
+            aria-label={language === "th" ? "ปิดหน้าต่าง" : "Close dialog"}
             className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors"
           >
             <X className="w-4 h-4" />

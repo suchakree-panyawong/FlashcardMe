@@ -20,7 +20,7 @@ import { ToastContainer } from "@/components/Toast";
 import { InstallPWA } from "@/components/InstallPWA";
 import { LanguageProvider, useLanguage } from "@/lib/language";
 import { areDuplicateWords } from "@/lib/duplicateWords";
-import { Sparkles, Play } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 // ─── Toast helper ─────────────────────────────────────────────────────────────
 
@@ -127,7 +127,6 @@ function FlashcardApp() {
         let updated: Flashcard[];
         if (editingCard) {
           updated = prev.map((c) => (c.id === editingCard.id ? { ...c, ...cardData } : c));
-          addToast(t("cardUpdated"));
         } else {
           const newCard: Flashcard = {
             ...cardData,
@@ -137,16 +136,20 @@ function FlashcardApp() {
             createdAt: new Date().toISOString(),
           };
           updated = [newCard, ...prev];
-          addToast(t("cardAdded"), `${newCard.vocab}`);
         }
         saveStoredFlashcards(updated);
         return updated;
       });
+      if (editingCard) {
+        addToast(t("cardUpdated"));
+      } else {
+        addToast(t("cardAdded"), cardData.vocab);
+      }
       setIsModalOpen(false);
       setEditingCard(null);
       return true;
     },
-    [editingCard, addToast, t]
+    [cards, editingCard, addToast, t]
   );
 
   const handleDeleteCard = useCallback(
@@ -285,37 +288,27 @@ function FlashcardApp() {
 
             <StatsOverview
               cards={activeModeCards}
-              onStartStudy={() => setActiveTab("study")}
+              onStartStudy={() => {
+                if (activeModeCards.length === 0) {
+                  setEditingCard(null);
+                  setIsModalOpen(true);
+                } else {
+                  setActiveTab("study");
+                }
+              }}
               onOpenAddModal={() => {
                 setEditingCard(null);
                 setIsModalOpen(true);
               }}
             />
 
-            <div className="pt-2">
-              <button
-                onClick={() => setActiveTab("study")}
-                disabled={activeModeDueCards.length === 0}
-                className={`w-full py-4 px-6 rounded-2xl font-black text-base flex items-center justify-center space-x-2.5 shadow-lg transition-all active:scale-98 ${
-                  activeModeDueCards.length > 0
-                    ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200"
-                    : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
-                }`}
-              >
-                <Play className="w-5 h-5 fill-current" />
-                <span>
-                  {activeModeDueCards.length > 0
-                    ? `${t("startReview")} (${activeModeDueCards.length} ${t("cards")})`
-                    : `${t("reviewComplete")} 🎉`}
-                </span>
-              </button>
-            </div>
           </div>
         )}
 
         {activeTab === "study" && (
           <FlashcardStudy
             dueCards={activeModeDueCards}
+            hasCards={activeModeCards.length > 0}
             mode={activeMode}
             onReviewCard={handleReviewCard}
             onFinishStudy={() => setActiveTab("home")}
