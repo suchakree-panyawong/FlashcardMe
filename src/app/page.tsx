@@ -16,6 +16,7 @@ import { HeaderNav, NavTab } from "@/components/HeaderNav";
 import { ModeSelector } from "@/components/ModeSelector";
 import { StatsOverview } from "@/components/StatsOverview";
 import { FlashcardStudy } from "@/components/FlashcardStudy";
+import { SpeedRunStudy } from "@/components/SpeedRunStudy";
 import { FlashcardLibrary } from "@/components/FlashcardLibrary";
 import { AudioLearn } from "@/components/AudioLearn";
 import { DataImportExport } from "@/components/DataImportExport";
@@ -70,6 +71,7 @@ function FlashcardApp() {
   const [lastStudyStatsSnapshot, setLastStudyStatsSnapshot] = useState<StudyStats | null>(null);
   const [studyStats, setStudyStats] = useState<StudyStats>(() => getStudyStats());
   const [studyFocus, setStudyFocus] = useState<StudyFocus>("all");
+  const [isSpeedRun, setIsSpeedRun] = useState(false);
 
   const { toasts, addToast, removeToast } = useToasts();
   const { t } = useLanguage();
@@ -269,6 +271,7 @@ function FlashcardApp() {
   const handleSelectMode = (mode: CardCategory) => {
     setActiveMode(mode);
     setActiveTab("home");
+    setIsSpeedRun(false);
   };
 
   const handleSetDailyGoal = useCallback((dailyGoal: number) => {
@@ -348,7 +351,15 @@ function FlashcardApp() {
 
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-10">
 
-        {activeTab === "home" && (
+        {isSpeedRun && (
+          <SpeedRunStudy
+            cards={activeModeDueCards}
+            onReviewCard={handleReviewCard}
+            onFinish={() => setIsSpeedRun(false)}
+          />
+        )}
+
+        {!isSpeedRun && activeTab === "home" && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex items-center justify-between bg-white border border-slate-100 rounded-3xl p-5 shadow-xs">
               <div>
@@ -382,6 +393,7 @@ function FlashcardApp() {
                   setActiveTab("study");
                 }
               }}
+              onStartSpeedRun={() => setIsSpeedRun(true)}
               onOpenAddModal={() => {
                 setEditingCard(null);
                 setIsModalOpen(true);
@@ -409,7 +421,7 @@ function FlashcardApp() {
           </div>
         )}
 
-        {activeTab === "study" && (
+        {!isSpeedRun && activeTab === "study" && (
           <FlashcardStudy
             dueCards={activeModeDueCards}
             hasCards={activeModeCards.length > 0}
@@ -426,7 +438,7 @@ function FlashcardApp() {
           />
         )}
 
-        {activeTab === "library" && (
+        {!isSpeedRun && activeTab === "library" && (
           <FlashcardLibrary
             cards={cards}
             activeMode={activeMode}
@@ -447,14 +459,14 @@ function FlashcardApp() {
           />
         )}
 
-        {activeTab === "listen" && (
+        {!isSpeedRun && activeTab === "listen" && (
           <AudioLearn
             cards={activeModeCards}
             activeMode={activeMode}
           />
         )}
 
-        {activeTab === "backup" && (
+        {!isSpeedRun && activeTab === "backup" && (
           <DataImportExport
             cards={cards}
             onImportCards={handleImportCards}

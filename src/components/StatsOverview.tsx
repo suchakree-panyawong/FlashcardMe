@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Flashcard, StudyFocus, StudyStats } from '@/types/flashcard';
 import { isDueToday } from '@/lib/spacedRepetition';
-import { BookOpen, ArrowRight, Layers, Plus, Trophy, Flame } from 'lucide-react';
+import { BookOpen, ArrowRight, Layers, Plus, Trophy, Flame, AlarmClock, CalendarDays } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 
 interface StatsOverviewProps {
@@ -13,6 +13,7 @@ interface StatsOverviewProps {
   onEnableNotifications: () => void;
   notificationsSupported: boolean;
   onStartStudy: () => void;
+  onStartSpeedRun: () => void;
   onOpenAddModal?: () => void;
 }
 
@@ -24,6 +25,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   onEnableNotifications,
   notificationsSupported,
   onStartStudy,
+  onStartSpeedRun,
   onOpenAddModal,
 }) => {
   const { t } = useLanguage();
@@ -46,6 +48,12 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
   const todayKey = new Date().toISOString().slice(0, 10);
   const todayReviews = studyStats.dailyReviews[todayKey] ?? 0;
   const goalProgress = Math.min(100, Math.round((todayReviews / studyStats.dailyGoal) * 100));
+  const heatmapDays = Array.from({ length: 28 }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (27 - index));
+    const key = date.toISOString().slice(0, 10);
+    return { key, reviews: studyStats.dailyReviews[key] ?? 0 };
+  });
 
   return (
     <div className="space-y-4 animate-fadeIn">
@@ -113,6 +121,22 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
             </span>
             {dueCount > 0 && <ArrowRight className="h-4 w-4" />}
           </motion.button>
+
+          {dueCount > 0 && (
+            <button
+              onClick={onStartSpeedRun}
+              className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-100 px-4 py-3 text-left text-slate-700 transition hover:border-slate-300 hover:bg-slate-200 active:scale-[0.99]"
+            >
+              <span className="flex items-center gap-2.5">
+                <AlarmClock className="h-5 w-5 text-slate-600" />
+                <span>
+                  <strong className="block text-xs font-black">{t('speedRunTitle')}</strong>
+                  <span className="text-[11px] text-slate-500">10 {t('secondsPerCard')}</span>
+                </span>
+              </span>
+              <ArrowRight className="h-4 w-4 text-slate-400" />
+            </button>
+          )}
         </div>
       </motion.div>
 
@@ -143,9 +167,32 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         </motion.div>
       </div>
 
-      <div className="flex items-center justify-between rounded-2xl border border-indigo-100 bg-indigo-50/70 px-4 py-3 text-xs font-bold text-indigo-700">
-        <span>{t('totalReviews')}: {studyStats.totalReviews}</span>
-        <span>{t('streak')}: {studyStats.currentStreak} {t('days')}</span>
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+              <Flame className="h-4 w-4 fill-amber-500" />
+            </span>
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{t('streak')}</p>
+              <p className="text-lg font-black text-slate-800">{studyStats.currentStreak} {t('days')}</p>
+            </div>
+          </div>
+          <span className="text-xs font-bold text-slate-400">{studyStats.totalReviews} {t('totalReviews')}</span>
+        </div>
+        <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-slate-400">
+          <CalendarDays className="h-3.5 w-3.5" />
+          <span>{t('consistency')}</span>
+        </div>
+        <div className="mt-2 grid grid-cols-7 gap-1">
+          {heatmapDays.map((day) => (
+            <span
+              key={day.key}
+              title={`${day.key}: ${day.reviews}`}
+              className={`aspect-square rounded-[3px] ${day.reviews === 0 ? 'bg-slate-100' : day.reviews < 5 ? 'bg-emerald-100' : day.reviews < 10 ? 'bg-emerald-300' : 'bg-emerald-500'}`}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
