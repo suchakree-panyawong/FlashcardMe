@@ -9,12 +9,9 @@ import { useLanguage } from "@/lib/language";
 import { clearStudySession, getStudySession, saveStudySession, StudySession } from "@/lib/storage";
 import {
   Sparkles,
-  AlertCircle,
-  HelpCircle,
   ArrowLeft,
   Flame,
   Award,
-  Zap,
   Volume2,
   Star,
   FileText,
@@ -22,6 +19,9 @@ import {
   ArrowUpDown,
   RotateCcw,
   HelpCircle as QuestionIcon,
+  ThumbsDown,
+  Minus,
+  ThumbsUp,
 } from "lucide-react";
 
 interface FlashcardStudyProps {
@@ -49,19 +49,19 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   hasCards = dueCards.length > 0,
   mode,
   onReviewCard,
-  onUndoReview,
   onFinishStudy,
   onBackToMode,
   onToggleFavorite,
+  onUndoReview,
 }) => {
   const { t } = useLanguage();
-  const [isShuffled, setIsShuffled] = useState(false);
-  const [studyList, setStudyList] = useState<Flashcard[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
   const [canUndo, setCanUndo] = useState(false);
   const [resumePrompt, setResumePrompt] = useState<StudySession | null>(null);
+  const [studyList, setStudyList] = useState<Flashcard[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isShuffled, setIsShuffled] = useState(false);
   const sessionInitialized = useRef(false);
 
   const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean) => {
@@ -494,29 +494,38 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           >
             <button
               onClick={() => handleRating("hard")}
-              className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 transition-all active:scale-95 shadow-sm"
+              aria-label="ยังจำไม่ได้"
+              className="group flex min-h-[118px] flex-col items-center justify-center gap-1.5 rounded-3xl border border-rose-200/80 bg-gradient-to-b from-rose-50 to-white p-3 text-rose-700 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-300 hover:shadow-lg hover:shadow-rose-100 active:translate-y-0 active:scale-95"
             >
-              <AlertCircle className="w-5 h-5 text-rose-500 mb-1" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 transition-transform group-hover:scale-110">
+                <ThumbsDown className="h-5 w-5" />
+              </span>
               <span className="font-extrabold text-xs">ยังจำไม่ได้</span>
-              <span className="text-[10px] text-rose-400 font-medium">ทบทวนเร็วๆ นี้</span>
+              <span className="text-[10px] font-medium text-rose-400">ทบทวนเร็วๆ นี้</span>
             </button>
 
             <button
               onClick={() => handleRating("good")}
-              className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-700 transition-all active:scale-95 shadow-sm"
+              aria-label="พอจำได้"
+              className="group flex min-h-[118px] flex-col items-center justify-center gap-1.5 rounded-3xl border border-amber-200/80 bg-gradient-to-b from-amber-50 to-white p-3 text-amber-700 shadow-sm transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-100 active:translate-y-0 active:scale-95"
             >
-              <HelpCircle className="w-5 h-5 text-amber-500 mb-1" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 transition-transform group-hover:scale-110">
+                <Minus className="h-5 w-5" />
+              </span>
               <span className="font-extrabold text-xs">พอจำได้</span>
-              <span className="text-[10px] text-amber-500 font-medium">เว้น 2-3 วัน</span>
+              <span className="text-[10px] font-medium text-amber-500">เว้น 2-3 วัน</span>
             </button>
 
             <button
               onClick={() => handleRating("easy")}
-              className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 transition-all active:scale-95 shadow-sm"
+              aria-label="จำได้แม่น"
+              className="group flex min-h-[118px] flex-col items-center justify-center gap-1.5 rounded-3xl border border-emerald-200/80 bg-gradient-to-b from-emerald-50 to-white p-3 text-emerald-700 shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100 active:translate-y-0 active:scale-95"
             >
-              <Zap className="w-5 h-5 text-emerald-500 mb-1" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 transition-transform group-hover:scale-110">
+                <ThumbsUp className="h-5 w-5" />
+              </span>
               <span className="font-extrabold text-xs">จำได้แม่น</span>
-              <span className="text-[10px] text-emerald-500 font-medium">เว้น 5-7 วัน</span>
+              <span className="text-[10px] font-medium text-emerald-500">เว้น 5-7 วัน</span>
             </button>
           </motion.div>
         )}
