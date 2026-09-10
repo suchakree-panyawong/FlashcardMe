@@ -6,7 +6,7 @@ import confetti from "canvas-confetti";
 import { Flashcard, ReviewRating, CardCategory } from "@/types/flashcard";
 import { getDomainTagClassName } from "@/lib/domainTags";
 import { useLanguage } from "@/lib/language";
-import { clearStudySession, getStudySession, saveStudySession } from "@/lib/storage";
+import { clearStudySession, getStudySession, saveStudySession, StudySession } from "@/lib/storage";
 import {
   Sparkles,
   AlertCircle,
@@ -61,6 +61,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
   const [canUndo, setCanUndo] = useState(false);
+  const [resumePrompt, setResumePrompt] = useState<StudySession | null>(null);
   const sessionInitialized = useRef(false);
 
   const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean) => {
@@ -86,6 +87,11 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           .map((id) => dueCards.find((card) => card.id === id))
           .filter((card): card is Flashcard => Boolean(card))
         : [];
+      if (savedSession?.mode === mode && savedCards.length > 0) {
+        setResumePrompt(savedSession);
+        sessionInitialized.current = true;
+        return;
+      }
       const nextList = savedCards.length > 0 ? savedCards : (isShuffled ? shuffleList(dueCards) : [...dueCards]);
       const nextShuffled = savedCards.length > 0 ? Boolean(savedSession?.isShuffled) : isShuffled;
       setStudyList(nextList);
@@ -107,6 +113,27 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     persistSession(nextList, sessionCount, shuffle);
     setIsFlipped(false);
     setCurrentIndex(0);
+  };
+
+  const startSession = (resume: boolean) => {
+    const savedSession = resumePrompt;
+    const restoredCards = resume && savedSession
+      ? savedSession.cardIds
+        .map((id) => dueCards.find((card) => card.id === id))
+        .filter((card): card is Flashcard => Boolean(card))
+      : [];
+    const nextShuffled = resume && savedSession ? savedSession.isShuffled : false;
+    const nextList = restoredCards.length > 0 ? restoredCards : [...dueCards];
+    const nextCount = resume && savedSession ? savedSession.sessionCount : 0;
+
+    if (!resume) clearStudySession();
+    setResumePrompt(null);
+    setIsShuffled(nextShuffled);
+    setStudyList(nextList);
+    setSessionCount(nextCount);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    persistSession(nextList, nextCount, nextShuffled);
   };
 
   const currentCard = studyList[currentIndex];
@@ -150,6 +177,38 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     clearStudySession();
     onFinishStudy();
   };
+
+  if (resumePrompt) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-3xl border border-slate-100 p-7 text-center space-y-5 shadow-soft my-6"
+      >
+        <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center">
+          <RotateCcw className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-black text-slate-900">{t("resumeTitle")}</h2>
+          <p className="text-sm text-slate-500 thai-text">{t("resumeMessage")}</p>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <button
+            onClick={() => startSession(true)}
+            className="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-black text-white shadow-md shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95"
+          >
+            {t("resumeSession")}
+          </button>
+          <button
+            onClick={() => startSession(false)}
+            className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-200 active:scale-95"
+          >
+            {t("startFresh")}
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
 
   if (studyList.length === 0) {
     return (

@@ -121,6 +121,10 @@ const translations = {
     backupRestored: "กู้คืน Backup แล้ว",
     noBackup: "ยังไม่มี Backup ให้กู้คืน",
     autoSaved: "บันทึกความคืบหน้าอัตโนมัติ",
+    resumeTitle: "เรียนค้างไว้",
+    resumeMessage: "พบความคืบหน้าการเรียนครั้งล่าสุด ต้องการทำต่อหรือเริ่มใหม่?",
+    resumeSession: "เรียนต่อจากเดิม",
+    startFresh: "เริ่มใหม่",
   },
   en: {
     home: "Home",
@@ -236,6 +240,10 @@ const translations = {
     backupRestored: "Backup restored",
     noBackup: "No backup is available",
     autoSaved: "Progress saved automatically",
+    resumeTitle: "Unfinished study session",
+    resumeMessage: "We found your latest study progress. Would you like to continue or start fresh?",
+    resumeSession: "Resume session",
+    startFresh: "Start fresh",
   },
 } as const;
 
