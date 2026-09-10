@@ -120,6 +120,7 @@ const translations = {
     restoreConfirm: "กู้คืนข้อมูลจาก Backup ล่าสุดหรือไม่? ข้อมูลปัจจุบันจะถูกแทนที่",
     backupRestored: "กู้คืน Backup แล้ว",
     noBackup: "ยังไม่มี Backup ให้กู้คืน",
+    autoSaved: "บันทึกความคืบหน้าอัตโนมัติ",
   },
   en: {
     home: "Home",
@@ -234,6 +235,7 @@ const translations = {
     restoreConfirm: "Restore the latest backup? Current data will be replaced.",
     backupRestored: "Backup restored",
     noBackup: "No backup is available",
+    autoSaved: "Progress saved automatically",
   },
 } as const;
 

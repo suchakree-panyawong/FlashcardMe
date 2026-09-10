@@ -1,11 +1,12 @@
 ﻿"use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Flashcard, ReviewRating, CardCategory } from "@/types/flashcard";
 import { getDomainTagClassName } from "@/lib/domainTags";
 import { useLanguage } from "@/lib/language";
+import { clearStudySession, getStudySession, saveStudySession } from "@/lib/storage";
 import {
   Sparkles,
   AlertCircle,
@@ -60,21 +61,50 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
   const [canUndo, setCanUndo] = useState(false);
+  const sessionInitialized = useRef(false);
 
-  // Initialize or re-sync studyList when dueCards changes
-  useEffect(() => {
-    if (isShuffled) {
-      setStudyList(shuffleList(dueCards));
-    } else {
-      setStudyList([...dueCards]);
+  const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean) => {
+    if (nextList.length === 0) {
+      clearStudySession();
+      return;
     }
-    setCurrentIndex(0);
-    setIsFlipped(false);
-  }, [dueCards, isShuffled]);
+    saveStudySession({
+      mode,
+      cardIds: nextList.map((card) => card.id),
+      sessionCount: nextSessionCount,
+      isShuffled: shuffled,
+      savedAt: new Date().toISOString(),
+    });
+  };
+
+  // Restore the unfinished session once, then keep the list synchronized.
+  useEffect(() => {
+    if (!sessionInitialized.current) {
+      const savedSession = getStudySession();
+      const savedCards = savedSession?.mode === mode
+        ? savedSession.cardIds
+          .map((id) => dueCards.find((card) => card.id === id))
+          .filter((card): card is Flashcard => Boolean(card))
+        : [];
+      const nextList = savedCards.length > 0 ? savedCards : (isShuffled ? shuffleList(dueCards) : [...dueCards]);
+      const nextShuffled = savedCards.length > 0 ? Boolean(savedSession?.isShuffled) : isShuffled;
+      setStudyList(nextList);
+      setIsShuffled(nextShuffled);
+      setSessionCount(savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0);
+      persistSession(nextList, savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0, nextShuffled);
+      sessionInitialized.current = true;
+      return;
+    }
+
+    setStudyList((previous) => previous.filter((card) => dueCards.some((dueCard) => dueCard.id === card.id)));
+  }, [dueCards, mode]);
 
   const handleToggleOrder = (shuffle: boolean) => {
     if (shuffle === isShuffled) return;
     setIsShuffled(shuffle);
+    const nextList = shuffle ? shuffleList(studyList) : [...studyList];
+    setStudyList(nextList);
+    persistSession(nextList, sessionCount, shuffle);
     setIsFlipped(false);
     setCurrentIndex(0);
   };
@@ -109,8 +139,16 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     onReviewCard(currentCard.id, rating);
     setIsFlipped(false);
     setSessionCount((prev) => prev + 1);
-    setCurrentIndex((prev) => prev + 1);
+    const remainingCards = studyList.filter((card) => card.id !== currentCard.id);
+    setStudyList(remainingCards);
+    setCurrentIndex(0);
+    persistSession(remainingCards, sessionCount + 1, isShuffled);
     setCanUndo(Boolean(onUndoReview));
+  };
+
+  const finishStudy = () => {
+    clearStudySession();
+    onFinishStudy();
   };
 
   if (studyList.length === 0) {
@@ -128,7 +166,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           <p className="text-sm text-slate-500 thai-text">{hasCards ? t("noDueMessage") : t("emptyDeckMessage")}</p>
         </div>
         <button
-          onClick={onFinishStudy}
+          onClick={finishStudy}
           className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition-all active:scale-95"
         >
           {t("backToHome")}
@@ -166,7 +204,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
 
         <div className="pt-4 space-y-3">
           <button
-            onClick={onFinishStudy}
+            onClick={finishStudy}
             className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-sm shadow-md shadow-indigo-200 transition-all active:scale-98"
           >
             กลับสู่หน้าหลัก
@@ -239,6 +277,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
             className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"
           />
         </div>
+        <p className="text-center text-[10px] font-semibold text-slate-400">{t("autoSaved")}</p>
         {canUndo && onUndoReview && (
           <button
             onClick={() => { onUndoReview(); setCanUndo(false); }}

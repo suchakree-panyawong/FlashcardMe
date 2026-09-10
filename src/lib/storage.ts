@@ -33,6 +33,50 @@ export const INITIAL_FLASHCARDS: Flashcard[] = [
 const STORAGE_KEY = 'flashcardme_cards_v8';
 const SAFETY_BACKUP_KEY = 'flashcardme_safety_backup_v1';
 const STUDY_STATS_KEY = 'flashcardme_study_stats_v1';
+const STUDY_SESSION_KEY = 'flashcardme_study_session_v1';
+
+export interface StudySession {
+  mode: 'general' | 'cert';
+  cardIds: string[];
+  sessionCount: number;
+  isShuffled: boolean;
+  savedAt: string;
+}
+
+export function getStudySession(): StudySession | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = localStorage.getItem(STUDY_SESSION_KEY);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored) as Partial<StudySession>;
+    if (
+      (parsed.mode !== 'general' && parsed.mode !== 'cert') ||
+      !Array.isArray(parsed.cardIds) ||
+      typeof parsed.sessionCount !== 'number' ||
+      typeof parsed.isShuffled !== 'boolean' ||
+      typeof parsed.savedAt !== 'string'
+    ) return null;
+    return {
+      mode: parsed.mode,
+      cardIds: parsed.cardIds.filter((id): id is string => typeof id === 'string'),
+      sessionCount: parsed.sessionCount,
+      isShuffled: parsed.isShuffled,
+      savedAt: parsed.savedAt,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function saveStudySession(session: StudySession): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STUDY_SESSION_KEY, JSON.stringify(session));
+}
+
+export function clearStudySession(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STUDY_SESSION_KEY);
+}
 
 const DEFAULT_STUDY_STATS: StudyStats = {
   currentStreak: 0,
