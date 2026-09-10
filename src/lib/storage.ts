@@ -38,6 +38,7 @@ const STUDY_SESSION_KEY = 'flashcardme_study_session_v1';
 export interface StudySession {
   mode: 'general' | 'cert';
   cardIds: string[];
+  retryCards?: Flashcard[];
   sessionCount: number;
   isShuffled: boolean;
   savedAt: string;
@@ -59,6 +60,7 @@ export function getStudySession(): StudySession | null {
     return {
       mode: parsed.mode,
       cardIds: parsed.cardIds.filter((id): id is string => typeof id === 'string'),
+      retryCards: Array.isArray(parsed.retryCards) ? parsed.retryCards as Flashcard[] : [],
       sessionCount: parsed.sessionCount,
       isShuffled: parsed.isShuffled,
       savedAt: parsed.savedAt,

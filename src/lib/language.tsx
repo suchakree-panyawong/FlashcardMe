@@ -151,6 +151,10 @@ const translations = {
     tapToReveal: "แตะการ์ดเพื่อดูเฉลย",
     showExample: "ดูตัวอย่าง",
     hideExample: "ซ่อนตัวอย่าง",
+    sessionCompleteTitle: "จบรอบนี้แล้ว",
+    sessionCompleteMessage: "พักสายตาสักครู่ แล้วค่อยไปต่อเมื่อพร้อม",
+    nextChunk: "เริ่มชุดถัดไป",
+    finishSession: "กลับหน้าหลัก",
   },
   en: {
     home: "Home",
@@ -296,6 +300,10 @@ const translations = {
     tapToReveal: "Tap the card to reveal",
     showExample: "Show example",
     hideExample: "Hide example",
+    sessionCompleteTitle: "This round is complete",
+    sessionCompleteMessage: "Take a short pause, then continue when you are ready.",
+    nextChunk: "Start next set",
+    finishSession: "Back home",
   },
 } as const;
 

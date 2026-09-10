@@ -65,9 +65,32 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isShuffled, setIsShuffled] = useState(false);
   const [showExample, setShowExample] = useState(false);
+  const [retryQueue, setRetryQueue] = useState<string[]>([]);
+  const [isChunkComplete, setIsChunkComplete] = useState(false);
   const sessionInitialized = useRef(false);
 
-  const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean) => {
+  const playPositiveFeedback = () => {
+    if ("vibrate" in navigator) navigator.vibrate(12);
+    if (!("AudioContext" in window || "webkitAudioContext" in window)) return;
+    const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(660, context.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(880, context.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.035, context.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.16);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.16);
+    oscillator.addEventListener("ended", () => { void context.close(); });
+  };
+
+  const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean, nextRetryCards: Flashcard[] = []) => {
     if (nextList.length === 0) {
       clearStudySession();
       return;
@@ -75,6 +98,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     saveStudySession({
       mode,
       cardIds: nextList.map((card) => card.id),
+      retryCards: nextRetryCards,
       sessionCount: nextSessionCount,
       isShuffled: shuffled,
       savedAt: new Date().toISOString(),
@@ -85,9 +109,10 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   useEffect(() => {
     if (!sessionInitialized.current) {
       const savedSession = getStudySession();
+      const savedRetryCards = savedSession?.mode === mode ? savedSession.retryCards ?? [] : [];
       const savedCards = savedSession?.mode === mode
         ? savedSession.cardIds
-          .map((id) => dueCards.find((card) => card.id === id))
+          .map((id) => dueCards.find((card) => card.id === id) || savedRetryCards.find((card) => card.id === id))
           .filter((card): card is Flashcard => Boolean(card))
         : [];
       if (savedSession?.mode === mode && savedCards.length > 0) {
@@ -98,15 +123,16 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       const nextList = savedCards.length > 0 ? savedCards : (isShuffled ? shuffleList(dueCards) : [...dueCards]);
       const nextShuffled = savedCards.length > 0 ? Boolean(savedSession?.isShuffled) : isShuffled;
       setStudyList(nextList);
+      setRetryQueue(savedRetryCards.map((card) => card.id));
       setIsShuffled(nextShuffled);
       setSessionCount(savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0);
-      persistSession(nextList, savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0, nextShuffled);
+      persistSession(nextList, savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0, nextShuffled, savedRetryCards);
       sessionInitialized.current = true;
       return;
     }
 
-    setStudyList((previous) => previous.filter((card) => dueCards.some((dueCard) => dueCard.id === card.id)));
-  }, [dueCards, mode]);
+    setStudyList((previous) => previous.filter((card) => dueCards.some((dueCard) => dueCard.id === card.id) || retryQueue.includes(card.id)));
+  }, [dueCards, mode, retryQueue]);
 
   const handleToggleOrder = (shuffle: boolean) => {
     if (shuffle === isShuffled) return;
@@ -117,17 +143,18 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setIsFlipped(false);
     setShowExample(false);
     setCurrentIndex(0);
+    setIsChunkComplete(false);
   };
 
   const startSession = (resume: boolean) => {
     const savedSession = resumePrompt;
     const restoredCards = resume && savedSession
       ? savedSession.cardIds
-        .map((id) => dueCards.find((card) => card.id === id))
+        .map((id) => dueCards.find((card) => card.id === id) || savedSession.retryCards?.find((card) => card.id === id))
         .filter((card): card is Flashcard => Boolean(card))
       : [];
     const nextShuffled = resume && savedSession ? savedSession.isShuffled : false;
-    const nextList = restoredCards.length > 0 ? restoredCards : [...dueCards];
+    const nextList = restoredCards.length > 0 ? restoredCards : dueCards.slice(0, 20);
     const nextCount = resume && savedSession ? savedSession.sessionCount : 0;
 
     if (!resume) clearStudySession();
@@ -137,7 +164,20 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setSessionCount(nextCount);
     setCurrentIndex(0);
     setIsFlipped(false);
-    persistSession(nextList, nextCount, nextShuffled);
+    setRetryQueue([]);
+    setIsChunkComplete(false);
+    persistSession(nextList, nextCount, nextShuffled, resume && savedSession ? savedSession.retryCards ?? [] : []);
+  };
+
+  const startNextChunk = () => {
+    const nextList = isShuffled ? shuffleList(dueCards.slice(0, 20)) : dueCards.slice(0, 20);
+    setStudyList(nextList);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setShowExample(false);
+    setRetryQueue([]);
+    setIsChunkComplete(false);
+    persistSession(nextList, sessionCount, isShuffled);
   };
 
   const currentCard = studyList[currentIndex];
@@ -168,12 +208,26 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const handleRating = (rating: ReviewRating) => {
     if (!currentCard) return;
     onReviewCard(currentCard.id, rating);
+    if (rating !== "hard") playPositiveFeedback();
     setIsFlipped(false);
     setSessionCount((prev) => prev + 1);
     const remainingCards = studyList.filter((card) => card.id !== currentCard.id);
+    const nextRetryQueue = rating === "hard"
+      ? [...retryQueue.filter((id) => id !== currentCard.id), currentCard.id]
+      : retryQueue.filter((id) => id !== currentCard.id);
+    if (rating === "hard") {
+      const retryPosition = Math.min(3, remainingCards.length);
+      remainingCards.splice(retryPosition, 0, currentCard);
+    }
+    setRetryQueue(nextRetryQueue);
     setStudyList(remainingCards);
     setCurrentIndex(0);
-    persistSession(remainingCards, sessionCount + 1, isShuffled);
+    if (remainingCards.length === 0) {
+      clearStudySession();
+      setIsChunkComplete(true);
+    } else {
+      persistSession(remainingCards, sessionCount + 1, isShuffled, remainingCards.filter((card) => nextRetryQueue.includes(card.id)));
+    }
     setShowExample(false);
     setCanUndo(Boolean(onUndoReview));
   };
@@ -210,6 +264,50 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           >
             {t("startFresh")}
           </button>
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (isChunkComplete) {
+    const hasNextChunk = dueCards.length > 0;
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="my-6 space-y-5 rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-soft"
+      >
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+          <Award className="h-8 w-8" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-black text-slate-900">{t("sessionCompleteTitle")}</h2>
+          <p className="text-sm text-slate-500 thai-text">{t("sessionCompleteMessage")}</p>
+        </div>
+        <div className="space-y-2 pt-2">
+          {hasNextChunk && (
+            <button
+              onClick={startNextChunk}
+              className="w-full rounded-2xl bg-slate-700 px-5 py-3.5 text-sm font-black text-white shadow-md shadow-slate-200 transition-all hover:bg-slate-800 active:scale-95"
+            >
+              {t("nextChunk")}
+            </button>
+          )}
+          <button
+            onClick={finishStudy}
+            className="w-full rounded-2xl bg-slate-100 px-5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-200 active:scale-95"
+          >
+            {t("finishSession")}
+          </button>
+          {canUndo && onUndoReview && (
+            <button
+              onClick={() => { onUndoReview(); setCanUndo(false); }}
+              className="inline-flex items-center justify-center gap-1.5 pt-1 text-xs font-bold text-slate-500 transition-colors hover:text-slate-700"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>{t("reviewUndone")}</span>
+            </button>
+          )}
         </div>
       </motion.div>
     );
