@@ -1,4 +1,4 @@
-import { Flashcard } from '@/types/flashcard';
+import { Flashcard, StudyStats } from '@/types/flashcard';
 import { validateImportData } from '@/lib/security';
 
 const publicCard = (
@@ -31,6 +31,47 @@ export const INITIAL_FLASHCARDS: Flashcard[] = [
 ];
 
 const STORAGE_KEY = 'flashcardme_cards_v8';
+const SAFETY_BACKUP_KEY = 'flashcardme_safety_backup_v1';
+const STUDY_STATS_KEY = 'flashcardme_study_stats_v1';
+
+const DEFAULT_STUDY_STATS: StudyStats = {
+  currentStreak: 0,
+  lastReviewDate: '',
+  totalReviews: 0,
+};
+
+export function getStudyStats(): StudyStats {
+  if (typeof window === 'undefined') return DEFAULT_STUDY_STATS;
+  try {
+    const stored = localStorage.getItem(STUDY_STATS_KEY);
+    if (!stored) return DEFAULT_STUDY_STATS;
+    const parsed = JSON.parse(stored) as Partial<StudyStats>;
+    return {
+      currentStreak: typeof parsed.currentStreak === 'number' ? parsed.currentStreak : 0,
+      lastReviewDate: typeof parsed.lastReviewDate === 'string' ? parsed.lastReviewDate : '',
+      totalReviews: typeof parsed.totalReviews === 'number' ? parsed.totalReviews : 0,
+    };
+  } catch {
+    return DEFAULT_STUDY_STATS;
+  }
+}
+
+export function saveStudyStats(stats: StudyStats): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STUDY_STATS_KEY, JSON.stringify(stats));
+}
+
+export function createSafetyBackup(cards: Flashcard[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(SAFETY_BACKUP_KEY, JSON.stringify({
+      createdAt: new Date().toISOString(),
+      cards,
+    }));
+  } catch (error) {
+    console.error('Failed to create safety backup:', error);
+  }
+}
 
 export function getStoredFlashcards(): Flashcard[] {
   if (typeof window === 'undefined') return INITIAL_FLASHCARDS;

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Flashcard, CardCategory } from "@/types/flashcard";
 import { speakText } from "@/lib/speech";
-import { Search, Plus, Trash2, Edit3, Volume2, BookOpen, ShieldCheck, Filter } from "lucide-react";
+import { Search, Plus, Trash2, Edit3, Volume2, BookOpen, ShieldCheck, Filter, Star } from "lucide-react";
 import { getDomainTagClassName } from "@/lib/domainTags";
 import { useLanguage } from "@/lib/language";
 
@@ -11,6 +11,7 @@ interface FlashcardLibraryProps {
   onAddCard: () => void;
   onEditCard: (card: Flashcard) => void;
   onDeleteCard: (cardId: string) => void;
+  onToggleFavorite?: (cardId: string) => void;
 }
 
 export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
@@ -19,6 +20,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
   onAddCard,
   onEditCard,
   onDeleteCard,
+  onToggleFavorite,
 }) => {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
@@ -138,6 +140,16 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
                   </span>
 
                   <div className="flex items-center space-x-1">
+                    {onToggleFavorite && (
+                      <button
+                        onClick={() => onToggleFavorite(card.id)}
+                        className="p-1.5 text-amber-400 hover:bg-amber-50 rounded-lg transition-colors"
+                        title={t("favorite")}
+                        aria-label={t("favorite")}
+                      >
+                        <Star className={`w-4 h-4 ${card.isFavorite ? "fill-amber-400" : ""}`} />
+                      </button>
+                    )}
                     <button
                       onClick={() => speakText(card.vocab)}
                       className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"

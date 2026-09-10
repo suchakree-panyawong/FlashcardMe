@@ -28,6 +28,7 @@ interface FlashcardStudyProps {
   hasCards?: boolean;
   mode: CardCategory;
   onReviewCard: (cardId: string, rating: ReviewRating) => void;
+  onUndoReview?: () => void;
   onFinishStudy: () => void;
   onBackToMode: () => void;
   onToggleFavorite?: (cardId: string) => void;
@@ -47,6 +48,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   hasCards = dueCards.length > 0,
   mode,
   onReviewCard,
+  onUndoReview,
   onFinishStudy,
   onBackToMode,
   onToggleFavorite,
@@ -57,6 +59,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
+  const [canUndo, setCanUndo] = useState(false);
 
   // Initialize or re-sync studyList when dueCards changes
   useEffect(() => {
@@ -107,6 +110,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setIsFlipped(false);
     setSessionCount((prev) => prev + 1);
     setCurrentIndex((prev) => prev + 1);
+    setCanUndo(Boolean(onUndoReview));
   };
 
   if (studyList.length === 0) {
@@ -129,6 +133,15 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         >
           {t("backToHome")}
         </button>
+        {canUndo && onUndoReview && (
+          <button
+            onClick={() => { onUndoReview(); setCanUndo(false); }}
+            className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>{t("reviewUndone")}</span>
+          </button>
+        )}
       </motion.div>
     );
   }
@@ -226,6 +239,15 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
             className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"
           />
         </div>
+        {canUndo && onUndoReview && (
+          <button
+            onClick={() => { onUndoReview(); setCanUndo(false); }}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>{t("reviewUndone")}</span>
+          </button>
+        )}
       </div>
 
       {/* Interactive Card Container */}
@@ -256,6 +278,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                       onToggleFavorite(currentCard.id);
                     }}
                     className="p-1.5 rounded-full hover:bg-slate-100 transition-all text-amber-400"
+                    aria-label={t("favorite")}
                   >
                     <Star className={`w-4 h-4 ${currentCard.isFavorite ? "fill-amber-400" : ""}`} />
                   </button>

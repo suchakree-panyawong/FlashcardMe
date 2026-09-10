@@ -1,10 +1,13 @@
 ﻿"use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { CardCategory, Flashcard, ReviewRating, ToastMessage } from "@/types/flashcard";
+import { CardCategory, Flashcard, ReviewRating, StudyStats, ToastMessage } from "@/types/flashcard";
 import {
   getStoredFlashcards,
   saveStoredFlashcards,
+  createSafetyBackup,
+  getStudyStats,
+  saveStudyStats,
   resetToDefaultFlashcards,
 } from "@/lib/storage";
 import { calculateNextReview } from "@/lib/spacedRepetition";
@@ -62,6 +65,8 @@ function FlashcardApp() {
   const [activeTab, setActiveTab] = useState<NavTab>("home");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
+  const [lastReviewSnapshot, setLastReviewSnapshot] = useState<Flashcard[] | null>(null);
+  const [studyStats, setStudyStats] = useState<StudyStats>(() => getStudyStats());
 
   const { toasts, addToast, removeToast } = useToasts();
   const { t } = useLanguage();
@@ -94,21 +99,41 @@ function FlashcardApp() {
 
   const handleReviewCard = useCallback(
     (cardId: string, rating: ReviewRating) => {
-      setCards((prevCards) => {
-        const updated = prevCards.map((card) => {
-          if (card.id === cardId) {
-            const { nextReviewDate, interval } = calculateNextReview(card, rating);
-            return { ...card, nextReviewDate, interval };
-          }
-          return card;
-        });
-        saveStoredFlashcards(updated);
-        return updated;
+      const updated = cards.map((card) => {
+        if (card.id === cardId) {
+          const { nextReviewDate, interval } = calculateNextReview(card, rating);
+          return { ...card, nextReviewDate, interval };
+        }
+        return card;
       });
+      setLastReviewSnapshot(cards);
+      setCards(updated);
+      saveStoredFlashcards(updated);
+      const today = new Date().toISOString().slice(0, 10);
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const nextStats: StudyStats = {
+        totalReviews: studyStats.totalReviews + 1,
+        lastReviewDate: today,
+        currentStreak: studyStats.lastReviewDate === today
+          ? studyStats.currentStreak
+          : studyStats.lastReviewDate === yesterday
+            ? studyStats.currentStreak + 1
+            : 1,
+      };
+      setStudyStats(nextStats);
+      saveStudyStats(nextStats);
       addToast(t("reviewSaved"));
     },
-    [addToast]
+    [cards, studyStats, addToast, t]
   );
+
+  const handleUndoReview = useCallback(() => {
+    if (!lastReviewSnapshot) return;
+    setCards(lastReviewSnapshot);
+    saveStoredFlashcards(lastReviewSnapshot);
+    setLastReviewSnapshot(null);
+    addToast(t("reviewUndone"), undefined, "info");
+  }, [lastReviewSnapshot, addToast, t]);
 
   const handleSaveCard = useCallback(
     (cardData: Omit<Flashcard, "id" | "nextReviewDate" | "interval" | "createdAt">) => {
@@ -166,6 +191,7 @@ function FlashcardApp() {
 
   const handleImportCards = useCallback(
     (importedCards: Flashcard[]) => {
+      createSafetyBackup(cards);
       const cardsById = new Map(cards.map((card) => [card.id, card]));
       let addedCount = 0;
       let updatedCount = 0;
@@ -197,6 +223,7 @@ function FlashcardApp() {
   );
 
   const handleResetCards = useCallback(() => {
+    createSafetyBackup(cards);
     const resetCards = resetToDefaultFlashcards();
     setCards(resetCards);
     addToast(t("resetDone"));
@@ -288,6 +315,7 @@ function FlashcardApp() {
 
             <StatsOverview
               cards={activeModeCards}
+              studyStats={studyStats}
               onStartStudy={() => {
                 if (activeModeCards.length === 0) {
                   setEditingCard(null);
@@ -311,6 +339,12 @@ function FlashcardApp() {
             hasCards={activeModeCards.length > 0}
             mode={activeMode}
             onReviewCard={handleReviewCard}
+            onUndoReview={handleUndoReview}
+            onToggleFavorite={(cardId) => {
+              const updated = cards.map((card) => card.id === cardId ? { ...card, isFavorite: !card.isFavorite } : card);
+              setCards(updated);
+              saveStoredFlashcards(updated);
+            }}
             onFinishStudy={() => setActiveTab("home")}
             onBackToMode={() => setActiveMode(null)}
           />
@@ -329,6 +363,11 @@ function FlashcardApp() {
               setIsModalOpen(true);
             }}
             onDeleteCard={handleDeleteCard}
+            onToggleFavorite={(cardId) => {
+              const updated = cards.map((card) => card.id === cardId ? { ...card, isFavorite: !card.isFavorite } : card);
+              setCards(updated);
+              saveStoredFlashcards(updated);
+            }}
           />
         )}
 

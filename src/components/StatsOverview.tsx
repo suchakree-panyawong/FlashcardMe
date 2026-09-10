@@ -1,18 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Flashcard } from '@/types/flashcard';
+import { Flashcard, StudyStats } from '@/types/flashcard';
 import { isDueToday } from '@/lib/spacedRepetition';
 import { BookOpen, ArrowRight, Layers, Plus, Trophy, Flame } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 
 interface StatsOverviewProps {
   cards: Flashcard[];
+  studyStats: StudyStats;
   onStartStudy: () => void;
   onOpenAddModal?: () => void;
 }
 
 export const StatsOverview: React.FC<StatsOverviewProps> = ({
   cards,
+  studyStats,
   onStartStudy,
   onOpenAddModal,
 }) => {
@@ -103,6 +105,11 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           <span className="text-2xl font-black text-emerald-500 block">{masteredCount}</span>
           <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide block mt-0.5">{t('mastered')}</span>
         </motion.div>
+      </div>
+
+      <div className="flex items-center justify-between rounded-2xl border border-indigo-100 bg-indigo-50/70 px-4 py-3 text-xs font-bold text-indigo-700">
+        <span>{t('totalReviews')}: {studyStats.totalReviews}</span>
+        <span>{t('streak')}: {studyStats.currentStreak} {t('days')}</span>
       </div>
 
       {/* Animated Progress Bar */}

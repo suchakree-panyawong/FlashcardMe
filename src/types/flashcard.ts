@@ -44,3 +44,9 @@ export interface UserStreak {
   lastStudyDate: string;
   totalReviews: number;
 }
+
+export interface StudyStats {
+  currentStreak: number;
+  lastReviewDate: string;
+  totalReviews: number;
+}
