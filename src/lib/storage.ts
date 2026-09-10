@@ -82,6 +82,8 @@ const DEFAULT_STUDY_STATS: StudyStats = {
   currentStreak: 0,
   lastReviewDate: '',
   totalReviews: 0,
+  dailyGoal: 10,
+  dailyReviews: {},
 };
 
 export function getStudyStats(): StudyStats {
@@ -94,6 +96,8 @@ export function getStudyStats(): StudyStats {
       currentStreak: typeof parsed.currentStreak === 'number' ? parsed.currentStreak : 0,
       lastReviewDate: typeof parsed.lastReviewDate === 'string' ? parsed.lastReviewDate : '',
       totalReviews: typeof parsed.totalReviews === 'number' ? parsed.totalReviews : 0,
+      dailyGoal: typeof parsed.dailyGoal === 'number' && parsed.dailyGoal > 0 ? parsed.dailyGoal : 10,
+      dailyReviews: parsed.dailyReviews && typeof parsed.dailyReviews === 'object' ? parsed.dailyReviews as Record<string, number> : {},
     };
   } catch {
     return DEFAULT_STUDY_STATS;

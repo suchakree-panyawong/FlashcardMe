@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { CardCategory, Flashcard, ReviewRating, StudyStats, ToastMessage } from "@/types/flashcard";
+import { CardCategory, Flashcard, ReviewRating, StudyFocus, StudyStats, ToastMessage } from "@/types/flashcard";
 import {
   getStoredFlashcards,
   saveStoredFlashcards,
@@ -24,7 +24,7 @@ import { ToastContainer } from "@/components/Toast";
 import { InstallPWA } from "@/components/InstallPWA";
 import { LanguageProvider, useLanguage } from "@/lib/language";
 import { areDuplicateWords } from "@/lib/duplicateWords";
-import { Sparkles } from "lucide-react";
+import { AlertCircle, Layers, Sparkles, Star } from "lucide-react";
 
 // ─── Toast helper ─────────────────────────────────────────────────────────────
 
@@ -68,6 +68,7 @@ function FlashcardApp() {
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [lastReviewSnapshot, setLastReviewSnapshot] = useState<Flashcard[] | null>(null);
   const [studyStats, setStudyStats] = useState<StudyStats>(() => getStudyStats());
+  const [studyFocus, setStudyFocus] = useState<StudyFocus>("all");
 
   const { toasts, addToast, removeToast } = useToasts();
   const { t } = useLanguage();
@@ -94,9 +95,14 @@ function FlashcardApp() {
 
   const activeModeDueCards = useMemo(() => {
     return activeModeCards.filter((card) => {
-      return card.nextReviewDate.split("T")[0] <= todayStr;
+      const due = card.nextReviewDate.split("T")[0] <= todayStr;
+      const focused = studyFocus === "all"
+        || (studyFocus === "favorites" && card.isFavorite)
+        || (studyFocus === "mistakes" && (card.incorrectCount ?? 0) > 0)
+        || (studyFocus === "unseen" && (card.reviewCount ?? 0) === 0);
+      return due && focused;
     });
-  }, [activeModeCards, todayStr]);
+  }, [activeModeCards, studyFocus, todayStr]);
 
   const handleReviewCard = useCallback(
     (cardId: string, rating: ReviewRating) => {
@@ -129,6 +135,11 @@ function FlashcardApp() {
           : studyStats.lastReviewDate === yesterday
             ? studyStats.currentStreak + 1
             : 1,
+        dailyGoal: studyStats.dailyGoal,
+        dailyReviews: {
+          ...studyStats.dailyReviews,
+          [today]: (studyStats.dailyReviews[today] ?? 0) + 1,
+        },
       };
       setStudyStats(nextStats);
       saveStudyStats(nextStats);
@@ -253,6 +264,23 @@ function FlashcardApp() {
     setActiveTab("home");
   };
 
+  const handleSetDailyGoal = useCallback((dailyGoal: number) => {
+    const nextStats = { ...studyStats, dailyGoal };
+    setStudyStats(nextStats);
+    saveStudyStats(nextStats);
+  }, [studyStats]);
+
+  const handleEnableNotifications = useCallback(async () => {
+    if (typeof Notification === "undefined") return;
+    const permission = await Notification.requestPermission();
+    if (permission === "granted" && activeModeDueCards.length > 0) {
+      new Notification("FlashcardMe", {
+        body: `${activeModeDueCards.length} ${t("dueNeedReview")}`,
+        icon: "/pwa-icon-192.jpg",
+      });
+    }
+  }, [activeModeDueCards.length, t]);
+
   // ── Loading Screen ──────────────────────────────────────────────────────────
   if (isLoading) {
     return (
@@ -335,6 +363,10 @@ function FlashcardApp() {
             <StatsOverview
               cards={activeModeCards}
               studyStats={studyStats}
+              studyFocus={studyFocus}
+              onSetDailyGoal={handleSetDailyGoal}
+              onEnableNotifications={handleEnableNotifications}
+              notificationsSupported={typeof window !== "undefined" && "Notification" in window}
               onStartStudy={() => {
                 if (activeModeCards.length === 0) {
                   setEditingCard(null);
@@ -348,6 +380,24 @@ function FlashcardApp() {
                 setIsModalOpen(true);
               }}
             />
+
+            <div className="flex gap-2 overflow-x-auto pb-1" aria-label={t("studyFocus") }>
+              {([
+                ["all", Layers, "allFocus"],
+                ["favorites", Star, "favoriteFocus"],
+                ["mistakes", AlertCircle, "mistakesFocus"],
+                ["unseen", Sparkles, "unseenFocus"],
+              ] as const).map(([focus, Icon, label]) => (
+                <button
+                  key={focus}
+                  onClick={() => setStudyFocus(focus)}
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold transition ${studyFocus === focus ? "bg-indigo-600 text-white shadow-md shadow-indigo-200" : "bg-white text-slate-500 border border-slate-200 hover:border-indigo-200"}`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {t(label)}
+                </button>
+              ))}
+            </div>
 
           </div>
         )}

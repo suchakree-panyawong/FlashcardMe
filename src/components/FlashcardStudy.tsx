@@ -288,64 +288,60 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <button
             onClick={onFinishStudy}
-            className="flex items-center space-x-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white px-3 py-1.5 rounded-full border border-slate-200/80 shadow-2xs transition-colors"
+            className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-500 transition-colors hover:text-slate-900"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>ออกจากการเรียน</span>
+            <span>กลับ</span>
           </button>
 
-          {/* Sequential vs Shuffle Mode Toggle Pills */}
-          <div className="flex items-center p-1 bg-slate-100 rounded-2xl border border-slate-200/60 shadow-2xs">
+          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
             <button
               onClick={() => handleToggleOrder(false)}
-              className={`flex items-center space-x-1 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-                !isShuffled
-                  ? "bg-white text-indigo-600 shadow-xs"
-                  : "text-slate-500 hover:text-slate-800"
+              className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition-all ${
+                !isShuffled ? "bg-indigo-50 text-indigo-600" : "text-slate-500"
               }`}
             >
-              <ArrowUpDown className="w-3.5 h-3.5" />
-              <span>เรียงลำดับ</span>
+              เรียง
             </button>
             <button
               onClick={() => handleToggleOrder(true)}
-              className={`flex items-center space-x-1 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-                isShuffled
-                  ? "bg-white text-purple-600 shadow-xs"
-                  : "text-slate-500 hover:text-slate-800"
+              className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition-all ${
+                isShuffled ? "bg-purple-50 text-purple-600" : "text-slate-500"
               }`}
             >
-              <Shuffle className="w-3.5 h-3.5" />
-              <span>สุ่ม (Shuffle)</span>
+              สุ่ม
             </button>
           </div>
 
-          <div className="flex items-center space-x-1.5 text-xs font-extrabold text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-200/80 shadow-2xs">
+          <div className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-slate-600">
             <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
             <span>
-              {currentIndex + 1} / {studyList.length}
+              {currentIndex + 1}/{studyList.length}
             </span>
           </div>
         </div>
 
-        <div className="w-full bg-slate-200/70 h-2.5 rounded-full overflow-hidden p-0.5 shadow-inner">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-200/80 p-0.5">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progressPercent}%` }}
             transition={{ type: "spring", stiffness: 100, damping: 15 }}
-            className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"
+            className="h-full rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
           />
         </div>
-        <p className="text-center text-[10px] font-semibold text-slate-400">{t("autoSaved")}</p>
-        {canUndo && onUndoReview && (
-          <button
-            onClick={() => { onUndoReview(); setCanUndo(false); }}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>{t("reviewUndone")}</span>
-          </button>
-        )}
+
+        <div className="flex items-center justify-between gap-3 text-[10px] font-semibold text-slate-400">
+          <span>{t("autoSaved")}</span>
+          {canUndo && onUndoReview && (
+            <button
+              onClick={() => { onUndoReview(); setCanUndo(false); }}
+              className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>{t("reviewUndone")}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Interactive Card Container */}
@@ -362,10 +358,10 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               animate={{ rotateY: 0, opacity: 1 }}
               exit={{ rotateY: 90, opacity: 0 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="w-full min-h-[460px] bg-white border-2 border-slate-100 rounded-3xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden"
+              className="relative flex min-h-[460px] w-full flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-b from-white via-slate-50 to-white p-5 shadow-[0_18px_38px_rgba(15,23,42,0.08)]"
             >
               <div className="flex items-center justify-between gap-3">
-                <span className={`inline-flex max-w-[85%] truncate rounded-full border px-2.5 py-0.5 text-[10px] font-bold tracking-wide ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
+                <span className={`inline-flex max-w-[85%] truncate rounded-full border px-2.5 py-1 text-[10px] font-bold tracking-[0.12em] ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
                   {currentCard.domain || "General Vocabulary"}
                 </span>
 
@@ -375,7 +371,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                       e.stopPropagation();
                       onToggleFavorite(currentCard.id);
                     }}
-                    className="p-1.5 rounded-full hover:bg-slate-100 transition-all text-amber-400"
+                    className="rounded-full p-1.5 text-amber-400 transition hover:bg-slate-100"
                     aria-label={t("favorite")}
                   >
                     <Star className={`w-4 h-4 ${currentCard.isFavorite ? "fill-amber-400" : ""}`} />
@@ -384,26 +380,24 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               </div>
 
               {/* Center Content: Vocab English + Audio */}
-              <div className="my-auto py-6 text-center space-y-4">
-                <h3 className="text-4xl font-black tracking-tight text-slate-900">
-                  {currentCard.vocab}
-                </h3>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.92 }}
-                  onClick={(e) => speakVocab(currentCard.vocab, e)}
-                  className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold transition-all border border-indigo-100/80"
-                >
-                  <Volume2 className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>ฟังเสียงอ่าน (Audio)</span>
-                </motion.button>
+              <div className="my-auto py-6 text-center space-y-5">
+                <div className="flex items-center justify-center gap-2">
+                  <h3 className="text-4xl font-black tracking-tight text-slate-900">
+                    {currentCard.vocab}
+                  </h3>
+                  <button
+                    onClick={(e) => speakVocab(currentCard.vocab, e)}
+                    className="rounded-full bg-indigo-50 p-2 text-indigo-600 transition hover:bg-indigo-100"
+                    aria-label="Listen"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              <div className="text-center pt-3 border-t border-slate-100">
-                <p className="text-xs font-bold text-indigo-600 flex items-center justify-center space-x-1">
-                  <Sparkles className="w-4 h-4 text-indigo-500" />
-                  <span>แตะการ์ดเพื่อดูเฉลยและสถานการณ์ประกอบ</span>
+              <div className="border-t border-slate-100 pt-3 text-center">
+                <p className="text-[11px] font-bold text-indigo-600">
+                  แตะการ์ดเพื่อดูเฉลย
                 </p>
               </div>
             </motion.div>
@@ -415,62 +409,56 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               animate={{ rotateY: 0, opacity: 1 }}
               exit={{ rotateY: -90, opacity: 0 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="w-full min-h-[460px] bg-white border-2 border-indigo-100 rounded-3xl p-6 shadow-xl flex flex-col justify-between"
+              className="relative flex min-h-[460px] w-full flex-col justify-between overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-b from-indigo-50/60 via-white to-white p-5 shadow-[0_18px_38px_rgba(79,70,229,0.08)]"
             >
-              <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                <span className={`inline-flex max-w-[58%] items-center truncate rounded-full border px-2.5 py-0.5 text-[10px] font-bold tracking-wide ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
+              <div className="flex items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+                <span className={`inline-flex max-w-[58%] items-center truncate rounded-full border px-2.5 py-1 text-[10px] font-bold tracking-[0.12em] ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
                   <span className="truncate">{currentCard.domain || "General Vocabulary"}</span>
                 </span>
-                <span className="flex items-center space-x-1.5 text-xs font-black uppercase tracking-wider text-indigo-600">
-                  <QuestionIcon className="w-4 h-4 text-indigo-600" />
-                  <span>เฉลยและบริบท</span>
-                </span>
-
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={(e) => speakVocab(currentCard.vocab, e)}
-                    className="p-1 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all"
-                  >
-                    <Volume2 className="w-4 h-4" />
-                  </button>
-                  <span className="text-sm font-black text-slate-800">
-                    {currentCard.vocab}
-                  </span>
+                <div className="flex items-center gap-1.5 rounded-full bg-white/90 px-2 py-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-indigo-600 shadow-sm">
+                  <QuestionIcon className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Reveal</span>
                 </div>
               </div>
 
+              <div className="mt-3 flex items-center justify-end gap-2">
+                <button
+                  onClick={(e) => speakVocab(currentCard.vocab, e)}
+                  className="rounded-full bg-indigo-50 p-1.5 text-indigo-600 transition hover:bg-indigo-100"
+                >
+                  <Volume2 className="w-4 h-4" />
+                </button>
+                <span className="text-sm font-black text-slate-800">
+                  {currentCard.vocab}
+                </span>
+              </div>
+
               {/* Answer Content Section */}
-              <div className="my-auto space-y-3 py-2">
-                {/* 1. ความหมายภาษาไทย */}
+              <div className="my-auto space-y-4 py-2">
                 {currentCard.vocabThai && (
-                  <div className="text-center bg-indigo-50/70 border border-indigo-100 rounded-2xl p-3">
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block">
-                      ความหมายภาษาไทย
-                    </span>
-                    <h4 className="text-2xl font-black text-indigo-700 thai-text mt-0.5">
+                  <div className="text-center rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
+                    <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-400">
+                      Meaning
+                    </div>
+                    <h4 className="mt-1 text-3xl font-black text-indigo-700 thai-text">
                       {currentCard.vocabThai}
                     </h4>
                   </div>
                 )}
 
-                {/* 2. คำอธิบายภาษาไทย */}
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 space-y-0.5">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    คำอธิบาย (Explanation)
-                  </span>
-                  <p className="text-sm text-slate-800 thai-text leading-relaxed font-semibold">
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <p className="text-sm font-semibold leading-relaxed text-slate-700 thai-text">
                     {currentCard.meaning}
                   </p>
                 </div>
 
-                {/* 3. Example scenario and real application */}
                 {mode === "cert" && currentCard.scenario && (
-                  <div className="bg-gradient-to-r from-amber-50/90 to-orange-50/90 border border-amber-200/90 rounded-2xl p-4 text-left space-y-2">
-                    <span className="text-[10px] font-extrabold text-amber-700 uppercase tracking-wider flex items-center space-x-1">
+                  <div className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 text-left">
+                    <div className="mb-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-amber-700">
                       <FileText className="w-3.5 h-3.5 text-amber-600" />
-                      <span>สถานการณ์ตัวอย่าง (Example Scenario)</span>
-                    </span>
-                    <div className="text-xs font-medium text-slate-800 leading-relaxed bg-white/80 p-3 rounded-xl border border-amber-200/60 space-y-2 whitespace-pre-line">
+                      <span>Example</span>
+                    </div>
+                    <div className="rounded-xl border border-amber-200/80 bg-white/80 p-3 text-xs font-medium leading-relaxed text-slate-700 whitespace-pre-line">
                       {currentCard.scenario}
                     </div>
                   </div>
@@ -495,37 +483,37 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
             <button
               onClick={() => handleRating("hard")}
               aria-label="ยังจำไม่ได้"
-              className="group flex min-h-[118px] flex-col items-center justify-center gap-1.5 rounded-3xl border border-rose-200/80 bg-gradient-to-b from-rose-50 to-white p-3 text-rose-700 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-300 hover:shadow-lg hover:shadow-rose-100 active:translate-y-0 active:scale-95"
+              className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-rose-200/80 bg-gradient-to-b from-rose-50 to-white p-2.5 text-rose-700 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-300 hover:shadow-lg hover:shadow-rose-100 active:translate-y-0 active:scale-95"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 transition-transform group-hover:scale-110">
                 <ThumbsDown className="h-5 w-5" />
               </span>
-              <span className="font-extrabold text-xs">ยังจำไม่ได้</span>
-              <span className="text-[10px] font-medium text-rose-400">ทบทวนเร็วๆ นี้</span>
+              <span className="text-[11px] font-extrabold">ยังจำไม่ได้</span>
+              <span className="text-[9px] font-medium text-rose-400">เร็ว</span>
             </button>
 
             <button
               onClick={() => handleRating("good")}
               aria-label="พอจำได้"
-              className="group flex min-h-[118px] flex-col items-center justify-center gap-1.5 rounded-3xl border border-amber-200/80 bg-gradient-to-b from-amber-50 to-white p-3 text-amber-700 shadow-sm transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-100 active:translate-y-0 active:scale-95"
+              className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-amber-200/80 bg-gradient-to-b from-amber-50 to-white p-2.5 text-amber-700 shadow-sm transition-all hover:-translate-y-1 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-100 active:translate-y-0 active:scale-95"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 transition-transform group-hover:scale-110">
                 <Minus className="h-5 w-5" />
               </span>
-              <span className="font-extrabold text-xs">พอจำได้</span>
-              <span className="text-[10px] font-medium text-amber-500">เว้น 2-3 วัน</span>
+              <span className="text-[11px] font-extrabold">พอจำได้</span>
+              <span className="text-[9px] font-medium text-amber-500">2-3 วัน</span>
             </button>
 
             <button
               onClick={() => handleRating("easy")}
               aria-label="จำได้แม่น"
-              className="group flex min-h-[118px] flex-col items-center justify-center gap-1.5 rounded-3xl border border-emerald-200/80 bg-gradient-to-b from-emerald-50 to-white p-3 text-emerald-700 shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100 active:translate-y-0 active:scale-95"
+              className="group flex min-h-[96px] flex-col items-center justify-center gap-1 rounded-2xl border border-emerald-200/80 bg-gradient-to-b from-emerald-50 to-white p-2.5 text-emerald-700 shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100 active:translate-y-0 active:scale-95"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 transition-transform group-hover:scale-110">
                 <ThumbsUp className="h-5 w-5" />
               </span>
-              <span className="font-extrabold text-xs">จำได้แม่น</span>
-              <span className="text-[10px] font-medium text-emerald-500">เว้น 5-7 วัน</span>
+              <span className="text-[11px] font-extrabold">จำได้แม่น</span>
+              <span className="text-[9px] font-medium text-emerald-500">5-7 วัน</span>
             </button>
           </motion.div>
         )}

@@ -26,17 +26,16 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   return (
     <>
       {/* Top Sticky Glassmorphism Header */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100/80 px-4 py-3 shadow-xs transition-all">
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/75 px-4 py-2.5 backdrop-blur-xl shadow-[0_4px_24px_rgba(15,23,42,0.04)] transition-all">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-1 sm:px-3">
-          {/* Logo Brand */}
           <div
             onClick={() => onSelectTab("home")}
-            className="flex items-center space-x-2.5 cursor-pointer group"
+            className="group flex cursor-pointer items-center gap-2.5"
           >
             <motion.div
-              whileHover={{ rotate: 15, scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex h-12 w-20 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md shadow-slate-200 sm:h-14 sm:w-24"
+              whileHover={{ rotate: 12, scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="flex h-11 w-18 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm shadow-slate-200 sm:h-12 sm:w-20"
             >
               <img src="/flashcardme-logo-mainpage-Photoroom.png" alt="FlashcardMe" className="h-full w-full object-contain" />
             </motion.div>
@@ -67,50 +66,50 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
         </div>
       </header>
 
-      <div className="fixed right-3 top-[4.5rem] z-40 flex rounded-full border border-slate-200 bg-white/90 p-1 shadow-sm backdrop-blur-xl" aria-label="Language selector">
+      <div className="fixed right-3 top-[4.1rem] z-40 flex rounded-full border border-slate-200 bg-white/90 p-1 shadow-sm backdrop-blur-xl" aria-label="Language selector">
         {(["th", "en"] as const).map((option) => (
-          <button key={option} type="button" onClick={() => setLanguage(option)} className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase transition-colors ${language === option ? "bg-slate-900 text-white" : "text-slate-400 hover:text-slate-700"}`}>
+          <button key={option} type="button" onClick={() => setLanguage(option)} className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] transition-colors ${language === option ? "bg-slate-900 text-white" : "text-slate-400 hover:text-slate-700"}`}>
             {option}
           </button>
         ))}
       </div>
 
       {/* Bottom Floating Glass Navigation Bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 bg-white/90 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl border-t border-slate-100/80 shadow-2xl">
-        <div className="mx-auto grid w-full max-w-5xl grid-cols-5 gap-1">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/80 bg-white/90 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-14px_30px_rgba(15,23,42,0.08)] backdrop-blur-2xl">
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-5 gap-1.5">
 
           {/* Tab 1: Home */}
           <button
             onClick={() => onSelectTab("home")}
-            className={`relative flex flex-col items-center justify-center py-2 rounded-2xl transition-all ${
+            className={`relative flex flex-col items-center justify-center rounded-2xl py-2 transition-all ${
               activeTab === "home" ? "text-indigo-600 font-black" : "text-slate-400 hover:text-slate-600 font-medium"
             }`}
           >
             {activeTab === "home" && (
               <motion.div layoutId="activeTabGlow"
-                className="absolute inset-0 bg-indigo-50/80 rounded-2xl -z-10"
+                className="absolute inset-0 rounded-2xl bg-indigo-50/80 -z-10"
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
-            <Home className="w-5 h-5" />
-            <span className="text-[10px] mt-1">{labels.home}</span>
+            <Home className="h-5 w-5" />
+            <span className="mt-1 text-[10px] tracking-[0.08em]">{labels.home}</span>
           </button>
 
           {/* Tab 2: Study */}
           <button
             onClick={() => onSelectTab("study")}
-            className={`relative flex flex-col items-center justify-center py-2 rounded-2xl transition-all ${
+            className={`relative flex flex-col items-center justify-center rounded-2xl py-2 transition-all ${
               activeTab === "study" ? "text-indigo-600 font-black" : "text-slate-400 hover:text-slate-600 font-medium"
             }`}
           >
             {activeTab === "study" && (
               <motion.div layoutId="activeTabGlow"
-                className="absolute inset-0 bg-indigo-50/80 rounded-2xl -z-10"
+                className="absolute inset-0 rounded-2xl bg-indigo-50/80 -z-10"
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
-            <Repeat className="w-5 h-5" />
-            <span className="text-[10px] mt-1">{labels.study}</span>
+            <Repeat className="h-5 w-5" />
+            <span className="mt-1 text-[10px] tracking-[0.08em]">{labels.study}</span>
             {dueCount > 0 && (
-              <span className="absolute top-1 right-3 w-4 h-4 bg-gradient-to-r from-orange-500 to-rose-500 text-white font-bold text-[9px] rounded-full flex items-center justify-center shadow-md animate-pulse">
+              <span className="absolute right-3 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-rose-500 text-[9px] font-bold text-white shadow-md animate-pulse">
                 {dueCount > 99 ? "99+" : dueCount}
               </span>
             )}
@@ -119,49 +118,49 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           {/* Tab 3: Library */}
           <button
             onClick={() => onSelectTab("library")}
-            className={`relative flex flex-col items-center justify-center py-2 rounded-2xl transition-all ${
+            className={`relative flex flex-col items-center justify-center rounded-2xl py-2 transition-all ${
               activeTab === "library" ? "text-indigo-600 font-black" : "text-slate-400 hover:text-slate-600 font-medium"
             }`}
           >
             {activeTab === "library" && (
               <motion.div layoutId="activeTabGlow"
-                className="absolute inset-0 bg-indigo-50/80 rounded-2xl -z-10"
+                className="absolute inset-0 rounded-2xl bg-indigo-50/80 -z-10"
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
-            <Grid className="w-5 h-5" />
-            <span className="text-[10px] mt-1">{labels.library}</span>
+            <Grid className="h-5 w-5" />
+            <span className="mt-1 text-[10px] tracking-[0.08em]">{labels.library}</span>
           </button>
 
           {/* Tab 4: Listen & Learn */}
           <button
             onClick={() => onSelectTab("listen")}
-            className={`relative flex flex-col items-center justify-center py-2 rounded-2xl transition-all ${
+            className={`relative flex flex-col items-center justify-center rounded-2xl py-2 transition-all ${
               activeTab === "listen" ? "text-indigo-600 font-black" : "text-slate-400 hover:text-slate-600 font-medium"
             }`}
           >
             {activeTab === "listen" && (
               <motion.div layoutId="activeTabGlow"
-                className="absolute inset-0 bg-indigo-50/80 rounded-2xl -z-10"
+                className="absolute inset-0 rounded-2xl bg-indigo-50/80 -z-10"
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
-            <Headphones className="w-5 h-5" />
-            <span className="text-[10px] mt-1">{labels.listen}</span>
+            <Headphones className="h-5 w-5" />
+            <span className="mt-1 text-[10px] tracking-[0.08em]">{labels.listen}</span>
           </button>
 
           {/* Tab 5: Backup */}
           <button
             onClick={() => onSelectTab("backup")}
-            className={`relative flex flex-col items-center justify-center py-2 rounded-2xl transition-all ${
+            className={`relative flex flex-col items-center justify-center rounded-2xl py-2 transition-all ${
               activeTab === "backup" ? "text-indigo-600 font-black" : "text-slate-400 hover:text-slate-600 font-medium"
             }`}
           >
             {activeTab === "backup" && (
               <motion.div layoutId="activeTabGlow"
-                className="absolute inset-0 bg-indigo-50/80 rounded-2xl -z-10"
+                className="absolute inset-0 rounded-2xl bg-indigo-50/80 -z-10"
                 transition={{ type: "spring", stiffness: 350, damping: 30 }} />
             )}
-            <Database className="w-5 h-5" />
-            <span className="text-[10px] mt-1">{labels.backup}</span>
+            <Database className="h-5 w-5" />
+            <span className="mt-1 text-[10px] tracking-[0.08em]">{labels.backup}</span>
           </button>
 
         </div>

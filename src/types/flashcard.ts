@@ -14,6 +14,7 @@ export const DOMAIN_OPTIONS: DomainCategory[] = [
 ];
 
 export type CardCategory = 'general' | 'cert';
+export type StudyFocus = 'all' | 'favorites' | 'mistakes' | 'unseen';
 
 export interface Flashcard {
   category?: CardCategory;
@@ -52,4 +53,6 @@ export interface StudyStats {
   currentStreak: number;
   lastReviewDate: string;
   totalReviews: number;
+  dailyGoal: number;
+  dailyReviews: Record<string, number>;
 }

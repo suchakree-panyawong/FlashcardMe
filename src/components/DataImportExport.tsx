@@ -1,7 +1,7 @@
 ﻿import React, { useRef } from 'react';
 import { Flashcard } from '@/types/flashcard';
 import { validateImportData } from '@/lib/security';
-import { FileDown, FileUp, RotateCcw, ShieldCheck, Database } from 'lucide-react';
+import { FileDown, FileUp, FileSpreadsheet, RotateCcw, ShieldCheck, Database } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 
 interface DataImportExportProps {
@@ -21,6 +21,51 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { language, t } = useLanguage();
+
+  const csvFields = ['id', 'vocab', 'vocabThai', 'meaning', 'domain', 'pattern', 'scenario', 'nextReviewDate', 'interval', 'category', 'createdAt', 'isFavorite', 'reviewCount', 'correctCount', 'incorrectCount'] as const;
+
+  const escapeCsv = (value: unknown) => {
+    const text = String(value ?? '');
+    return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  };
+
+  const parseCsv = (text: string): Record<string, string>[] => {
+    const rows: string[][] = [];
+    let row: string[] = [];
+    let value = '';
+    let quoted = false;
+    for (let index = 0; index < text.length; index += 1) {
+      const character = text[index];
+      const next = text[index + 1];
+      if (character === '"' && quoted && next === '"') { value += '"'; index += 1; }
+      else if (character === '"') quoted = !quoted;
+      else if (character === ',' && !quoted) { row.push(value); value = ''; }
+      else if ((character === '\n' || character === '\r') && !quoted) {
+        if (character === '\r' && next === '\n') index += 1;
+        row.push(value); rows.push(row); row = []; value = '';
+      } else value += character;
+    }
+    if (value || row.length) { row.push(value); rows.push(row); }
+    const headers = rows.shift()?.map((header) => header.trim()) ?? [];
+    return rows.filter((currentRow) => currentRow.some(Boolean)).map((currentRow) =>
+      headers.reduce<Record<string, string>>((record, header, index) => {
+        record[header] = currentRow[index] ?? '';
+        return record;
+      }, {})
+    );
+  };
+
+  const handleExportCSV = () => {
+    const header = csvFields.join(',');
+    const rows = cards.map((card) => csvFields.map((field) => escapeCsv(card[field])).join(','));
+    const blob = new Blob([`${header}\n${rows.join('\n')}`], { type: 'text/csv;charset=utf-8' });
+    const anchor = document.createElement('a');
+    anchor.href = URL.createObjectURL(blob);
+    anchor.download = `flashcardme_backup_${new Date().toISOString().slice(0, 10)}.csv`;
+    anchor.click();
+    URL.revokeObjectURL(anchor.href);
+    showToast(t('exportSuccess'), `${cards.length} ${t('cards')} CSV`, 'success');
+  };
 
   const handleExportJSON = () => {
     try {
@@ -48,7 +93,17 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const json = JSON.parse(event.target?.result as string);
+        const content = event.target?.result as string;
+        const json = file.name.toLowerCase().endsWith('.csv')
+          ? parseCsv(content).map((row) => ({
+              ...row,
+              interval: row.interval ? Number(row.interval) : 1,
+              isFavorite: row.isFavorite === 'true',
+              reviewCount: row.reviewCount ? Number(row.reviewCount) : 0,
+              correctCount: row.correctCount ? Number(row.correctCount) : 0,
+              incorrectCount: row.incorrectCount ? Number(row.incorrectCount) : 0,
+            }))
+          : JSON.parse(content);
         const { isValid, cards: validatedCards, error } = validateImportData(json);
 
         if (!isValid) {
@@ -126,9 +181,25 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept=".json"
+            accept=".json,.csv"
             className="hidden"
           />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold text-slate-600 transition hover:bg-slate-100 active:scale-95"
+          >
+            <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
+            <span>{t('importCsv')}</span>
+          </button>
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold text-slate-600 transition hover:bg-slate-100 active:scale-95"
+          >
+            <FileSpreadsheet className="h-4 w-4 text-indigo-600" />
+            <span>{t('exportCsv')}</span>
+          </button>
         </div>
         <p className="text-[11px] text-slate-400 leading-relaxed thai-text">
           {t('importReplaces')}
