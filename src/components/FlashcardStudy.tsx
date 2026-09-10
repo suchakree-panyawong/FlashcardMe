@@ -10,6 +10,7 @@ import { clearStudySession, getStudySession, saveStudySession, StudySession } fr
 import {
   Sparkles,
   ArrowLeft,
+  ArrowRight,
   Flame,
   Award,
   Volume2,
@@ -75,6 +76,8 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [retryQueue, setRetryQueue] = useState<string[]>([]);
   const [isChunkComplete, setIsChunkComplete] = useState(false);
   const [promptDirections, setPromptDirections] = useState<Record<string, boolean>>({});
+  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const sessionInitialized = useRef(false);
 
   const playPositiveFeedback = () => {
@@ -154,6 +157,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     persistSession(nextList, sessionCount, shuffle);
     setIsFlipped(false);
     setShowExample(false);
+    setSwipeDirection(null);
     setCurrentIndex(0);
     setIsChunkComplete(false);
   };
@@ -177,6 +181,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setSessionCount(nextCount);
     setCurrentIndex(0);
     setIsFlipped(false);
+    setSwipeDirection(null);
     setRetryQueue(resume && savedSession ? savedSession.retryCards?.map((card) => card.id) ?? [] : []);
     setPromptDirections(nextPromptDirections);
     setIsChunkComplete(false);
@@ -190,6 +195,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setCurrentIndex(0);
     setIsFlipped(false);
     setShowExample(false);
+    setSwipeDirection(null);
     setRetryQueue([]);
     setPromptDirections(nextPromptDirections);
     setIsChunkComplete(false);
@@ -230,6 +236,8 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     onReviewCard(currentCard.id, rating);
     if (rating !== "hard") playPositiveFeedback();
     setIsFlipped(false);
+    setSwipeDirection(null);
+    setIsDragging(false);
     setSessionCount((prev) => prev + 1);
     const remainingCards = studyList.filter((card) => card.id !== currentCard.id);
     const nextRetryQueue = rating === "hard"
@@ -470,7 +478,9 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       {/* Interactive Card Container */}
       <div
         className="w-full min-h-[460px] cursor-pointer select-none"
-        onClick={() => setIsFlipped(!isFlipped)}
+        onClick={() => {
+          if (!isDragging) setIsFlipped(!isFlipped);
+        }}
       >
         <AnimatePresence mode="wait">
           {!isFlipped ? (
@@ -534,8 +544,38 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               animate={{ rotateY: 0, opacity: 1 }}
               exit={{ rotateY: -90, opacity: 0 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
+              drag="x"
+              dragConstraints={{ left: -180, right: 180 }}
+              dragElastic={0.7}
+              whileDrag={{ scale: 1.02, cursor: "grabbing" }}
+              onDragStart={() => {
+                setIsDragging(true);
+                setSwipeDirection(null);
+              }}
+              onDrag={(_, info) => {
+                setSwipeDirection(info.offset.x < -24 ? "left" : info.offset.x > 24 ? "right" : null);
+              }}
+              onDragEnd={(_, info) => {
+                const swipeDistance = info.offset.x;
+                setIsDragging(false);
+                if (swipeDistance <= -110) {
+                  handleRating("hard");
+                } else if (swipeDistance >= 110) {
+                  handleRating("easy");
+                } else {
+                  setSwipeDirection(null);
+                }
+              }}
               className="relative flex min-h-[460px] w-full flex-col justify-between overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-b from-indigo-50/60 via-white to-white p-5 shadow-[0_18px_38px_rgba(79,70,229,0.08)]"
             >
+              {swipeDirection && (
+                <div className={`pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-[28px] border-2 ${swipeDirection === "left" ? "border-slate-300 bg-slate-100/45" : "border-emerald-300 bg-emerald-100/45"}`}>
+                  <div className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black shadow-sm ${swipeDirection === "left" ? "bg-slate-700 text-white" : "bg-emerald-600 text-white"}`}>
+                    {swipeDirection === "left" ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+                    <span>{swipeDirection === "left" ? t("reviewAgain") : t("gotIt")}</span>
+                  </div>
+                </div>
+              )}
               <div className="flex items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
                 <span className={`inline-flex max-w-[58%] items-center truncate rounded-full border px-2.5 py-1 text-[10px] font-bold tracking-[0.12em] ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
                   <span className="truncate">{currentCard.domain || "General Vocabulary"}</span>
