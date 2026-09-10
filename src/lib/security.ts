@@ -5,6 +5,34 @@ export function sanitizeText(str: string): string {
   return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+const MOJIBAKE_MARKERS = ['Ã', 'Â', 'â', 'ð', '�'];
+
+function mojibakeScore(value: string): number {
+  return MOJIBAKE_MARKERS.reduce((score, marker) => score + value.split(marker).length - 1, 0);
+}
+
+function repairMojibake(value: string): string {
+  let repaired = value;
+
+  for (let pass = 0; pass < 2; pass += 1) {
+    if (mojibakeScore(repaired) === 0) break;
+
+    try {
+      const bytes = new Uint8Array(repaired.split('').map((character) => {
+        const codePoint = character.codePointAt(0) ?? 0;
+        return codePoint <= 0xff ? codePoint : 0;
+      }));
+      const candidate = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      if (mojibakeScore(candidate) >= mojibakeScore(repaired)) break;
+      repaired = candidate;
+    } catch {
+      break;
+    }
+  }
+
+  return repaired;
+}
+
 export function validateImportData(data: unknown): { isValid: boolean; cards: Flashcard[]; error?: string } {
   if (!Array.isArray(data)) {
     return { isValid: false, cards: [], error: 'ข้อมูล JSON ต้องเป็น Array ของ Flashcard' };
@@ -21,7 +49,7 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
       return { isValid: false, cards: [], error: 'รายการลำดับที่ ' + i + ' ไม่ใช่วัตถุข้อมูลที่ถูกต้อง' };
     }
 
-    const { id, vocab, vocabThai, meaning, domain, pattern, scenario, nextReviewDate, interval, createdAt } = item as Record<string, any>;
+    const { id, vocab, vocabThai, meaning, domain, pattern, scenario, nextReviewDate, interval, createdAt, category } = item as Record<string, any>;
 
     if (typeof vocab !== 'string' || !vocab.trim() || vocab.length > 200) {
       return { isValid: false, cards: [], error: 'คำศัพท์ในลำดับที่ ' + i + ' ไม่ถูกต้อง' };
@@ -41,15 +69,20 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
 
     validCards.push({
       id: typeof id === 'string' && id.trim() ? id : 'card-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
-      vocab: vocab.trim(),
-      vocabThai: typeof vocabThai === 'string' ? vocabThai.trim() : '',
-      meaning: meaning.trim(),
-      domain: typeof domain === 'string' && domain.trim() ? domain.trim() : 'Domain 1: Security Principles',
-      pattern: typeof pattern === 'string' ? pattern : '',
-      scenario: typeof scenario === 'string' ? scenario : '',
+      vocab: repairMojibake(vocab.trim()),
+      vocabThai: typeof vocabThai === 'string' ? repairMojibake(vocabThai.trim()) : '',
+      meaning: repairMojibake(meaning.trim()),
+      domain: typeof domain === 'string' && domain.trim() ? repairMojibake(domain.trim()) : 'Domain 1: Security Principles',
+      pattern: typeof pattern === 'string' ? repairMojibake(pattern) : '',
+      scenario: typeof scenario === 'string' ? repairMojibake(scenario) : '',
       nextReviewDate: typeof nextReviewDate === 'string' ? nextReviewDate : new Date().toISOString(),
       interval: typeof interval === 'number' && interval > 0 ? interval : 1,
       createdAt: typeof createdAt === 'string' ? createdAt : new Date().toISOString(),
+      category: category === 'cert' || category === 'general'
+        ? category
+        : typeof domain === 'string' && domain !== 'General Vocab'
+          ? 'cert'
+          : 'general',
     });
   }
 

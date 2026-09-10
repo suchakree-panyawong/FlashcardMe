@@ -6,7 +6,7 @@ import { useLanguage } from '@/lib/language';
 
 interface DataImportExportProps {
   cards: Flashcard[];
-  onImportCards: (importedCards: Flashcard[]) => void;
+  onImportCards: (importedCards: Flashcard[]) => { addedCount: number; updatedCount: number; skippedCount: number };
   onResetToDefault: () => void;
   showToast: (title: string, message?: string, type?: 'success' | 'error' | 'info') => void;
 }
@@ -54,8 +54,12 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
           return;
         }
 
-        onImportCards(validatedCards);
-        showToast(t('importSuccess'), `${validatedCards.length} ${t('cards')}`, 'success');
+        const result = onImportCards(validatedCards);
+        showToast(
+          t('importSuccess'),
+          `${t('added')}: ${result.addedCount} · ${t('updated')}: ${result.updatedCount} · ${t('skipped')}: ${result.skippedCount}`,
+          result.skippedCount > 0 ? 'info' : 'success'
+        );
       } catch {
         showToast(t('invalidFile'), t('invalidJson'), 'error');
       }

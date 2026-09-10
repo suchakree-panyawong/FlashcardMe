@@ -1,4 +1,5 @@
 import { Flashcard } from '@/types/flashcard';
+import { validateImportData } from '@/lib/security';
 
 const publicCard = (
   id: string,
@@ -38,7 +39,11 @@ export function getStoredFlashcards(): Flashcard[] {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed: unknown = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed as Flashcard[];
+      const validated = validateImportData(parsed);
+      if (validated.isValid) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(validated.cards));
+        return validated.cards;
+      }
     }
 
     const starterCards = INITIAL_FLASHCARDS;

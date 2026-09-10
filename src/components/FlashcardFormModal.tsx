@@ -7,7 +7,7 @@ import { useLanguage } from "@/lib/language";
 interface FlashcardFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (card: Omit<Flashcard, "id" | "nextReviewDate" | "interval" | "createdAt">) => void;
+  onSave: (card: Omit<Flashcard, "id" | "nextReviewDate" | "interval" | "createdAt">) => boolean | void;
   editingCard?: Flashcard | null;
   defaultCategory?: CardCategory;
 }
@@ -62,7 +62,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
       return;
     }
 
-    onSave({
+    const saved = onSave({
       vocab: cleanVocab,
       vocabThai: cleanVocabThai,
       meaning: cleanMeaning,
@@ -72,7 +72,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
       category,
     });
 
-    onClose();
+    if (saved !== false) onClose();
   };
 
   return (

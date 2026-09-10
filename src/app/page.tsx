@@ -19,6 +19,7 @@ import { FlashcardFormModal } from "@/components/FlashcardFormModal";
 import { ToastContainer } from "@/components/Toast";
 import { InstallPWA } from "@/components/InstallPWA";
 import { LanguageProvider, useLanguage } from "@/lib/language";
+import { areDuplicateWords } from "@/lib/duplicateWords";
 import { Sparkles, Play } from "lucide-react";
 
 // ─── Toast helper ─────────────────────────────────────────────────────────────
@@ -113,7 +114,13 @@ function FlashcardApp() {
     (cardData: Omit<Flashcard, "id" | "nextReviewDate" | "interval" | "createdAt">) => {
       if (!cardData.vocab.trim()) {
         addToast(t("enterWord"), undefined, "error");
-        return;
+        return false;
+      }
+
+      if (!editingCard && cards.some((card) => areDuplicateWords(card.vocab, cardData.vocab))) {
+        const duplicateCard = cards.find((card) => areDuplicateWords(card.vocab, cardData.vocab));
+        addToast(t("duplicateWord"), duplicateCard?.vocab, "error");
+        return false;
       }
 
       setCards((prev) => {
@@ -137,8 +144,9 @@ function FlashcardApp() {
       });
       setIsModalOpen(false);
       setEditingCard(null);
+      return true;
     },
-    [cards, editingCard, addToast]
+    [editingCard, addToast, t]
   );
 
   const handleDeleteCard = useCallback(
@@ -155,11 +163,34 @@ function FlashcardApp() {
 
   const handleImportCards = useCallback(
     (importedCards: Flashcard[]) => {
-      setCards(importedCards);
-      saveStoredFlashcards(importedCards);
-      addToast(t("importSuccess"), `${importedCards.length} ${t("cards")}`);
+      const cardsById = new Map(cards.map((card) => [card.id, card]));
+      let addedCount = 0;
+      let updatedCount = 0;
+      let skippedCount = 0;
+
+      importedCards.forEach((card) => {
+        if (cardsById.has(card.id)) {
+          cardsById.set(card.id, card);
+          updatedCount += 1;
+          return;
+        }
+        const duplicateWord = Array.from(cardsById.values()).some((existingCard) =>
+          areDuplicateWords(existingCard.vocab, card.vocab)
+        );
+        if (duplicateWord) {
+          skippedCount += 1;
+          return;
+        }
+        cardsById.set(card.id, card);
+        addedCount += 1;
+      });
+
+      const mergedCards = Array.from(cardsById.values());
+      setCards(mergedCards);
+      saveStoredFlashcards(mergedCards);
+      return { addedCount, updatedCount, skippedCount };
     },
-    [addToast]
+    [cards]
   );
 
   const handleResetCards = useCallback(() => {
