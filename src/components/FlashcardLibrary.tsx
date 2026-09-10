@@ -24,7 +24,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
 }) => {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<"all" | CardCategory>(activeMode || "all");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "favorites" | CardCategory>(activeMode || "all");
 
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
@@ -35,8 +35,9 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
 
       const cardCat = card.category || (card.domain === "General Vocab" ? "general" : "cert");
       const matchCategory = categoryFilter === "all" || cardCat === categoryFilter;
+      const matchFavorite = categoryFilter !== "favorites" || card.isFavorite === true;
 
-      return matchSearch && matchCategory;
+      return matchSearch && matchCategory && matchFavorite;
     });
   }, [cards, searchTerm, categoryFilter]);
 
@@ -56,6 +57,18 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
         >
           <Plus className="w-4 h-4" />
           <span>{t("addCard")}</span>
+        </button>
+      </div>
+
+      <div className="flex items-center space-x-2 overflow-x-auto pb-1">
+        <button
+          onClick={() => setCategoryFilter("favorites")}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center space-x-1 ${
+            categoryFilter === "favorites" ? "bg-amber-500 text-white" : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+          }`}
+        >
+          <Star className="w-3 h-3" />
+          <span>{t("favorite")}</span>
         </button>
       </div>
 

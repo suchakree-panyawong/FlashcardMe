@@ -73,6 +73,20 @@ export function createSafetyBackup(cards: Flashcard[]): void {
   }
 }
 
+export function getSafetyBackup(): { createdAt: string; cards: Flashcard[] } | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = localStorage.getItem(SAFETY_BACKUP_KEY);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored) as { createdAt?: unknown; cards?: unknown };
+    const validated = validateImportData(parsed.cards);
+    if (!validated.isValid || typeof parsed.createdAt !== 'string') return null;
+    return { createdAt: parsed.createdAt, cards: validated.cards };
+  } catch {
+    return null;
+  }
+}
+
 export function getStoredFlashcards(): Flashcard[] {
   if (typeof window === 'undefined') return INITIAL_FLASHCARDS;
 

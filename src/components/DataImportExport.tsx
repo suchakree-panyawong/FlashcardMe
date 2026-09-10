@@ -8,6 +8,7 @@ interface DataImportExportProps {
   cards: Flashcard[];
   onImportCards: (importedCards: Flashcard[]) => { addedCount: number; updatedCount: number; skippedCount: number };
   onResetToDefault: () => void;
+  onRestoreBackup: () => boolean;
   showToast: (title: string, message?: string, type?: 'success' | 'error' | 'info') => void;
 }
 
@@ -15,6 +16,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
   cards,
   onImportCards,
   onResetToDefault,
+  onRestoreBackup,
   showToast,
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -131,6 +133,24 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
         <p className="text-[11px] text-slate-400 leading-relaxed thai-text">
           {t('importReplaces')}
         </p>
+      </div>
+
+      {/* Reset Section */}
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-soft flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-bold text-slate-700">{t('restoreBackup')}</p>
+          <p className="text-xs text-slate-400 mt-0.5">{t('restoreBackupHint')}</p>
+        </div>
+        <button
+          onClick={() => {
+            if (confirm(t('restoreConfirm')) && !onRestoreBackup()) {
+              showToast(t('noBackup'), undefined, 'error');
+            }
+          }}
+          className="shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-all active:scale-95"
+        >
+          {t('restoreBackup')}
+        </button>
       </div>
 
       {/* Reset Section */}

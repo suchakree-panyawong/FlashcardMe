@@ -109,6 +109,11 @@ const translations = {
     added: "เพิ่มใหม่",
     updated: "อัปเดต",
     skipped: "ข้าม",
+    restoreBackup: "กู้คืน Backup",
+    restoreBackupHint: "กู้คืนข้อมูลก่อนการ Import หรือ Reset ล่าสุด",
+    restoreConfirm: "กู้คืนข้อมูลจาก Backup ล่าสุดหรือไม่? ข้อมูลปัจจุบันจะถูกแทนที่",
+    backupRestored: "กู้คืน Backup แล้ว",
+    noBackup: "ยังไม่มี Backup ให้กู้คืน",
   },
   en: {
     home: "Home",
@@ -212,6 +217,11 @@ const translations = {
     added: "Added",
     updated: "Updated",
     skipped: "Skipped",
+    restoreBackup: "Restore backup",
+    restoreBackupHint: "Restore the data saved before the latest Import or Reset",
+    restoreConfirm: "Restore the latest backup? Current data will be replaced.",
+    backupRestored: "Backup restored",
+    noBackup: "No backup is available",
   },
 } as const;
 

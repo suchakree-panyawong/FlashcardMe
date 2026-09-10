@@ -6,6 +6,7 @@ import {
   getStoredFlashcards,
   saveStoredFlashcards,
   createSafetyBackup,
+  getSafetyBackup,
   getStudyStats,
   saveStudyStats,
   resetToDefaultFlashcards,
@@ -229,6 +230,15 @@ function FlashcardApp() {
     addToast(t("resetDone"));
   }, [addToast, t]);
 
+  const handleRestoreBackup = useCallback(() => {
+    const backup = getSafetyBackup();
+    if (!backup) return false;
+    setCards(backup.cards);
+    saveStoredFlashcards(backup.cards);
+    addToast(t("backupRestored"), `${backup.cards.length} ${t("cards")}`, "info");
+    return true;
+  }, [addToast, t]);
+
   const handleSelectMode = (mode: CardCategory) => {
     setActiveMode(mode);
     setActiveTab("home");
@@ -383,6 +393,7 @@ function FlashcardApp() {
             cards={cards}
             onImportCards={handleImportCards}
             onResetToDefault={handleResetCards}
+            onRestoreBackup={handleRestoreBackup}
             showToast={addToast}
           />
         )}
