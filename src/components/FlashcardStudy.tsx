@@ -133,7 +133,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         sessionInitialized.current = true;
         return;
       }
-      const nextList = savedCards.length > 0 ? savedCards : shuffleList(dueCards.slice(0, 20));
+      const nextList = savedCards.length > 0 ? savedCards : shuffleList(dueCards.slice(0, 50));
       const nextShuffled = savedCards.length > 0 ? Boolean(savedSession?.isShuffled) : true;
       const nextPromptDirections = savedCards.length > 0 ? savedPromptDirections : createPromptDirections(nextList);
       setStudyList(nextList);
@@ -170,7 +170,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         .filter((card): card is Flashcard => Boolean(card))
       : [];
     const nextShuffled = resume && savedSession ? savedSession.isShuffled : true;
-    const nextList = restoredCards.length > 0 ? restoredCards : shuffleList(dueCards.slice(0, 20));
+    const nextList = restoredCards.length > 0 ? restoredCards : shuffleList(dueCards.slice(0, 50));
     const nextCount = resume && savedSession ? savedSession.sessionCount : 0;
     const nextPromptDirections = resume && savedSession ? savedSession.promptDirections ?? createPromptDirections(nextList) : createPromptDirections(nextList);
 
@@ -189,7 +189,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   };
 
   const startNextChunk = () => {
-    const nextList = isShuffled ? shuffleList(dueCards.slice(0, 20)) : dueCards.slice(0, 20);
+    const nextList = isShuffled ? shuffleList(dueCards.slice(0, 50)) : dueCards.slice(0, 50);
     const nextPromptDirections = createPromptDirections(nextList);
     setStudyList(nextList);
     setCurrentIndex(0);
