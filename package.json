@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
+    "test": "node --test scripts/*.test.mjs",
     "validate:flashcards": "node scripts/validate-flashcards.mjs",
     "fix:flashcards": "node scripts/validate-flashcards.mjs --fix"
   },

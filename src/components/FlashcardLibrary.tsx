@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Flashcard, CardCategory } from "@/types/flashcard";
 import { speakText } from "@/lib/speech";
-import { Search, Plus, Trash2, Edit3, Volume2, BookOpen, ShieldCheck, Filter, Star } from "lucide-react";
+import { Search, Plus, Trash2, Edit3, Volume2, BookOpen, ShieldCheck, Filter, Star, Pencil } from "lucide-react";
 import { getDomainTagClassName } from "@/lib/domainTags";
 import { useLanguage } from "@/lib/language";
 
@@ -11,6 +11,7 @@ interface FlashcardLibraryProps {
   onAddCard: () => void;
   onEditCard: (card: Flashcard) => void;
   onDeleteCard: (cardId: string) => void;
+  onRenameDeck: (oldName: string, newName: string) => void;
   onToggleFavorite?: (cardId: string) => void;
 }
 
@@ -20,6 +21,7 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
   onAddCard,
   onEditCard,
   onDeleteCard,
+  onRenameDeck,
   onToggleFavorite,
 }) => {
   const { t } = useLanguage();
@@ -109,6 +111,40 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
           <option value="all">{t("allDecks")}</option>
           {decks.map((deck) => <option key={deck} value={deck}>{deck}</option>)}
         </select>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <p className="text-xs font-black text-slate-800">{t("deckManagement")}</p>
+          <span className="text-[10px] font-bold text-slate-400">{decks.length}</span>
+        </div>
+        <div className="space-y-2">
+          {decks.map((deck) => (
+            <div key={deck} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2">
+              <span className="truncate text-xs font-bold text-slate-600">{deck}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const nextName = prompt(t("renameDeckPrompt"), deck)?.trim();
+                  if (!nextName || nextName === deck) return;
+                  if (decks.includes(nextName)) {
+                    alert(t("renameDeckExists"));
+                    return;
+                  }
+                  if (confirm(t("renameDeckConfirm"))) {
+                    onRenameDeck(deck, nextName);
+                    if (deckFilter === deck) setDeckFilter(nextName);
+                  }
+                }}
+                className="shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                title={t("renameDeck")}
+                aria-label={`${t("renameDeck")}: ${deck}`}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Search Input */}

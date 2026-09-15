@@ -1,6 +1,7 @@
 ﻿import React, { useRef, useState } from 'react';
 import { Flashcard } from '@/types/flashcard';
 import { validateImportData } from '@/lib/security';
+import { buildImportPlan, ImportPlan } from '@/lib/importPlan';
 import { FileDown, FileUp, FileSpreadsheet, RotateCcw, ShieldCheck, Database } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 
@@ -22,6 +23,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { language, t } = useLanguage();
   const [pendingImport, setPendingImport] = useState<{ cards: Flashcard[]; fileName: string; format: string } | null>(null);
+  const importPlan: ImportPlan | null = pendingImport ? buildImportPlan(cards, pendingImport.cards) : null;
 
   const csvFields = ['id', 'vocab', 'vocabThai', 'meaning', 'domain', 'pattern', 'scenario', 'nextReviewDate', 'interval', 'category', 'createdAt', 'isFavorite', 'reviewCount', 'correctCount', 'incorrectCount'] as const;
 
@@ -144,6 +146,22 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
                 <p className="mt-1 text-xl font-black text-emerald-700">{pendingImport.cards.length}</p>
               </div>
             </div>
+            {importPlan && (
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-2">
+                  <p className="text-[10px] font-bold text-emerald-600">{t('added')}</p>
+                  <p className="text-lg font-black text-emerald-700">{importPlan.added.length}</p>
+                </div>
+                <div className="rounded-xl border border-sky-100 bg-sky-50 p-2">
+                  <p className="text-[10px] font-bold text-sky-600">{t('updated')}</p>
+                  <p className="text-lg font-black text-sky-700">{importPlan.updated.length}</p>
+                </div>
+                <div className="rounded-xl border border-amber-100 bg-amber-50 p-2">
+                  <p className="text-[10px] font-bold text-amber-600">{t('skipped')}</p>
+                  <p className="text-lg font-black text-amber-700">{importPlan.skipped.length}</p>
+                </div>
+              </div>
+            )}
             <div className="max-h-40 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-3">
               {pendingImport.cards.slice(0, 5).map((card) => (
                 <div key={card.id} className="flex items-center justify-between border-b border-slate-200 py-2 text-xs last:border-0">

@@ -266,6 +266,33 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     onFinishStudy();
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.tagName === "INPUT" || target?.tagName === "TEXTAREA") return;
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        finishStudy();
+        return;
+      }
+
+      if (event.key === " " && currentCard) {
+        event.preventDefault();
+        setIsFlipped((previous) => !previous);
+        return;
+      }
+
+      if (isFlipped && (event.key === "1" || event.key === "2" || event.key === "3")) {
+        event.preventDefault();
+        handleRating(event.key === "1" ? "hard" : event.key === "2" ? "good" : "easy");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentCard, finishStudy, handleRating, isFlipped]);
+
   if (resumePrompt) {
     return (
       <motion.div

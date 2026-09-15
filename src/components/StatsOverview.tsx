@@ -62,6 +62,21 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
     }))
     .sort((first, second) => second.due - first.due || second.total - first.total)
     .slice(0, 3);
+  const deckInsights = Array.from(new Set(cards.map((card) => card.deck || (card.category === 'cert' ? 'ISC2 CC' : 'General English'))))
+    .map((deck) => {
+      const deckCards = cards.filter((card) => (card.deck || (card.category === 'cert' ? 'ISC2 CC' : 'General English')) === deck);
+      const deckCorrect = deckCards.reduce((sum, card) => sum + (card.correctCount ?? 0), 0);
+      const deckIncorrect = deckCards.reduce((sum, card) => sum + (card.incorrectCount ?? 0), 0);
+      const deckAnswered = deckCorrect + deckIncorrect;
+      return {
+        deck,
+        total: deckCards.length,
+        due: dueCards.filter((card) => (card.deck || (card.category === 'cert' ? 'ISC2 CC' : 'General English')) === deck).length,
+        accuracy: deckAnswered > 0 ? Math.round((deckCorrect / deckAnswered) * 100) : 0,
+      };
+    })
+    .sort((first, second) => second.due - first.due || second.total - first.total)
+    .slice(0, 3);
   const difficultCards = [...cards]
     .filter((card) => (card.incorrectCount ?? 0) > 0)
     .sort((first, second) => (second.incorrectCount ?? 0) - (first.incorrectCount ?? 0))
@@ -285,6 +300,19 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
 
       {totalCards > 0 && (
         <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4 shadow-soft">
+            <p className="text-xs font-black text-slate-800">{t('deckInsights')}</p>
+            <div className="mt-3 space-y-2">
+              {deckInsights.map((insight) => (
+                <div key={insight.deck} className="flex items-center justify-between gap-3 text-xs">
+                  <span className="truncate font-semibold text-slate-600">{insight.deck}</span>
+                  <span className="shrink-0 text-right font-black text-slate-500">
+                    {insight.total} / {insight.due} / {insight.accuracy}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
             <p className="text-xs font-black text-slate-800">{t('domainInsights')}</p>
             <div className="mt-3 space-y-2">

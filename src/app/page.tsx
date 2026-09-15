@@ -25,6 +25,7 @@ import { ToastContainer } from "@/components/Toast";
 import { InstallPWA } from "@/components/InstallPWA";
 import { LanguageProvider, useLanguage } from "@/lib/language";
 import { areDuplicateWords } from "@/lib/duplicateWords";
+import { buildImportPlan } from "@/lib/importPlan";
 import { AlertCircle, Layers, Sparkles, Star } from "lucide-react";
 
 // ─── Toast helper ─────────────────────────────────────────────────────────────
@@ -219,35 +220,26 @@ function FlashcardApp() {
     [addToast]
   );
 
+  const handleRenameDeck = useCallback(
+    (oldName: string, newName: string) => {
+      const updated = cards.map((card) => {
+        const deck = card.deck || (card.category === "cert" ? "ISC2 CC" : "General English");
+        return deck === oldName ? { ...card, deck: newName } : card;
+      });
+      setCards(updated);
+      saveStoredFlashcards(updated);
+      addToast(t("deckRenamed"), newName);
+    },
+    [cards, addToast, t]
+  );
+
   const handleImportCards = useCallback(
     (importedCards: Flashcard[]) => {
       createSafetyBackup(cards);
-      const cardsById = new Map(cards.map((card) => [card.id, card]));
-      let addedCount = 0;
-      let updatedCount = 0;
-      let skippedCount = 0;
-
-      importedCards.forEach((card) => {
-        if (cardsById.has(card.id)) {
-          cardsById.set(card.id, card);
-          updatedCount += 1;
-          return;
-        }
-        const duplicateWord = Array.from(cardsById.values()).some((existingCard) =>
-          areDuplicateWords(existingCard.vocab, card.vocab)
-        );
-        if (duplicateWord) {
-          skippedCount += 1;
-          return;
-        }
-        cardsById.set(card.id, card);
-        addedCount += 1;
-      });
-
-      const mergedCards = Array.from(cardsById.values());
-      setCards(mergedCards);
-      saveStoredFlashcards(mergedCards);
-      return { addedCount, updatedCount, skippedCount };
+      const plan = buildImportPlan(cards, importedCards);
+      setCards(plan.cards);
+      saveStoredFlashcards(plan.cards);
+      return { addedCount: plan.added.length, updatedCount: plan.updated.length, skippedCount: plan.skipped.length };
     },
     [cards]
   );
@@ -451,6 +443,7 @@ function FlashcardApp() {
               setIsModalOpen(true);
             }}
             onDeleteCard={handleDeleteCard}
+            onRenameDeck={handleRenameDeck}
             onToggleFavorite={(cardId) => {
               const updated = cards.map((card) => card.id === cardId ? { ...card, isFavorite: !card.isFavorite } : card);
               setCards(updated);
