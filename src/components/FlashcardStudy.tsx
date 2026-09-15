@@ -78,6 +78,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [promptDirections, setPromptDirections] = useState<Record<string, boolean>>({});
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const didSwipe = useRef(false);
   const sessionInitialized = useRef(false);
 
   const playPositiveFeedback = () => {
@@ -479,7 +480,11 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       <div
         className="w-full min-h-[460px] cursor-pointer select-none"
         onClick={() => {
-          if (!isDragging) setIsFlipped(!isFlipped);
+          if (isDragging || didSwipe.current) {
+            didSwipe.current = false;
+            return;
+          }
+          setIsFlipped(!isFlipped);
         }}
       >
         <AnimatePresence mode="wait">
@@ -545,11 +550,14 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               exit={{ rotateY: -90, opacity: 0 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
               drag="x"
+              dragDirectionLock
               dragConstraints={{ left: -180, right: 180 }}
               dragElastic={0.7}
+              dragTransition={{ bounceStiffness: 420, bounceDamping: 28 }}
               whileDrag={{ scale: 1.02, cursor: "grabbing" }}
               onDragStart={() => {
                 setIsDragging(true);
+                didSwipe.current = true;
                 setSwipeDirection(null);
               }}
               onDrag={(_, info) => {
@@ -566,7 +574,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                   setSwipeDirection(null);
                 }
               }}
-              className="relative flex min-h-[460px] w-full flex-col justify-between overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-b from-indigo-50/60 via-white to-white p-5 shadow-[0_18px_38px_rgba(79,70,229,0.08)]"
+              className="relative flex min-h-[460px] w-full touch-pan-y flex-col justify-between overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-b from-indigo-50/60 via-white to-white p-5 shadow-[0_18px_38px_rgba(79,70,229,0.08)]"
             >
               {swipeDirection && (
                 <div className={`pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-[28px] border-2 ${swipeDirection === "left" ? "border-slate-300 bg-slate-100/45" : "border-emerald-300 bg-emerald-100/45"}`}>
@@ -656,8 +664,10 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="grid grid-cols-3 gap-2.5 pt-2"
+            className="space-y-2 pt-2"
           >
+            <p className="text-center text-[10px] font-semibold text-slate-400">{t("swipeHint")}</p>
+            <div className="grid grid-cols-3 gap-2.5">
             <button
               onClick={() => handleRating("hard")}
               aria-label={t("reviewAgain")}
@@ -693,6 +703,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               <span className="text-[11px] font-extrabold">{t("gotIt")}</span>
               <span className="text-[9px] font-medium text-emerald-500">{t("reviewInLongerDays")}</span>
             </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
