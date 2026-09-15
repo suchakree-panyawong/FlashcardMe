@@ -1,4 +1,4 @@
-﻿import React, { useRef } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { Flashcard } from '@/types/flashcard';
 import { validateImportData } from '@/lib/security';
 import { FileDown, FileUp, FileSpreadsheet, RotateCcw, ShieldCheck, Database } from 'lucide-react';
@@ -21,6 +21,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { language, t } = useLanguage();
+  const [pendingImport, setPendingImport] = useState<{ cards: Flashcard[]; fileName: string; format: string } | null>(null);
 
   const csvFields = ['id', 'vocab', 'vocabThai', 'meaning', 'domain', 'pattern', 'scenario', 'nextReviewDate', 'interval', 'category', 'createdAt', 'isFavorite', 'reviewCount', 'correctCount', 'incorrectCount'] as const;
 
@@ -111,12 +112,11 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
           return;
         }
 
-        const result = onImportCards(validatedCards);
-        showToast(
-          t('importSuccess'),
-          `${t('added')}: ${result.addedCount} · ${t('updated')}: ${result.updatedCount} · ${t('skipped')}: ${result.skippedCount}`,
-          result.skippedCount > 0 ? 'info' : 'success'
-        );
+        setPendingImport({
+          cards: validatedCards,
+          fileName: file.name,
+          format: file.name.toLowerCase().endsWith('.csv') ? 'CSV' : 'JSON',
+        });
       } catch {
         showToast(t('invalidFile'), t('invalidJson'), 'error');
       }
@@ -127,6 +127,47 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
 
   return (
     <div className="space-y-4 animate-fadeIn">
+      {pendingImport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="import-preview-title">
+          <div className="w-full max-w-md space-y-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
+            <div>
+              <h3 id="import-preview-title" className="text-lg font-black text-slate-900">{t('importPreviewTitle')}</h3>
+              <p className="mt-1 truncate text-xs text-slate-500">{pendingImport.fileName}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-slate-50 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{t('importFormat')}</p>
+                <p className="mt-1 text-xl font-black text-slate-800">{pendingImport.format}</p>
+              </div>
+              <div className="rounded-2xl bg-emerald-50 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-600">{t('importCards')}</p>
+                <p className="mt-1 text-xl font-black text-emerald-700">{pendingImport.cards.length}</p>
+              </div>
+            </div>
+            <div className="max-h-40 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-3">
+              {pendingImport.cards.slice(0, 5).map((card) => (
+                <div key={card.id} className="flex items-center justify-between border-b border-slate-200 py-2 text-xs last:border-0">
+                  <span className="font-bold text-slate-700">{card.vocab}</span>
+                  <span className="max-w-[45%] truncate text-slate-500">{card.vocabThai}</span>
+                </div>
+              ))}
+              {pendingImport.cards.length > 5 && <p className="pt-2 text-center text-[11px] text-slate-400">+ {pendingImport.cards.length - 5}</p>}
+            </div>
+            <p className="text-xs leading-relaxed text-slate-500">{t('importPreviewHint')}</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={() => setPendingImport(null)} className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-200">{t('cancel')}</button>
+              <button
+                onClick={() => {
+                  const result = onImportCards(pendingImport.cards);
+                  setPendingImport(null);
+                  showToast(t('importSuccess'), `${t('added')}: ${result.addedCount} · ${t('updated')}: ${result.updatedCount} · ${t('skipped')}: ${result.skippedCount}`, result.skippedCount > 0 ? 'info' : 'success');
+                }}
+                className="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-black text-white hover:bg-indigo-700"
+              >{t('confirmImport')}</button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header Card */}
       <div className="surface-lift bg-white border border-slate-200/80 rounded-3xl p-5 shadow-soft">
         <div className="flex items-center space-x-2 mb-1">

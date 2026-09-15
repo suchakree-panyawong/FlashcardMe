@@ -164,6 +164,13 @@ const translations = {
     speedRunEmpty: "ยังไม่มีการ์ดที่ถึงเวลาทบทวน",
     secondsPerCard: "วินาทีต่อใบ",
     consistency: "ความสม่ำเสมอ",
+    importPreviewTitle: "ตรวจสอบก่อนนำเข้า",
+    importFormat: "รูปแบบไฟล์",
+    importCards: "จำนวนการ์ด",
+    importPreviewHint: "ตรวจสอบตัวอย่างแล้วกดยืนยันเพื่อเพิ่มข้อมูลเข้าคลังเดิม",
+    cancel: "ยกเลิก",
+    confirmImport: "ยืนยันนำเข้า",
+    clearFilters: "ล้างตัวกรอง",
   },
   en: {
     home: "Home",
@@ -322,6 +329,13 @@ const translations = {
     speedRunEmpty: "No cards are due for review",
     secondsPerCard: "seconds per card",
     consistency: "Consistency",
+    importPreviewTitle: "Review before import",
+    importFormat: "File format",
+    importCards: "Cards",
+    importPreviewHint: "Review the preview, then confirm to merge these cards into your existing library.",
+    cancel: "Cancel",
+    confirmImport: "Confirm import",
+    clearFilters: "Clear filters",
   },
 } as const;
 

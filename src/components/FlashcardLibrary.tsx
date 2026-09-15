@@ -108,6 +108,24 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
         />
       </div>
 
+      <div className="flex items-center justify-between gap-3 text-xs font-bold text-slate-400">
+        <span>{filteredCards.length} / {cards.length} {t("cardCount")}</span>
+        {(searchTerm || categoryFilter !== (activeMode || "all") || domainFilter !== "all" || favoriteOnly || neverStudiedOnly) && (
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setCategoryFilter(activeMode || "all");
+              setDomainFilter("all");
+              setFavoriteOnly(false);
+              setNeverStudiedOnly(false);
+            }}
+            className="text-indigo-600 hover:text-indigo-700"
+          >
+            {t("clearFilters")}
+          </button>
+        )}
+      </div>
+
       {/* Filter Tabs */}
       <div className="flex items-center space-x-2 overflow-x-auto pb-1">
         <button

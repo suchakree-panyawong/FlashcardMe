@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { AlarmClock, ArrowLeft, BrainCircuit, Check, CircleDot, RotateCcw, Trophy } from "lucide-react";
 import { Flashcard, ReviewRating } from "@/types/flashcard";
@@ -27,6 +27,7 @@ export const SpeedRunStudy: React.FC<SpeedRunStudyProps> = ({ cards, onReviewCar
   const [score, setScore] = useState(0);
   const [timedOut, setTimedOut] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const handledCardId = useRef<string | null>(null);
 
   const currentCard = runCards[currentIndex];
   const hasFinished = isComplete || currentIndex >= runCards.length;
@@ -40,6 +41,8 @@ export const SpeedRunStudy: React.FC<SpeedRunStudyProps> = ({ cards, onReviewCar
       setSecondsLeft((previous) => {
         if (previous <= 1) {
           window.clearInterval(timer);
+          if (handledCardId.current === currentCard.id) return 0;
+          handledCardId.current = currentCard.id;
           onReviewCard(currentCard.id, "hard");
           setTimedOut((count) => count + 1);
           setCurrentIndex((index) => index + 1);
@@ -58,6 +61,8 @@ export const SpeedRunStudy: React.FC<SpeedRunStudyProps> = ({ cards, onReviewCar
 
   const handleRating = (rating: ReviewRating) => {
     if (!currentCard) return;
+    if (handledCardId.current === currentCard.id) return;
+    handledCardId.current = currentCard.id;
     onReviewCard(currentCard.id, rating);
     if (rating === "easy") setScore((value) => value + 2);
     if (rating === "good") setScore((value) => value + 1);
