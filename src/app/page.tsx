@@ -25,7 +25,7 @@ import { ToastContainer } from "@/components/Toast";
 import { InstallPWA } from "@/components/InstallPWA";
 import { LanguageProvider, useLanguage } from "@/lib/language";
 import { areDuplicateWords } from "@/lib/duplicateWords";
-import { buildImportPlan } from "@/lib/importPlan";
+import { buildImportPlan, ImportAction } from "@/lib/importPlan";
 import { AlertCircle, Layers, Sparkles, Star } from "lucide-react";
 
 // ─── Toast helper ─────────────────────────────────────────────────────────────
@@ -234,9 +234,9 @@ function FlashcardApp() {
   );
 
   const handleImportCards = useCallback(
-    (importedCards: Flashcard[]) => {
+    (importedCards: Flashcard[], decisions?: Record<string, ImportAction>) => {
       createSafetyBackup(cards);
-      const plan = buildImportPlan(cards, importedCards);
+      const plan = buildImportPlan(cards, importedCards, decisions);
       setCards(plan.cards);
       saveStoredFlashcards(plan.cards);
       return { addedCount: plan.added.length, updatedCount: plan.updated.length, skippedCount: plan.skipped.length };

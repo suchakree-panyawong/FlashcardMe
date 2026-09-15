@@ -1,13 +1,13 @@
 ﻿import React, { useRef, useState } from 'react';
 import { Flashcard } from '@/types/flashcard';
 import { validateImportData } from '@/lib/security';
-import { buildImportPlan, ImportPlan } from '@/lib/importPlan';
+import { buildImportPlan, ImportAction, ImportPlan } from '@/lib/importPlan';
 import { FileDown, FileUp, FileSpreadsheet, RotateCcw, ShieldCheck, Database } from 'lucide-react';
 import { useLanguage } from '@/lib/language';
 
 interface DataImportExportProps {
   cards: Flashcard[];
-  onImportCards: (importedCards: Flashcard[]) => { addedCount: number; updatedCount: number; skippedCount: number };
+  onImportCards: (importedCards: Flashcard[], decisions?: Record<string, ImportAction>) => { addedCount: number; updatedCount: number; skippedCount: number };
   onResetToDefault: () => void;
   onRestoreBackup: () => boolean;
   showToast: (title: string, message?: string, type?: 'success' | 'error' | 'info') => void;
@@ -23,7 +23,8 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { language, t } = useLanguage();
   const [pendingImport, setPendingImport] = useState<{ cards: Flashcard[]; fileName: string; format: string } | null>(null);
-  const importPlan: ImportPlan | null = pendingImport ? buildImportPlan(cards, pendingImport.cards) : null;
+  const [importDecisions, setImportDecisions] = useState<Record<string, ImportAction>>({});
+  const importPlan: ImportPlan | null = pendingImport ? buildImportPlan(cards, pendingImport.cards, importDecisions) : null;
 
   const csvFields = ['id', 'vocab', 'vocabThai', 'meaning', 'domain', 'pattern', 'scenario', 'nextReviewDate', 'interval', 'category', 'createdAt', 'isFavorite', 'reviewCount', 'correctCount', 'incorrectCount'] as const;
 
@@ -119,6 +120,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
           fileName: file.name,
           format: file.name.toLowerCase().endsWith('.csv') ? 'CSV' : 'JSON',
         });
+        setImportDecisions({});
       } catch {
         showToast(t('invalidFile'), t('invalidJson'), 'error');
       }
@@ -162,6 +164,28 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
                 </div>
               </div>
             )}
+            {importPlan && (
+              <div className="max-h-56 space-y-2 overflow-y-auto rounded-2xl border border-slate-200 p-2">
+                {importPlan.items.map(({ card, action, reason }) => (
+                  <div key={card.id} className="flex items-center gap-2 rounded-xl bg-slate-50 p-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-black text-slate-700">{card.vocab}</p>
+                      <p className="truncate text-[10px] text-slate-400">{reason === 'id-match' ? 'ID match' : reason === 'duplicate-word' ? 'Duplicate word' : 'New card'}</p>
+                    </div>
+                    <select
+                      value={action}
+                      onChange={(event) => setImportDecisions((previous) => ({ ...previous, [card.id]: event.target.value as ImportAction }))}
+                      aria-label={`${card.vocab} import action`}
+                      className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[10px] font-bold text-slate-600"
+                    >
+                      <option value="add">{t('importAdd')}</option>
+                      <option value="update">{t('importUpdate')}</option>
+                      <option value="skip">{t('importSkip')}</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="max-h-40 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-3">
               {pendingImport.cards.slice(0, 5).map((card) => (
                 <div key={card.id} className="flex items-center justify-between border-b border-slate-200 py-2 text-xs last:border-0">
@@ -176,8 +200,9 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
               <button onClick={() => setPendingImport(null)} className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-200">{t('cancel')}</button>
               <button
                 onClick={() => {
-                  const result = onImportCards(pendingImport.cards);
+                  const result = onImportCards(pendingImport.cards, importDecisions);
                   setPendingImport(null);
+                  setImportDecisions({});
                   showToast(t('importSuccess'), `${t('added')}: ${result.addedCount} · ${t('updated')}: ${result.updatedCount} · ${t('skipped')}: ${result.skippedCount}`, result.skippedCount > 0 ? 'info' : 'success');
                 }}
                 className="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-black text-white hover:bg-indigo-700"
