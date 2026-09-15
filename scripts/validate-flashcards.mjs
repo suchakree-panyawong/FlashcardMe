@@ -1,6 +1,8 @@
 import fs from "node:fs";
 
-const file = process.argv[2] ?? "data/isc2-cc-master-flashcards-2026-clean.json";
+const args = process.argv.slice(2);
+const shouldFix = args.includes("--fix");
+const file = args.find((argument) => argument !== "--fix") ?? "data/isc2-cc-master-flashcards-2026-clean.json";
 
 const requiredFields = [
   "id",
@@ -21,6 +23,33 @@ const hasThai = (value) => Array.from(value).some((character) => {
   return codePoint >= 0x0e00 && codePoint <= 0x0e7f;
 });
 const hasMojibake = (value) => mojibakeMarkers.some((marker) => value.includes(marker));
+const mojibakeScore = (value) => mojibakeMarkers.reduce((score, marker) => score + value.split(marker).length - 1, 0);
+const cp1252Bytes = {
+  0x20ac: 0x80, 0x201a: 0x82, 0x192: 0x83, 0x201e: 0x84, 0x2026: 0x85,
+  0x2020: 0x86, 0x2021: 0x87, 0x2c6: 0x88, 0x2030: 0x89, 0x160: 0x8a,
+  0x2039: 0x8b, 0x152: 0x8c, 0x17d: 0x8e, 0x2018: 0x91, 0x2019: 0x92,
+  0x201c: 0x93, 0x201d: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97,
+  0x2dc: 0x98, 0x2122: 0x99, 0x161: 0x9a, 0x203a: 0x9b, 0x153: 0x9c,
+  0x17e: 0x9e, 0x178: 0x9f,
+};
+const repairMojibake = (value) => {
+  let repaired = value;
+  for (let pass = 0; pass < 4; pass += 1) {
+    if (mojibakeScore(repaired) === 0) break;
+    try {
+      const bytes = new Uint8Array(Array.from(repaired).map((character) => {
+        const codePoint = character.codePointAt(0) ?? 0;
+        return codePoint <= 0xff ? codePoint : cp1252Bytes[codePoint] ?? 0;
+      }));
+      const candidate = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+      if (mojibakeScore(candidate) >= mojibakeScore(repaired)) break;
+      repaired = candidate;
+    } catch {
+      break;
+    }
+  }
+  return repaired;
+};
 
 let data;
 try {
@@ -28,6 +57,19 @@ try {
 } catch (error) {
   console.error(`Invalid JSON: ${error.message}`);
   process.exit(1);
+}
+
+if (shouldFix && Array.isArray(data)) {
+  const textFields = ["id", "vocab", "vocabThai", "meaning", "domain", "pattern", "scenario", "deck", "category"];
+  data = data.map((card) => {
+    if (!card || typeof card !== "object") return card;
+    return Object.fromEntries(Object.entries(card).map(([field, value]) => [
+      field,
+      textFields.includes(field) && typeof value === "string" ? repairMojibake(value) : value,
+    ]));
+  });
+  fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  console.log(`Repaired mojibake text in ${file}`);
 }
 
 const issues = [];

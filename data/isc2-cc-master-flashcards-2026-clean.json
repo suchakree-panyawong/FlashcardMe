@@ -80,11 +80,11 @@
   {
     "id": "cc-master-007",
     "vocab": "Masquerade",
-    "vocabThai": "à¸›à¸¥à¸­à¸¡à¸•à¸±à¸§à¹€à¸›à¹‡à¸™à¸œà¸¹à¹‰à¸­à¸·à¹ˆà¸™",
+    "vocabThai": "ปลอมตัวเป็นผู้อื่น",
     "meaning": "การแอบอ้างตัวตนของผู้ใช้ ระบบ หรือองค์กรอื่นเพื่อให้ได้รับความไว้วางใจหรือสิทธิ์",
     "domain": "Domain 1: Security Principles",
     "pattern": "Spoofing; impersonation; false identity",
-    "scenario": "Exam cue: à¸œà¸¹à¹‰à¹‚à¸ˆà¸¡à¸•à¸µà¹ƒà¸Šà¹‰à¸šà¸±à¸à¸Šà¸µà¸«à¸£à¸·à¸­à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸£à¸°à¸šà¸¸à¸•à¸±à¸§à¸•à¸™à¸‚à¸­à¸‡à¸œà¸¹à¹‰à¸­à¸·à¹ˆà¸™à¸„à¸·à¸­ Masquerade. Real-world: à¸­à¸µà¹€à¸¡à¸¥à¸›à¸¥à¸­à¸¡à¹€à¸›à¹‡à¸™à¸œà¸¹à¹‰à¸šà¸£à¸´à¸«à¸²à¸£à¹€à¸žà¸·à¹ˆà¸­à¸ªà¸±à¹ˆà¸‡à¹‚à¸­à¸™à¹€à¸‡à¸´à¸™.",
+    "scenario": "Exam cue: ผู้โจมตีใช้บัญชีหรือข้อมูลระบุตัวตนของผู้อื่นคือ Masquerade. Real-world: อีเมลปลอมเป็นผู้บริหารเพื่อสั่งโอนเงิน.",
     "nextReviewDate": "2026-09-10T08:57:22.094Z",
     "interval": 1,
     "category": "cert",
@@ -171,8 +171,8 @@
   {
     "id": "cc-master-014",
     "vocab": "Baseline",
-    "vocabThai": "à¸¡à¸²à¸•à¸£à¸à¸²à¸™à¸„à¸§à¸²à¸¡à¸›à¸¥à¸­à¸”à¸ à¸±à¸¢à¸‚à¸±à¹‰à¸™à¸•à¹ˆà¸³",
-    "meaning": "à¸„à¹ˆà¸²à¸¡à¸²à¸•à¸£à¸à¸²à¸™à¸«à¸£à¸·à¸­ configuration à¸‚à¸±à¹‰à¸™à¸•à¹ˆà¸³à¸—à¸µà¹ˆà¸£à¸°à¸šà¸šà¸•à¹‰à¸­à¸‡à¸œà¹ˆà¸²à¸™à¹€à¸žà¸·à¹ˆà¸­à¹ƒà¸«à¹‰à¸¡à¸µà¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¸›à¸¥à¸­à¸”à¸ à¸±à¸¢à¸ªà¸¡à¹ˆà¸³à¹€à¸ªà¸¡à¸­",
+    "vocabThai": "มาตรฐานความปลอดภัยขั้นต่ำ",
+    "meaning": "ค่ามาตรฐานหรือ configuration ขั้นต่ำที่ระบบต้องผ่านเพื่อให้มีระดับความปลอดภัยสม่ำเสมอ",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Minimum standard; secure configuration; benchmark",
     "scenario": "Exam cue: Baseline ใช้เปรียบเทียบสถานะจริงกับค่ามาตรฐาน. Real-world: workstation ทุกเครื่องต้องมี patch และ encryption ตาม baseline เดียวกัน.",
@@ -262,7 +262,7 @@
   {
     "id": "cc-master-021",
     "vocab": "Explicitly",
-    "vocabThai": "à¸­à¸¢à¹ˆà¸²à¸‡à¸£à¸°à¸šà¸¸à¹€à¸ˆà¸²à¸°à¸ˆà¸‡à¸Šà¸±à¸”à¹€à¸ˆà¸™",
+    "vocabThai": "อย่างระบุเจาะจงชัดเจน",
     "meaning": "การระบุเงื่อนไขหรือคำสั่งไว้อย่างชัดแจ้ง ไม่ต้องตีความจากค่าเริ่มต้น",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Explicit allow; explicit deny",
@@ -288,7 +288,7 @@
   {
     "id": "cc-master-023",
     "vocab": "Subsequent",
-    "vocabThai": "à¸‹à¸¶à¹ˆà¸‡à¸•à¸²à¸¡à¸¡à¸²à¸—à¸µà¸«à¸¥à¸±à¸‡ / à¸¥à¸³à¸”à¸±à¸šà¸–à¸±à¸”à¹„à¸›",
+    "vocabThai": "ซึ่งตามมาทีหลัง / ลำดับถัดไป",
     "meaning": "เหตุการณ์หรือขั้นตอนที่เกิดขึ้นหลังจากสิ่งหนึ่งสิ่งใด",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Followed by; next step; later phase",
@@ -327,7 +327,7 @@
   {
     "id": "cc-master-026",
     "vocab": "Malicious",
-    "vocabThai": "à¸›à¸£à¸°à¸ªà¸‡à¸„à¹Œà¸£à¹‰à¸²à¸¢ / à¸¡à¸µà¹€à¸ˆà¸•à¸™à¸²à¹‚à¸ˆà¸¡à¸•à¸µ",
+    "vocabThai": "ประสงค์ร้าย / มีเจตนาโจมตี",
     "meaning": "มีเจตนาทำลาย ขโมย หลอกลวง หรือทำให้ระบบและข้อมูลเสียหาย",
     "domain": "Domain 1: Security Principles",
     "pattern": "Malware; attacker; hostile intent",
@@ -457,7 +457,7 @@
   {
     "id": "cc-master-036",
     "vocab": "Non-repudiation",
-    "vocabThai": "à¸«à¹‰à¸²à¸¡à¸›à¸à¸´à¹€à¸ªà¸˜à¸„à¸§à¸²à¸¡à¸£à¸±à¸šà¸œà¸´à¸”à¸Šà¸­à¸š",
+    "vocabThai": "ห้ามปฏิเสธความรับผิดชอบ",
     "meaning": "คุณสมบัติที่ช่วยพิสูจน์ว่าผู้ใดเป็นผู้ส่งหรือผู้กระทำ ทำให้ปฏิเสธการกระทำภายหลังได้ยาก",
     "domain": "Domain 1: Security Principles",
     "pattern": "Digital signature; proof of action; audit evidence",
@@ -483,7 +483,7 @@
   {
     "id": "cc-master-038",
     "vocab": "Mitigate",
-    "vocabThai": "à¸¥à¸”à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡",
+    "vocabThai": "ลดความเสี่ยง",
     "meaning": "ลดโอกาสเกิดหรือผลกระทบของความเสี่ยงด้วยการใช้ control หรือมาตรการที่เหมาะสม",
     "domain": "Domain 2: Security Governance",
     "pattern": "Antivirus; training; reduce likelihood or impact",
@@ -500,7 +500,7 @@
     "meaning": "ย้ายภาระหรือผลกระทบทางการเงินของความเสี่ยงไปยังบุคคลหรือองค์กรอื่นบางส่วน",
     "domain": "Domain 2: Security Governance",
     "pattern": "Insurance; outsource; shared responsibility",
-    "scenario": "Exam cue: Transfer à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸—à¸³à¹ƒà¸«à¹‰à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸«à¸²à¸¢à¹„à¸›à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”. Real-world: à¸‹à¸·à¹‰à¸­ cyber insurance à¸«à¸£à¸·à¸­à¸—à¸³à¸ªà¸±à¸à¸à¸²à¹ƒà¸«à¹‰ vendor à¸£à¸±à¸šà¸œà¸´à¸”à¸Šà¸­à¸šà¸šà¸²à¸‡à¸ªà¹ˆà¸§à¸™.",
+    "scenario": "Exam cue: Transfer ไม่ได้ทำให้ความเสี่ยงหายไปทั้งหมด. Real-world: ซื้อ cyber insurance หรือทำสัญญาให้ vendor รับผิดชอบบางส่วน.",
     "nextReviewDate": "2026-09-10T08:57:22.094Z",
     "interval": 1,
     "category": "cert",
@@ -509,7 +509,7 @@
   {
     "id": "cc-master-040",
     "vocab": "Accept",
-    "vocabThai": "à¸¢à¸­à¸¡à¸£à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡",
+    "vocabThai": "ยอมรับความเสี่ยง",
     "meaning": "การตัดสินใจรับความเสี่ยงไว้โดยมีความเข้าใจและการอนุมัติจากผู้มีอำนาจ",
     "domain": "Domain 2: Security Governance",
     "pattern": "Cost greater than benefit; risk owner approval",
@@ -587,7 +587,7 @@
   {
     "id": "cc-master-046",
     "vocab": "Reconnaissance",
-    "vocabThai": "à¸¥à¸²à¸”à¸•à¸£à¸°à¹€à¸§à¸™à¸«à¸²à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸›à¹‰à¸²à¸«à¸¡à¸²à¸¢",
+    "vocabThai": "ลาดตระเวนหาข้อมูลเป้าหมาย",
     "meaning": "ขั้นตอนการค้นหาและรวบรวมข้อมูลเกี่ยวกับเป้าหมายก่อนเริ่มการโจมตีหรือการทดสอบ",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Footprinting; scanning; first phase",
@@ -600,7 +600,7 @@
   {
     "id": "cc-master-047",
     "vocab": "Tailgating / Piggybacking",
-    "vocabThai": "à¹€à¸”à¸´à¸™à¸•à¸²à¸¡à¸«à¸¥à¸±à¸‡à¸œà¹ˆà¸²à¸™à¸›à¸£à¸°à¸•à¸¹",
+    "vocabThai": "เดินตามหลังผ่านประตู",
     "meaning": "การเข้าสถานที่โดยอาศัยผู้มีสิทธิ์เปิดประตูให้ โดยผู้บุกรุกไม่ได้ผ่านการตรวจสอบสิทธิ์ของตนเอง",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Physical bypass; unauthorized entry",
@@ -626,7 +626,7 @@
   {
     "id": "cc-master-049",
     "vocab": "Dumpster Diving",
-    "vocabThai": "à¸„à¸¸à¹‰à¸¢à¸‚à¸¢à¸°à¸«à¸²à¸‚à¹‰à¸­à¸¡à¸¹à¸¥",
+    "vocabThai": "คุ้ยขยะหาข้อมูล",
     "meaning": "การค้นหาข้อมูลที่ถูกทิ้งในเอกสาร อุปกรณ์ หรือสื่อบันทึกซึ่งยังมีข้อมูลสำคัญหลงเหลือ",
     "domain": "Domain 1: Security Principles",
     "pattern": "Shredder; paper disposal; discarded media",
@@ -691,7 +691,7 @@
   {
     "id": "cc-master-054",
     "vocab": "Comprehensive",
-    "vocabThai": "à¸„à¸£à¸­à¸šà¸„à¸¥à¸¸à¸¡à¹€à¸šà¹‡à¸”à¹€à¸ªà¸£à¹‡à¸ˆ",
+    "vocabThai": "ครอบคลุมเบ็ดเสร็จ",
     "meaning": "ครอบคลุมองค์ประกอบ ความเสี่ยง และสถานการณ์ที่เกี่ยวข้องอย่างครบถ้วน ไม่จำกัดเพียงส่วนเดียว",
     "domain": "Domain 2: Security Governance",
     "pattern": "Complete BCP plan; all aspects",
@@ -717,7 +717,7 @@
   {
     "id": "cc-master-056",
     "vocab": "Inherit",
-    "vocabThai": "à¸ªà¸·à¸šà¸—à¸­à¸”à¸„à¸¸à¸“à¸ªà¸¡à¸šà¸±à¸•à¸´à¸«à¸£à¸·à¸­à¸ªà¸´à¸—à¸˜à¸´à¹Œ",
+    "vocabThai": "สืบทอดคุณสมบัติหรือสิทธิ์",
     "meaning": "รับสิทธิ์ คุณสมบัติ หรือ configuration มาจาก object, folder, role หรือ parent ที่อยู่เหนือกว่า",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Folder permissions from parent; inherited settings",
@@ -769,7 +769,7 @@
   {
     "id": "cc-master-060",
     "vocab": "Discretion",
-    "vocabThai": "à¸”à¸¸à¸¥à¸¢à¸žà¸´à¸™à¸´à¸ˆ",
+    "vocabThai": "ดุลยพินิจ",
     "meaning": "อำนาจในการตัดสินใจตามเงื่อนไขและการพิจารณาของผู้มีสิทธิ์หรือเจ้าของทรัพยากร",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Data owner decides; DAC; discretionary decision",
@@ -834,7 +834,7 @@
   {
     "id": "cc-master-065",
     "vocab": "Bastion Host / Jump Box",
-    "vocabThai": "à¹€à¸„à¸£à¸·à¹ˆà¸­à¸‡à¸—à¸²à¸‡à¸œà¹ˆà¸²à¸™à¹€à¸‚à¹‰à¸²à¹‚à¸‹à¸™à¸›à¸¥à¸­à¸”à¸ à¸±à¸¢",
+    "vocabThai": "เครื่องทางผ่านเข้าโซนปลอดภัย",
     "meaning": "เครื่องที่ทำหน้าที่เป็นจุดผ่านที่ควบคุมและตรวจสอบการบริหารระบบในเครือข่ายสำคัญ",
     "domain": "Domain 4: Networking and Cloud Security Concepts",
     "pattern": "Admin access point; heavily monitored; hardened host",
@@ -952,10 +952,10 @@
     "id": "cc-master-074",
     "vocab": "Payload",
     "vocabThai": "ส่วนการทำงานหรือทำลายของมัลแวร์",
-    "meaning": "à¸ªà¹ˆà¸§à¸™à¸‚à¸­à¸‡ exploit à¸«à¸£à¸·à¸­ malware à¸—à¸µà¹ˆà¸—à¸³à¸‡à¸²à¸™à¸•à¸²à¸¡à¸§à¸±à¸•à¸–à¸¸à¸›à¸£à¸°à¸ªà¸‡à¸„à¹Œ à¹€à¸Šà¹ˆà¸™ à¸‚à¹‚à¸¡à¸¢à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ à¹€à¸‚à¹‰à¸²à¸£à¸«à¸±à¸ªà¹„à¸Ÿà¸¥à¹Œ à¸«à¸£à¸·à¸­à¸—à¸³à¸¥à¸²à¸¢à¸£à¸°à¸šà¸š",
+    "meaning": "ส่วนของ exploit หรือ malware ที่ทำงานตามวัตถุประสงค์ เช่น ขโมยข้อมูล เข้ารหัสไฟล์ หรือทำลายระบบ",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Destructive code; ransomware execution; malicious action",
-    "scenario": "Exam cue: exploit à¸„à¸·à¸­à¸§à¸´à¸˜à¸µà¹€à¸‚à¹‰à¸² à¸ªà¹ˆà¸§à¸™ payload à¸„à¸·à¸­à¸ªà¸´à¹ˆà¸‡à¸—à¸µà¹ˆà¸—à¸³à¸«à¸¥à¸±à¸‡à¹€à¸‚à¹‰à¸²à¹„à¸”à¹‰. Real-world: ransomware payload à¹€à¸‚à¹‰à¸²à¸£à¸«à¸±à¸ªà¹„à¸Ÿà¸¥à¹Œà¸‚à¸­à¸‡à¹€à¸«à¸¢à¸·à¹ˆà¸­.",
+    "scenario": "Exam cue: exploit คือวิธีเข้า ส่วน payload คือสิ่งที่ทำหลังเข้าได้. Real-world: ransomware payload เข้ารหัสไฟล์ของเหยื่อ.",
     "nextReviewDate": "2026-09-10T08:57:22.094Z",
     "interval": 1,
     "category": "cert",
@@ -1068,7 +1068,7 @@
   {
     "id": "cc-master-083",
     "vocab": "Delegate",
-    "vocabThai": "à¸¡à¸­à¸šà¸«à¸¡à¸²à¸¢à¸‡à¸²à¸™ / à¹‚à¸­à¸™à¸ªà¸´à¸—à¸˜à¸´à¹Œà¸Šà¸±à¹ˆà¸§à¸„à¸£à¸²à¸§",
+    "vocabThai": "มอบหมายงาน / โอนสิทธิ์ชั่วคราว",
     "meaning": "มอบหมายงานหรือสิทธิ์ให้บุคคลอื่นทำแทนภายใต้ขอบเขตและระยะเวลาที่กำหนด",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Assign temporary access; delegated authority",
@@ -1094,7 +1094,7 @@
   {
     "id": "cc-master-085",
     "vocab": "Ephemeral",
-    "vocabThai": "à¸Šà¸±à¹ˆà¸§à¸„à¸£à¸²à¸§ / à¸¡à¸µà¸­à¸²à¸¢à¸¸à¸ªà¸±à¹‰à¸™",
+    "vocabThai": "ชั่วคราว / มีอายุสั้น",
     "meaning": "มีอยู่เพียงช่วงเวลาสั้น ๆ และถูกยกเลิกหรือหมดอายุโดยอัตโนมัติ",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "OTP; temporary port; short-lived credential",
@@ -1107,8 +1107,8 @@
   {
     "id": "cc-master-086",
     "vocab": "Omit",
-    "vocabThai": "à¸¥à¸°à¹€à¸§à¹‰à¸™ / à¸‚à¹‰à¸²à¸¡à¹„à¸›",
-    "meaning": "à¹„à¸¡à¹ˆà¸£à¸§à¸¡ à¹„à¸¡à¹ˆà¸—à¸³ à¸«à¸£à¸·à¸­à¸‚à¹‰à¸²à¸¡à¸‚à¸±à¹‰à¸™à¸•à¸­à¸™ à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ à¸«à¸£à¸·à¸­à¹€à¸‡à¸·à¹ˆà¸­à¸™à¹„à¸‚à¸—à¸µà¹ˆà¸„à¸§à¸£à¸žà¸´à¸ˆà¸²à¸£à¸“à¸²",
+    "vocabThai": "ละเว้น / ข้ามไป",
+    "meaning": "ไม่รวม ไม่ทำ หรือข้ามขั้นตอน ข้อมูล หรือเงื่อนไขที่ควรพิจารณา",
     "domain": "Domain 1: Security Principles",
     "pattern": "Skipped step; policy violation; missing control",
     "scenario": "Exam cue: การ omit ขั้นตอนสำคัญอาจทำให้ control ล้มเหลว. Real-world: ละเว้นการ review permission ทำให้สิทธิ์เกินค้างอยู่.",
@@ -1124,7 +1124,7 @@
     "meaning": "มีความสัมพันธ์หรือเกี่ยวข้องโดยตรงกับเรื่อง บุคคล ระบบ หรือข้อกำหนดใด",
     "domain": "Domain 1: Security Principles",
     "pattern": "Relates to; applies to; concerns",
-    "scenario": "Exam cue: à¸­à¹ˆà¸²à¸™à¸§à¹ˆà¸² requirement à¸™à¸±à¹‰à¸™ pertain to asset à¸«à¸£à¸·à¸­ role à¹ƒà¸”. Real-world: policy à¸™à¸µà¹‰ pertain to privileged administrators à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™.",
+    "scenario": "Exam cue: อ่านว่า requirement นั้น pertain to asset หรือ role ใด. Real-world: policy นี้ pertain to privileged administrators เท่านั้น.",
     "nextReviewDate": "2026-09-10T08:57:22.094Z",
     "interval": 1,
     "category": "cert",
@@ -1133,7 +1133,7 @@
   {
     "id": "cc-master-088",
     "vocab": "Ambiguity",
-    "vocabThai": "à¸„à¸§à¸²à¸¡à¸„à¸¥à¸¸à¸¡à¹€à¸„à¸£à¸·à¸­",
+    "vocabThai": "ความคลุมเครือ",
     "meaning": "ข้อความหรือ policy ที่ตีความได้หลายแบบจนทำให้เกิดความไม่แน่นอนหรือการปฏิบัติไม่สม่ำเสมอ",
     "domain": "Domain 1: Security Principles",
     "pattern": "Unclear policy; confusion; multiple interpretations",
@@ -1159,7 +1159,7 @@
   {
     "id": "cc-master-090",
     "vocab": "Confidentiality",
-    "vocabThai": "à¸„à¸§à¸²à¸¡à¸¥à¸±à¸šà¸‚à¸­à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥",
+    "vocabThai": "ความลับของข้อมูล",
     "meaning": "หลักการที่ทำให้ข้อมูลเปิดเผยเฉพาะผู้ที่ได้รับอนุญาต และป้องกัน unauthorized disclosure",
     "domain": "Domain 1: Security Principles",
     "pattern": "Data leak; encryption; unauthorized access; CIA triad",
@@ -1185,7 +1185,7 @@
   {
     "id": "cc-master-092",
     "vocab": "Availability",
-    "vocabThai": "à¸„à¸§à¸²à¸¡à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™",
+    "vocabThai": "ความพร้อมใช้งาน",
     "meaning": "หลักการที่ทำให้ผู้ใช้ที่ได้รับอนุญาตเข้าถึงระบบและข้อมูลได้เมื่อจำเป็น",
     "domain": "Domain 1: Security Principles",
     "pattern": "DDoS; outage; uptime; redundancy; CIA triad",
@@ -1198,7 +1198,7 @@
   {
     "id": "cc-master-093",
     "vocab": "Vulnerability",
-    "vocabThai": "à¸ˆà¸¸à¸”à¸­à¹ˆà¸­à¸™ / à¸Šà¹ˆà¸­à¸‡à¹‚à¸«à¸§à¹ˆ",
+    "vocabThai": "จุดอ่อน / ช่องโหว่",
     "meaning": "จุดอ่อนในระบบ กระบวนการ หรือการตั้งค่าที่ threat อาจใช้โจมตีได้",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Lack of patch; system flaw; weakness",
@@ -1241,7 +1241,7 @@
     "meaning": "วิธีการ โค้ด หรือการกระทำที่ใช้ vulnerability เพื่อให้เกิดการเข้าถึงหรือผลลัพธ์ที่ไม่ได้รับอนุญาต",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Take advantage of vulnerability; attack method",
-    "scenario": "Exam cue: exploit à¹€à¸›à¹‡à¸™à¸§à¸´à¸˜à¸µà¹ƒà¸Šà¹‰ weakness à¹„à¸¡à¹ˆà¹ƒà¸Šà¹ˆà¸•à¸±à¸§ weakness à¹€à¸­à¸‡. Real-world: attacker à¹ƒà¸Šà¹‰ exploit à¸‚à¸­à¸‡ web server à¹€à¸žà¸·à¹ˆà¸­à¸£à¸±à¸™à¸„à¸³à¸ªà¸±à¹ˆà¸‡.",
+    "scenario": "Exam cue: exploit เป็นวิธีใช้ weakness ไม่ใช่ตัว weakness เอง. Real-world: attacker ใช้ exploit ของ web server เพื่อรันคำสั่ง.",
     "nextReviewDate": "2026-09-10T08:57:22.094Z",
     "interval": 1,
     "category": "cert",
@@ -1328,11 +1328,11 @@
   {
     "id": "cc-master-103",
     "vocab": "SPOF (Single Point of Failure)",
-    "vocabThai": "à¸ˆà¸¸à¸”à¸¥à¹‰à¸¡à¹€à¸«à¸¥à¸§à¹€à¸žà¸µà¸¢à¸‡à¸ˆà¸¸à¸”à¹€à¸”à¸µà¸¢à¸§",
+    "vocabThai": "จุดล้มเหลวเพียงจุดเดียว",
     "meaning": "ส่วนประกอบเดียวที่หากล้มเหลวจะทำให้ระบบหรือบริการทั้งหมดหยุดทำงาน",
     "domain": "Domain 2: Security Governance",
     "pattern": "Bottleneck; lack of redundancy; one failure causes outage",
-    "scenario": "Exam cue: à¸•à¹‰à¸­à¸‡à¸¥à¸” SPOF à¸”à¹‰à¸§à¸¢ redundancy à¸«à¸£à¸·à¸­ alternate path. Real-world: à¸¡à¸µ power supply à¹€à¸”à¸µà¸¢à¸§à¸ªà¸³à¸«à¸£à¸±à¸š server à¸—à¸±à¹‰à¸‡ rack à¹€à¸›à¹‡à¸™ SPOF.",
+    "scenario": "Exam cue: ต้องลด SPOF ด้วย redundancy หรือ alternate path. Real-world: มี power supply เดียวสำหรับ server ทั้ง rack เป็น SPOF.",
     "nextReviewDate": "2026-09-10T08:57:22.094Z",
     "interval": 1,
     "category": "cert",
@@ -1367,7 +1367,7 @@
   {
     "id": "cc-master-106",
     "vocab": "RPO (Recovery Point Objective)",
-    "vocabThai": "à¸ˆà¸¸à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡à¸—à¸µà¹ˆà¸¢à¸­à¸¡à¹€à¸ªà¸µà¸¢à¹„à¸”à¹‰",
+    "vocabThai": "จุดข้อมูลย้อนหลังที่ยอมเสียได้",
     "meaning": "ปริมาณข้อมูลย้อนหลังสูงสุดที่องค์กรยอมสูญเสียได้เมื่อกู้คืนระบบ",
     "domain": "Domain 2: Security Governance",
     "pattern": "Backup frequency; data loss limit",
@@ -1380,7 +1380,7 @@
   {
     "id": "cc-master-107",
     "vocab": "Hot Site",
-    "vocabThai": "à¸¨à¸¹à¸™à¸¢à¹Œà¸ªà¸³à¸£à¸­à¸‡à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¸—à¸±à¸™à¸—à¸µ",
+    "vocabThai": "ศูนย์สำรองพร้อมใช้งานทันที",
     "meaning": "สถานที่สำรองที่มีระบบ อุปกรณ์ และข้อมูลพร้อมให้ใช้งานหรือสลับไปทำงานได้อย่างรวดเร็ว",
     "domain": "Domain 2: Security Governance",
     "pattern": "Most expensive; hours to recover; ready infrastructure",
@@ -1419,7 +1419,7 @@
   {
     "id": "cc-master-110",
     "vocab": "Outage",
-    "vocabThai": "à¸£à¸°à¸šà¸šà¸¥à¹ˆà¸¡ / à¸«à¸¢à¸¸à¸”à¸—à¸³à¸‡à¸²à¸™",
+    "vocabThai": "ระบบล่ม / หยุดทำงาน",
     "meaning": "ช่วงเวลาที่บริการ ระบบ หรือทรัพยากรไม่พร้อมใช้งานตามปกติ",
     "domain": "Domain 2: Security Governance",
     "pattern": "Downtime; interruption; unavailable service",
@@ -1471,7 +1471,7 @@
   {
     "id": "cc-master-114",
     "vocab": "Least Privilege",
-    "vocabThai": "à¹ƒà¸«à¹‰à¸ªà¸´à¸—à¸˜à¸´à¹Œà¸™à¹‰à¸­à¸¢à¸—à¸µà¹ˆà¸ªà¸¸à¸”à¹€à¸—à¹ˆà¸²à¸—à¸µà¹ˆà¸ˆà¸³à¹€à¸›à¹‡à¸™",
+    "vocabThai": "ให้สิทธิ์น้อยที่สุดเท่าที่จำเป็น",
     "meaning": "หลักการให้ผู้ใช้หรือ process ได้รับสิทธิ์ขั้นต่ำที่จำเป็นต่อการทำงานและเฉพาะช่วงเวลาที่ต้องใช้",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Only required access; prevent abuse; limit blast radius",
@@ -1497,7 +1497,7 @@
   {
     "id": "cc-master-116",
     "vocab": "Job Rotation",
-    "vocabThai": "à¸ªà¸±à¸šà¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸«à¸™à¹‰à¸²à¸—à¸µà¹ˆ / à¸«à¸¡à¸¸à¸™à¹€à¸§à¸µà¸¢à¸™à¸‡à¸²à¸™",
+    "vocabThai": "สับเปลี่ยนหน้าที่ / หมุนเวียนงาน",
     "meaning": "การสลับบุคลากรไปทำหน้าที่ต่างกันตามรอบ เพื่อเพิ่ม cross-training และช่วยค้นหาการทุจริตที่ซ่อนอยู่",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Detect hidden fraud; cross-training; periodic reassignment",
@@ -1627,7 +1627,7 @@
   {
     "id": "cc-master-126",
     "vocab": "Patch",
-    "vocabThai": "à¸•à¸±à¸§à¸­à¸±à¸›à¹€à¸”à¸•à¸­à¸¸à¸”à¸Šà¹ˆà¸­à¸‡à¹‚à¸«à¸§à¹ˆ",
+    "vocabThai": "ตัวอัปเดตอุดช่องโหว่",
     "meaning": "การแก้ไขหรือ update software ที่ผู้ผลิตออกเพื่อแก้ bug, vulnerability หรือปรับปรุงความปลอดภัย",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Software update; fix vulnerability; remediation",
@@ -1718,7 +1718,7 @@
   {
     "id": "cc-master-133",
     "vocab": "On-premises",
-    "vocabThai": "à¹€à¸‹à¸´à¸£à¹Œà¸Ÿà¹€à¸§à¸­à¸£à¹Œà¸•à¸±à¹‰à¸‡à¸­à¸¢à¸¹à¹ˆà¹ƒà¸™à¸šà¸£à¸´à¸©à¸±à¸—",
+    "vocabThai": "เซิร์ฟเวอร์ตั้งอยู่ในบริษัท",
     "meaning": "ระบบหรือโครงสร้างพื้นฐานที่องค์กรเป็นเจ้าของและดำเนินการในสถานที่ของตนเอง",
     "domain": "Domain 1: Security Principles",
     "pattern": "Full control; high hardware cost; local facility",
@@ -1731,7 +1731,7 @@
   {
     "id": "cc-master-134",
     "vocab": "IaaS (Infrastructure as a Service)",
-    "vocabThai": "à¹€à¸Šà¹ˆà¸²à¹‚à¸„à¸£à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¸žà¸·à¹‰à¸™à¸à¸²à¸™à¸šà¸™à¸„à¸¥à¸²à¸§à¸”à¹Œ",
+    "vocabThai": "เช่าโครงสร้างพื้นฐานบนคลาวด์",
     "meaning": "บริการคลาวด์ที่ให้ virtual machine, storage หรือ network โดยลูกค้ายังจัดการ OS และ application ส่วนใหญ่เอง",
     "domain": "Domain 1: Security Principles",
     "pattern": "Customer manages OS and apps; virtual infrastructure",
@@ -1770,7 +1770,7 @@
   {
     "id": "cc-master-137",
     "vocab": "Public Cloud",
-    "vocabThai": "à¸„à¸¥à¸²à¸§à¸”à¹Œà¸ªà¸²à¸˜à¸²à¸£à¸“à¸°",
+    "vocabThai": "คลาวด์สาธารณะ",
     "meaning": "บริการคลาวด์ที่ผู้ให้บริการจัดสรรทรัพยากรให้ลูกค้าหลายรายบน infrastructure ร่วมกัน",
     "domain": "Domain 1: Security Principles",
     "pattern": "Shared resources; AWS; Azure; provider operated",
@@ -1783,7 +1783,7 @@
   {
     "id": "cc-master-138",
     "vocab": "Private Cloud",
-    "vocabThai": "à¸„à¸¥à¸²à¸§à¸”à¹Œà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§",
+    "vocabThai": "คลาวด์ส่วนตัว",
     "meaning": "cloud environment ที่จัดสรรให้กับองค์กรเดียวและควบคุมการใช้งานเฉพาะกลุ่ม",
     "domain": "Domain 1: Security Principles",
     "pattern": "Single organization; high privacy; dedicated environment",
@@ -1888,7 +1888,7 @@
     "id": "cc-master-146",
     "vocab": "Port 80 (HTTP)",
     "vocabThai": "พอร์ตเว็บแบบไม่เข้ารหัส",
-    "meaning": "à¸žà¸­à¸£à¹Œà¸•à¸¡à¸²à¸•à¸£à¸à¸²à¸™à¸‚à¸­à¸‡ HTTP à¸‹à¸¶à¹ˆà¸‡à¸ªà¹ˆà¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸§à¹‡à¸šà¹‚à¸”à¸¢à¹„à¸¡à¹ˆà¹€à¸‚à¹‰à¸²à¸£à¸«à¸±à¸ªà¸—à¸µà¹ˆ transport layer",
+    "meaning": "พอร์ตมาตรฐานของ HTTP ซึ่งส่งข้อมูลเว็บโดยไม่เข้ารหัสที่ transport layer",
     "domain": "Domain 4: Networking and Cloud Security Concepts",
     "pattern": "Unencrypted web; plaintext; HTTP",
     "scenario": "Exam cue: Port 80 คือ HTTP ไม่ใช่ HTTPS. Real-world: redirect ไป HTTPS และหลีกเลี่ยงการส่ง credential ผ่าน HTTP.",
@@ -1953,7 +1953,7 @@
     "id": "cc-master-151",
     "vocab": "MAC Address",
     "vocabThai": "เลขที่อยู่ประจำการ์ดเครือข่าย",
-    "meaning": "à¸—à¸µà¹ˆà¸­à¸¢à¸¹à¹ˆà¸£à¸°à¸”à¸±à¸š data link à¸—à¸µà¹ˆà¸£à¸°à¸šà¸¸ network interface à¹‚à¸”à¸¢à¸—à¸±à¹ˆà¸§à¹„à¸›à¸¡à¸µà¸„à¸§à¸²à¸¡à¸¢à¸²à¸§ 48 bits",
+    "meaning": "ที่อยู่ระดับ data link ที่ระบุ network interface โดยทั่วไปมีความยาว 48 bits",
     "domain": "Domain 4: Networking and Cloud Security Concepts",
     "pattern": "Physical address; 48-bit; Layer 2",
     "scenario": "Exam cue: MAC ใช้ใน LAN ส่วน IP ใช้สำหรับ logical addressing และ routing. Real-world: switch ใช้ MAC table ส่ง frame ไปยัง port ที่ถูกต้อง.",
@@ -1965,7 +1965,7 @@
   {
     "id": "cc-master-152",
     "vocab": "IP Address",
-    "vocabThai": "à¹€à¸¥à¸‚à¸—à¸µà¹ˆà¸­à¸¢à¸¹à¹ˆà¸šà¸™à¹€à¸„à¸£à¸·à¸­à¸‚à¹ˆà¸²à¸¢",
+    "vocabThai": "เลขที่อยู่บนเครือข่าย",
     "meaning": "ที่อยู่เชิงตรรกะที่ใช้ระบุ host และช่วยส่ง packet ผ่านเครือข่ายต่าง ๆ",
     "domain": "Domain 4: Networking and Cloud Security Concepts",
     "pattern": "Logical address; routing; IPv4/IPv6",
@@ -2004,7 +2004,7 @@
   {
     "id": "cc-master-155",
     "vocab": "Regardless of",
-    "vocabThai": "à¹‚à¸”à¸¢à¹„à¸¡à¹ˆà¸„à¸³à¸™à¸¶à¸‡à¸–à¸¶à¸‡",
+    "vocabThai": "โดยไม่คำนึงถึง",
     "meaning": "ระบุว่าผลลัพธ์หรือข้อกำหนดยังคงเหมือนเดิมไม่ว่าเงื่อนไขบางอย่างจะเป็นอย่างไร",
     "domain": "Domain 1: Security Principles",
     "pattern": "Absolute compliance rule; no exception",
@@ -2021,7 +2021,7 @@
     "meaning": "ระบุว่า action หรือเหตุการณ์หนึ่งต้องเกิดก่อนอีกเหตุการณ์หนึ่ง",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "First action trigger; before",
-    "scenario": "Exam cue: Prior to containment à¸­à¸²à¸ˆà¸•à¹‰à¸­à¸‡ preserve evidence à¸•à¸²à¸¡ procedure. Real-world: à¸•à¸£à¸§à¸ˆ approval prior to granting privileged access.",
+    "scenario": "Exam cue: Prior to containment อาจต้อง preserve evidence ตาม procedure. Real-world: ตรวจ approval prior to granting privileged access.",
     "nextReviewDate": "2026-09-10T08:57:22.094Z",
     "interval": 1,
     "category": "cert",
@@ -2030,7 +2030,7 @@
   {
     "id": "cc-master-157",
     "vocab": "Consequently / Therefore",
-    "vocabThai": "à¸œà¸¥à¸—à¸µà¹ˆà¸•à¸²à¸¡à¸¡à¸²à¸„à¸·à¸­ / à¸”à¸±à¸‡à¸™à¸±à¹‰à¸™",
+    "vocabThai": "ผลที่ตามมาคือ / ดังนั้น",
     "meaning": "คำที่เชื่อมเหตุและผล โดยส่วนหลังเป็นผลลัพธ์จากข้อเท็จจริงหรือการกระทำก่อนหน้า",
     "domain": "Domain 1: Security Principles",
     "pattern": "Result; conclusion; cause and effect",
@@ -2056,7 +2056,7 @@
   {
     "id": "cc-master-159",
     "vocab": "Solely / Exclusively",
-    "vocabThai": "à¹€à¸žà¸µà¸¢à¸‡à¸­à¸¢à¹ˆà¸²à¸‡à¹€à¸”à¸µà¸¢à¸§ / à¹‚à¸”à¸¢à¹€à¸‰à¸žà¸²à¸°",
+    "vocabThai": "เพียงอย่างเดียว / โดยเฉพาะ",
     "meaning": "จำกัดความหมายให้เหลือเพียงสิ่งเดียวหรือกลุ่มเดียวโดยไม่มีส่วนอื่นร่วม",
     "domain": "Domain 1: Security Principles",
     "pattern": "Absolute trap word; only; no alternatives",
@@ -2069,7 +2069,7 @@
   {
     "id": "cc-master-160",
     "vocab": "Adequate / Sufficient",
-    "vocabThai": "à¹€à¸žà¸µà¸¢à¸‡à¸žà¸­ / à¸žà¸­à¸›à¸£à¸°à¸¡à¸²à¸“",
+    "vocabThai": "เพียงพอ / พอประมาณ",
     "meaning": "มีระดับหรือปริมาณเพียงพอต่อเป้าหมายหรือข้อกำหนดที่กำหนดไว้",
     "domain": "Domain 1: Security Principles",
     "pattern": "Minimum standard requirement; enough for purpose",
@@ -2082,7 +2082,7 @@
   {
     "id": "cc-master-161",
     "vocab": "Prohibit",
-    "vocabThai": "à¸ªà¸±à¹ˆà¸‡à¸«à¹‰à¸²à¸¡à¸­à¸¢à¹ˆà¸²à¸‡à¹€à¸”à¹‡à¸”à¸‚à¸²à¸”",
+    "vocabThai": "สั่งห้ามอย่างเด็ดขาด",
     "meaning": "กำหนดไม่ให้กระทำหรือใช้งานสิ่งใดตาม policy หรือข้อกำหนด",
     "domain": "Domain 1: Security Principles",
     "pattern": "Deny policy; forbidden action",
@@ -2121,7 +2121,7 @@
   {
     "id": "cc-master-164",
     "vocab": "Stakeholders / Shareholder",
-    "vocabThai": "à¸œà¸¹à¹‰à¸¡à¸µà¸ªà¹ˆà¸§à¸™à¹„à¸”à¹‰à¸ªà¹ˆà¸§à¸™à¹€à¸ªà¸µà¸¢ / à¸œà¸¹à¹‰à¸–à¸·à¸­à¸«à¸¸à¹‰à¸™",
+    "vocabThai": "ผู้มีส่วนได้ส่วนเสีย / ผู้ถือหุ้น",
     "meaning": "Stakeholders คือผู้ที่ได้รับผลกระทบหรือมีส่วนได้ส่วนเสีย ส่วน Shareholders คือผู้ถือหุ้นหรือเจ้าของทางการเงิน",
     "domain": "Domain 1: Security Principles",
     "pattern": "Governance impact groups; owners; affected parties",
@@ -2134,7 +2134,7 @@
   {
     "id": "cc-master-165",
     "vocab": "Accountability",
-    "vocabThai": "à¸„à¸§à¸²à¸¡à¸£à¸±à¸šà¸œà¸´à¸”à¸Šà¸­à¸šà¸—à¸µà¹ˆà¸£à¸°à¸šà¸¸à¸•à¸±à¸§à¸•à¸™à¹„à¸”à¹‰",
+    "vocabThai": "ความรับผิดชอบที่ระบุตัวตนได้",
     "meaning": "ความสามารถในการระบุได้ว่าใครทำอะไร เมื่อไร และรับผิดชอบต่อการกระทำนั้น",
     "domain": "Domain 1: Security Principles",
     "pattern": "Who performed the action; audit trail; individual identity",
@@ -2173,7 +2173,7 @@
   {
     "id": "cc-master-168",
     "vocab": "Residual Risk",
-    "vocabThai": "à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸—à¸µà¹ˆà¸¢à¸±à¸‡à¸«à¸¥à¸‡à¹€à¸«à¸¥à¸·à¸­",
+    "vocabThai": "ความเสี่ยงที่ยังหลงเหลือ",
     "meaning": "ความเสี่ยงที่ยังคงอยู่หลังจากใช้ control และมาตรการลดความเสี่ยงแล้ว",
     "domain": "Domain 2: Security Governance",
     "pattern": "Risk remaining after controls; accepted exposure",
@@ -2329,7 +2329,7 @@
   {
     "id": "cc-master-180",
     "vocab": "Non-Human Identity",
-    "vocabThai": "à¸•à¸±à¸§à¸•à¸™à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¹ƒà¸Šà¹ˆà¸¡à¸™à¸¸à¸©à¸¢à¹Œ",
+    "vocabThai": "ตัวตนที่ไม่ใช่มนุษย์",
     "meaning": "ตัวตนดิจิทัลของ service account, bot, workload หรืออุปกรณ์ที่ใช้ยืนยันและเข้าถึงทรัพยากรแทนมนุษย์",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Service account; identity lifecycle; provision and deprovision",
@@ -2342,7 +2342,7 @@
   {
     "id": "cc-master-181",
     "vocab": "Model Drift",
-    "vocabThai": "à¸›à¸£à¸°à¸ªà¸´à¸—à¸˜à¸´à¸ à¸²à¸žà¸‚à¸­à¸‡à¹‚à¸¡à¹€à¸”à¸¥ AI à¸¥à¸”à¸¥à¸‡à¸•à¸²à¸¡à¹€à¸§à¸¥à¸²",
+    "vocabThai": "ประสิทธิภาพของโมเดล AI ลดลงตามเวลา",
     "meaning": "ภาวะที่ข้อมูลหรือรูปแบบของโลกจริงเปลี่ยนจนโมเดล AI ให้ผลลัพธ์แม่นยำน้อยลงและสร้างความเสี่ยงทางธุรกิจ",
     "domain": "Domain 2: Security Governance",
     "pattern": "AI performance degradation; continuity risk; monitoring",
@@ -2355,7 +2355,7 @@
   {
     "id": "cc-master-182",
     "vocab": "Identity Lifecycle",
-    "vocabThai": "à¸§à¸‡à¸ˆà¸£à¸šà¸£à¸´à¸«à¸²à¸£à¸•à¸±à¸§à¸•à¸™",
+    "vocabThai": "วงจรบริหารตัวตน",
     "meaning": "การจัดการตัวตนตั้งแต่สร้างบัญชี กำหนดสิทธิ์ ดูแล เปลี่ยนบทบาท จนถึงยกเลิกบัญชี",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
     "pattern": "Onboarding; provisioning; maintenance; offboarding",
@@ -2381,7 +2381,7 @@
   {
     "id": "cc-master-184",
     "vocab": "Data Leakage via AI",
-    "vocabThai": "à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸„à¸§à¸²à¸¡à¸¥à¸±à¸šà¸£à¸±à¹ˆà¸§à¹„à¸«à¸¥à¸œà¹ˆà¸²à¸™ AI",
+    "vocabThai": "ข้อมูลความลับรั่วไหลผ่าน AI",
     "meaning": "การเปิดเผยข้อมูลลับหรือข้อมูลส่วนตัวผ่าน prompt, context, output หรือระบบ AI ของบุคคลที่สาม",
     "domain": "Domain 5: Security Operations and Incident Response",
     "pattern": "Employees pasting source code; confidential prompt data",
@@ -2394,7 +2394,7 @@
   {
     "id": "cc-master-185",
     "vocab": "Data Sovereignty",
-    "vocabThai": "à¸­à¸³à¸™à¸²à¸ˆà¸­à¸˜à¸´à¸›à¹„à¸•à¸¢à¸‚à¸­à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥",
+    "vocabThai": "อำนาจอธิปไตยของข้อมูล",
     "meaning": "ข้อกำหนดว่าข้อมูลอยู่ภายใต้กฎหมายและอำนาจของประเทศหรือเขตอำนาจที่ข้อมูลถูกจัดเก็บหรือประมวลผล",
     "domain": "Domain 4: Networking and Cloud Security Concepts",
     "pattern": "Cloud storage location; legal boundary; jurisdiction",
@@ -2524,7 +2524,7 @@
   {
     "id": "cc-master-195",
     "vocab": "Risk Appetite",
-    "vocabThai": "à¸£à¸°à¸”à¸±à¸šà¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¸ªà¸¹à¸‡à¸ªà¸¸à¸”à¸—à¸µà¹ˆà¸¢à¸­à¸¡à¸£à¸±à¸šà¹„à¸”à¹‰",
+    "vocabThai": "ระดับความเสี่ยงสูงสุดที่ยอมรับได้",
     "meaning": "ระดับและประเภทความเสี่ยงที่องค์กรตั้งใจยอมรับเพื่อบรรลุเป้าหมายทางธุรกิจ",
     "domain": "Domain 2: Security Governance",
     "pattern": "Board decision; governance threshold; risk tolerance",

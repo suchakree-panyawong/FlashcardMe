@@ -6,8 +6,10 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint",
-    "validate:flashcards": "node scripts/validate-flashcards.mjs"
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "validate:flashcards": "node scripts/validate-flashcards.mjs",
+    "fix:flashcards": "node scripts/validate-flashcards.mjs --fix"
   },
   "dependencies": {
     "@types/canvas-confetti": "^1.9.0",
