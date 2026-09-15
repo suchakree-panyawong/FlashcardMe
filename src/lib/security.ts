@@ -52,6 +52,8 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
   }
 
   const validCards: Flashcard[] = [];
+  const ids = new Set<string>();
+  const vocabs = new Set<string>();
 
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
@@ -77,8 +79,19 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
       return { isValid: false, cards: [], error: 'ข้อมูลวันที่หรือรอบทบทวนในลำดับที่ ' + i + ' ไม่ถูกต้อง' };
     }
 
+    const normalizedId = typeof id === 'string' ? id.trim() : '';
+    const normalizedVocab = vocab.trim().toLocaleLowerCase().replace(/\s+/g, ' ');
+    if (normalizedId && ids.has(normalizedId)) {
+      return { isValid: false, cards: [], error: 'พบ ID ซ้ำในรายการลำดับที่ ' + i };
+    }
+    if (vocabs.has(normalizedVocab)) {
+      return { isValid: false, cards: [], error: 'พบคำศัพท์ซ้ำในรายการลำดับที่ ' + i };
+    }
+    if (normalizedId) ids.add(normalizedId);
+    vocabs.add(normalizedVocab);
+
     validCards.push({
-      id: typeof id === 'string' && id.trim() ? id : 'card-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      id: normalizedId || 'card-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
       vocab: repairMojibake(vocab.trim()),
       vocabThai: typeof vocabThai === 'string' ? repairMojibake(vocabThai.trim()) : '',
       meaning: repairMojibake(meaning.trim()),
