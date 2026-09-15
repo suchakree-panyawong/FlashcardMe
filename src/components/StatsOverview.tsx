@@ -54,6 +54,18 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
     const key = date.toISOString().slice(0, 10);
     return { key, reviews: studyStats.dailyReviews[key] ?? 0 };
   });
+  const domainInsights = Array.from(new Set(cards.map((card) => card.domain || 'General')))
+    .map((domain) => ({
+      domain,
+      due: dueCards.filter((card) => (card.domain || 'General') === domain).length,
+      total: cards.filter((card) => (card.domain || 'General') === domain).length,
+    }))
+    .sort((first, second) => second.due - first.due || second.total - first.total)
+    .slice(0, 3);
+  const difficultCards = [...cards]
+    .filter((card) => (card.incorrectCount ?? 0) > 0)
+    .sort((first, second) => (second.incorrectCount ?? 0) - (first.incorrectCount ?? 0))
+    .slice(0, 3);
 
   return (
     <div className="space-y-4 animate-fadeIn">
@@ -268,6 +280,35 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           <p className="text-[10px] text-slate-400 font-semibold mt-2 thai-text">
             {masteredCount} / {totalCards} {t('masteryNote')} (7+ days)
           </p>
+        </div>
+      )}
+
+      {totalCards > 0 && (
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+            <p className="text-xs font-black text-slate-800">{t('domainInsights')}</p>
+            <div className="mt-3 space-y-2">
+              {domainInsights.map((insight) => (
+                <div key={insight.domain} className="flex items-center justify-between gap-3 text-xs">
+                  <span className="truncate font-semibold text-slate-600">{insight.domain}</span>
+                  <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 font-black text-slate-500">{insight.due} / {insight.total}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+            <p className="text-xs font-black text-slate-800">{t('difficultCards')}</p>
+            {difficultCards.length > 0 ? (
+              <div className="mt-3 space-y-2">
+                {difficultCards.map((card) => (
+                  <div key={card.id} className="flex items-center justify-between gap-3 text-xs">
+                    <span className="truncate font-semibold text-slate-600">{card.vocab}</span>
+                    <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 font-black text-slate-500">{card.incorrectCount}</span>
+                  </div>
+                ))}
+              </div>
+            ) : <p className="mt-3 text-xs text-slate-400">{t('noDifficultCards')}</p>}
+          </div>
         </div>
       )}
 

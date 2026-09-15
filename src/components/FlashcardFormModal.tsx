@@ -27,6 +27,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
   const [pattern, setPattern] = useState("");
   const [scenario, setScenario] = useState("");
   const [category, setCategory] = useState<CardCategory>(defaultCategory);
+  const [deck, setDeck] = useState("General English");
 
   useEffect(() => {
     if (editingCard) {
@@ -37,6 +38,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
       setPattern(editingCard.pattern || "");
       setScenario(editingCard.scenario || "");
       setCategory(editingCard.category || "cert");
+      setDeck(editingCard.deck || (editingCard.category === "cert" ? "ISC2 CC" : "General English"));
     } else {
       setVocab("");
       setVocabThai("");
@@ -45,6 +47,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
       setPattern("");
       setScenario("");
       setCategory(defaultCategory);
+      setDeck(defaultCategory === "cert" ? "ISC2 CC" : "General English");
     }
   }, [editingCard, defaultCategory, isOpen]);
 
@@ -70,6 +73,7 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
       pattern: sanitizeText(pattern),
       scenario: sanitizeText(scenario),
       category,
+      deck: sanitizeText(deck.trim()) || (category === "cert" ? "ISC2 CC" : "General English"),
     });
 
     if (saved !== false) onClose();
@@ -132,6 +136,17 @@ export const FlashcardFormModal: React.FC<FlashcardFormModalProps> = ({
                 <span>{t("personal")}</span>
               </button>
             </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 block">{t("deckLabel")}</label>
+            <input
+              type="text"
+              value={deck}
+              onChange={(e) => setDeck(e.target.value)}
+              placeholder={t("deckPlaceholder")}
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-semibold text-slate-900 placeholder:text-slate-300 text-sm outline-none transition-all"
+            />
           </div>
 
           {/* Vocab English */}

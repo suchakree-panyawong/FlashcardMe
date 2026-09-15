@@ -26,10 +26,15 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<"all" | CardCategory>(activeMode || "all");
   const [domainFilter, setDomainFilter] = useState("all");
+  const [deckFilter, setDeckFilter] = useState("all");
   const [favoriteOnly, setFavoriteOnly] = useState(false);
   const [neverStudiedOnly, setNeverStudiedOnly] = useState(false);
   const domains = useMemo(
     () => Array.from(new Set(cards.map((card) => card.domain).filter((domain): domain is string => Boolean(domain)))),
+    [cards]
+  );
+  const decks = useMemo(
+    () => Array.from(new Set(cards.map((card) => card.deck || (card.category === "cert" ? "ISC2 CC" : "General English")))),
     [cards]
   );
 
@@ -43,12 +48,13 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
       const cardCat = card.category || (card.domain === "General Vocab" ? "general" : "cert");
       const matchCategory = categoryFilter === "all" || cardCat === categoryFilter;
       const matchDomain = domainFilter === "all" || card.domain === domainFilter;
+      const matchDeck = deckFilter === "all" || (card.deck || (card.category === "cert" ? "ISC2 CC" : "General English")) === deckFilter;
       const matchFavorite = !favoriteOnly || card.isFavorite === true;
       const matchNeverStudied = !neverStudiedOnly || (card.reviewCount ?? 0) === 0;
 
-      return matchSearch && matchCategory && matchDomain && matchFavorite && matchNeverStudied;
+      return matchSearch && matchCategory && matchDomain && matchDeck && matchFavorite && matchNeverStudied;
     });
-  }, [cards, searchTerm, categoryFilter, domainFilter, favoriteOnly, neverStudiedOnly]);
+  }, [cards, searchTerm, categoryFilter, domainFilter, deckFilter, favoriteOnly, neverStudiedOnly]);
 
   return (
     <div className="space-y-5 animate-fadeIn pb-6">
@@ -94,6 +100,15 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
           <option value="all">{t("allDomains")}</option>
           {domains.map((domain) => <option key={domain} value={domain}>{domain}</option>)}
         </select>
+        <select
+          value={deckFilter}
+          onChange={(event) => setDeckFilter(event.target.value)}
+          aria-label={t("deckLabel")}
+          className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 outline-none"
+        >
+          <option value="all">{t("allDecks")}</option>
+          {decks.map((deck) => <option key={deck} value={deck}>{deck}</option>)}
+        </select>
       </div>
 
       {/* Search Input */}
@@ -110,12 +125,13 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
 
       <div className="flex items-center justify-between gap-3 text-xs font-bold text-slate-400">
         <span>{filteredCards.length} / {cards.length} {t("cardCount")}</span>
-        {(searchTerm || categoryFilter !== (activeMode || "all") || domainFilter !== "all" || favoriteOnly || neverStudiedOnly) && (
+        {(searchTerm || categoryFilter !== (activeMode || "all") || domainFilter !== "all" || deckFilter !== "all" || favoriteOnly || neverStudiedOnly) && (
           <button
             onClick={() => {
               setSearchTerm("");
               setCategoryFilter(activeMode || "all");
               setDomainFilter("all");
+              setDeckFilter("all");
               setFavoriteOnly(false);
               setNeverStudiedOnly(false);
             }}

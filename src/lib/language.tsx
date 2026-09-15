@@ -171,6 +171,13 @@ const translations = {
     cancel: "ยกเลิก",
     confirmImport: "ยืนยันนำเข้า",
     clearFilters: "ล้างตัวกรอง",
+    deckLabel: "ชุดคำศัพท์",
+    deckPlaceholder: "เช่น ISC2 CC หรือ General English",
+    allDecks: "ทุกชุดคำศัพท์",
+    domainInsights: "ภาพรวมตาม Domain",
+    difficultCards: "คำที่ควรทบทวนเพิ่ม",
+    noDifficultCards: "ยังไม่มีคำที่ตอบผิด",
+    swipeHint: "เฉลยแล้วปัดซ้ายเพื่อทวนอีกครั้ง หรือปัดขวาเมื่อเข้าใจแล้ว",
   },
   en: {
     home: "Home",
@@ -336,6 +343,13 @@ const translations = {
     cancel: "Cancel",
     confirmImport: "Confirm import",
     clearFilters: "Clear filters",
+    deckLabel: "Deck",
+    deckPlaceholder: "e.g. ISC2 CC or General English",
+    allDecks: "All decks",
+    domainInsights: "Domain overview",
+    difficultCards: "Cards needing attention",
+    noDifficultCards: "No difficult cards yet",
+    swipeHint: "After revealing, swipe left to review again or right when you got it",
   },
 } as const;
 

@@ -18,6 +18,7 @@ const publicCard = (
   nextReviewDate: new Date().toISOString(),
   interval: 1,
   category: 'general',
+  deck: 'General English',
   createdAt: new Date().toISOString(),
 });
 

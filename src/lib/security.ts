@@ -59,7 +59,7 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
       return { isValid: false, cards: [], error: 'รายการลำดับที่ ' + i + ' ไม่ใช่วัตถุข้อมูลที่ถูกต้อง' };
     }
 
-    const { id, vocab, vocabThai, meaning, domain, pattern, scenario, nextReviewDate, interval, createdAt, category, isFavorite, reviewCount, correctCount, incorrectCount } = item as Record<string, any>;
+    const { id, vocab, vocabThai, meaning, domain, pattern, scenario, nextReviewDate, interval, createdAt, category, deck, isFavorite, reviewCount, correctCount, incorrectCount } = item as Record<string, any>;
 
     if (typeof vocab !== 'string' || !vocab.trim() || vocab.length > 200) {
       return { isValid: false, cards: [], error: 'คำศัพท์ในลำดับที่ ' + i + ' ไม่ถูกต้อง' };
@@ -93,6 +93,11 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
         : typeof domain === 'string' && domain !== 'General Vocab'
           ? 'cert'
           : 'general',
+          deck: typeof deck === 'string' && deck.trim()
+            ? repairMojibake(deck.trim())
+            : category === 'cert' || (typeof domain === 'string' && domain !== 'General Vocab')
+              ? 'ISC2 CC'
+              : 'General English',
           isFavorite: isFavorite === true,
           reviewCount: typeof reviewCount === 'number' && reviewCount >= 0 ? Math.floor(reviewCount) : 0,
           correctCount: typeof correctCount === 'number' && correctCount >= 0 ? Math.floor(correctCount) : 0,

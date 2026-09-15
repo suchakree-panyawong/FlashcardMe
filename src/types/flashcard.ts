@@ -18,6 +18,7 @@ export type StudyFocus = 'all' | 'favorites' | 'mistakes' | 'unseen';
 
 export interface Flashcard {
   category?: CardCategory;
+  deck?: string;
   id: string;
   vocab: string;
   vocabThai?: string;
