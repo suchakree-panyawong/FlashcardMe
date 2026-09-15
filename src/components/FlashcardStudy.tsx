@@ -78,7 +78,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const [promptDirections, setPromptDirections] = useState<Record<string, boolean>>({});
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const didSwipe = useRef(false);
+  const lastDragAt = useRef(0);
   const sessionInitialized = useRef(false);
 
   const playPositiveFeedback = () => {
@@ -480,8 +480,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       <div
         className="w-full min-h-[460px] cursor-pointer select-none"
         onClick={() => {
-          if (isDragging || didSwipe.current) {
-            didSwipe.current = false;
+          if (isDragging || Date.now() - lastDragAt.current < 400) {
             return;
           }
           setIsFlipped(!isFlipped);
@@ -557,7 +556,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               whileDrag={{ scale: 1.02, cursor: "grabbing" }}
               onDragStart={() => {
                 setIsDragging(true);
-                didSwipe.current = true;
+                lastDragAt.current = Date.now();
                 setSwipeDirection(null);
               }}
               onDrag={(_, info) => {
