@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Flashcard, CardCategory } from "@/types/flashcard";
 import { speakText } from "@/lib/speech";
 import { Search, Plus, Trash2, Edit3, Volume2, BookOpen, ShieldCheck, Filter, Star, Pencil } from "lucide-react";
@@ -13,6 +13,8 @@ interface FlashcardLibraryProps {
   onDeleteCard: (cardId: string) => void;
   onRenameDeck: (oldName: string, newName: string) => void;
   onToggleFavorite?: (cardId: string) => void;
+  initialSearchTerm?: string;
+  onSearchTermChange?: (value: string) => void;
 }
 
 export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
@@ -23,14 +25,17 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
   onDeleteCard,
   onRenameDeck,
   onToggleFavorite,
+  initialSearchTerm = "",
+  onSearchTermChange,
 }) => {
   const { t } = useLanguage();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [categoryFilter, setCategoryFilter] = useState<"all" | CardCategory>(activeMode || "all");
   const [domainFilter, setDomainFilter] = useState("all");
   const [deckFilter, setDeckFilter] = useState("all");
   const [favoriteOnly, setFavoriteOnly] = useState(false);
   const [neverStudiedOnly, setNeverStudiedOnly] = useState(false);
+    useEffect(() => setSearchTerm(initialSearchTerm), [initialSearchTerm]);
   const domains = useMemo(
     () => Array.from(new Set(cards.map((card) => card.domain).filter((domain): domain is string => Boolean(domain)))),
     [cards]
@@ -154,7 +159,10 @@ export const FlashcardLibrary: React.FC<FlashcardLibraryProps> = ({
           type="text"
           placeholder={t("searchPlaceholder")}
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            onSearchTermChange?.(e.target.value);
+          }}
           className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-medium text-slate-900 placeholder:text-slate-400 text-sm outline-none transition-all thai-text"
         />
       </div>

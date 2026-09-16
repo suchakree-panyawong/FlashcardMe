@@ -36,9 +36,9 @@ function useToasts() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const addToast = useCallback(
-    (title: string, message?: string, type: ToastMessage["type"] = "success") => {
+    (title: string, message?: string, type: ToastMessage["type"] = "success", action?: ToastMessage["action"]) => {
       const id = `toast-${++toastCounter}-${Date.now()}`;
-      setToasts((prev) => [...prev, { id, title, message, type }]);
+      setToasts((prev) => [...prev, { id, title, message, type, action }]);
       setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
     },
     []
@@ -73,6 +73,7 @@ function FlashcardApp() {
   const [studyStats, setStudyStats] = useState<StudyStats>(() => getStudyStats());
   const [studyFocus, setStudyFocus] = useState<StudyFocus>("all");
   const [isSpeedRun, setIsSpeedRun] = useState(false);
+  const [librarySearchTerm, setLibrarySearchTerm] = useState("");
 
   const { toasts, addToast, removeToast } = useToasts();
   const { t } = useLanguage();
@@ -175,7 +176,16 @@ function FlashcardApp() {
 
       if (!editingCard && cards.some((card) => areDuplicateWords(card.vocab, cardData.vocab))) {
         const duplicateCard = cards.find((card) => areDuplicateWords(card.vocab, cardData.vocab));
-        addToast(t("duplicateWord"), duplicateCard?.vocab, "error");
+        const duplicateVocab = duplicateCard?.vocab ?? cardData.vocab;
+        setIsModalOpen(false);
+        setEditingCard(null);
+        addToast(t("duplicateWord"), duplicateVocab, "error", {
+          label: t("navigateToCard"),
+          onClick: () => {
+            setLibrarySearchTerm(duplicateVocab);
+            setActiveTab("library");
+          },
+        });
         return false;
       }
 
@@ -443,6 +453,8 @@ function FlashcardApp() {
               setIsModalOpen(true);
             }}
             onDeleteCard={handleDeleteCard}
+                        initialSearchTerm={librarySearchTerm}
+                        onSearchTermChange={setLibrarySearchTerm}
             onRenameDeck={handleRenameDeck}
             onToggleFavorite={(cardId) => {
               const updated = cards.map((card) => card.id === cardId ? { ...card, isFavorite: !card.isFavorite } : card);
