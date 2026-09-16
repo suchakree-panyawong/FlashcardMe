@@ -61,12 +61,21 @@ try {
 
 if (shouldFix && Array.isArray(data)) {
   const textFields = ["id", "vocab", "vocabThai", "meaning", "domain", "pattern", "scenario", "deck", "category"];
+  const now = new Date().toISOString();
   data = data.map((card) => {
     if (!card || typeof card !== "object") return card;
-    return Object.fromEntries(Object.entries(card).map(([field, value]) => [
+    const repairedCard = Object.fromEntries(Object.entries(card).map(([field, value]) => [
       field,
       textFields.includes(field) && typeof value === "string" ? repairMojibake(value) : value,
     ]));
+    return {
+      ...repairedCard,
+      nextReviewDate: typeof repairedCard.nextReviewDate === "string" && repairedCard.nextReviewDate.trim() ? repairedCard.nextReviewDate : now,
+      interval: typeof repairedCard.interval === "number" && repairedCard.interval > 0 ? repairedCard.interval : 1,
+      category: repairedCard.category === "general" || repairedCard.category === "cert" ? repairedCard.category : "cert",
+      deck: typeof repairedCard.deck === "string" && repairedCard.deck.trim() ? repairedCard.deck : "ISC2 CC Study Vocabulary",
+      createdAt: typeof repairedCard.createdAt === "string" && repairedCard.createdAt.trim() ? repairedCard.createdAt : now,
+    };
   });
   fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
   console.log(`Repaired mojibake text in ${file}`);

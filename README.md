@@ -17,6 +17,8 @@ FlashcardMe is a local-first flashcard and spaced-repetition application for des
 - Browser speech synthesis for vocabulary pronunciation.
 - PWA installation support where the browser provides it.
 
+The repository also includes `data/isc2-cc-study-vocabulary.json`, a focused 55-card ISC2 CC vocabulary deck covering risk, governance, physical security, incident response, and security operations terminology. Import this file from the Backup screen and select the `ISC2 CC Study Vocabulary` deck in the Library.
+
 ## Privacy and Storage
 
 This application is intentionally local-first. It does not require an account and does not include Google/GitHub login, cloud sync, Supabase, or a remote database.
