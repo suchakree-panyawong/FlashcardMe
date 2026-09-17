@@ -22,6 +22,7 @@ export interface Flashcard {
   id: string;
   vocab: string;
   vocabThai?: string;
+  alternativeMeanings?: string[];
   meaning: string;
   domain: DomainCategory | string;
   pattern: string;

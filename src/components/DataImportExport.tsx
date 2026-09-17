@@ -26,7 +26,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
   const [importDecisions, setImportDecisions] = useState<Record<string, ImportAction>>({});
   const importPlan: ImportPlan | null = pendingImport ? buildImportPlan(cards, pendingImport.cards, importDecisions) : null;
 
-  const csvFields = ['id', 'vocab', 'vocabThai', 'meaning', 'domain', 'pattern', 'scenario', 'nextReviewDate', 'interval', 'category', 'createdAt', 'isFavorite', 'reviewCount', 'correctCount', 'incorrectCount'] as const;
+  const csvFields = ['id', 'vocab', 'vocabThai', 'alternativeMeanings', 'meaning', 'domain', 'pattern', 'scenario', 'nextReviewDate', 'interval', 'category', 'createdAt', 'isFavorite', 'reviewCount', 'correctCount', 'incorrectCount'] as const;
 
   const escapeCsv = (value: unknown) => {
     const text = String(value ?? '');
@@ -61,7 +61,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
 
   const handleExportCSV = () => {
     const header = csvFields.join(',');
-    const rows = cards.map((card) => csvFields.map((field) => escapeCsv(card[field])).join(','));
+    const rows = cards.map((card) => csvFields.map((field) => escapeCsv(field === 'alternativeMeanings' ? (card[field] ?? []).join(' | ') : card[field])).join(','));
     const blob = new Blob([`${header}\n${rows.join('\n')}`], { type: 'text/csv;charset=utf-8' });
     const anchor = document.createElement('a');
     anchor.href = URL.createObjectURL(blob);
@@ -101,6 +101,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
         const json = file.name.toLowerCase().endsWith('.csv')
           ? parseCsv(content).map((row) => ({
               ...row,
+              alternativeMeanings: row.alternativeMeanings ? row.alternativeMeanings.split('|').map((value) => value.trim()).filter(Boolean) : [],
               interval: row.interval ? Number(row.interval) : 1,
               isFavorite: row.isFavorite === 'true',
               reviewCount: row.reviewCount ? Number(row.reviewCount) : 0,

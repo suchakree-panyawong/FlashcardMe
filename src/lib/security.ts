@@ -61,7 +61,7 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
       return { isValid: false, cards: [], error: 'รายการลำดับที่ ' + i + ' ไม่ใช่วัตถุข้อมูลที่ถูกต้อง' };
     }
 
-    const { id, vocab, vocabThai, meaning, domain, pattern, scenario, nextReviewDate, interval, createdAt, category, deck, isFavorite, reviewCount, correctCount, incorrectCount } = item as Record<string, any>;
+    const { id, vocab, vocabThai, alternativeMeanings, meaning, domain, pattern, scenario, nextReviewDate, interval, createdAt, category, deck, isFavorite, reviewCount, correctCount, incorrectCount } = item as Record<string, any>;
 
     if (typeof vocab !== 'string' || !vocab.trim() || vocab.length > 200) {
       return { isValid: false, cards: [], error: 'คำศัพท์ในลำดับที่ ' + i + ' ไม่ถูกต้อง' };
@@ -94,6 +94,11 @@ export function validateImportData(data: unknown): { isValid: boolean; cards: Fl
       id: normalizedId || 'card-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
       vocab: repairMojibake(vocab.trim()),
       vocabThai: typeof vocabThai === 'string' ? repairMojibake(vocabThai.trim()) : '',
+      alternativeMeanings: Array.isArray(alternativeMeanings)
+        ? alternativeMeanings
+          .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+          .map((value) => repairMojibake(value.trim()))
+        : [],
       meaning: repairMojibake(meaning.trim()),
       domain: typeof domain === 'string' && domain.trim() ? repairMojibake(domain.trim()) : 'Domain 1: Security Principles',
       pattern: typeof pattern === 'string' ? repairMojibake(pattern) : '',

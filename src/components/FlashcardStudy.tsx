@@ -649,7 +649,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                   </p>
                 </div>
 
-                {mode === "cert" && currentCard.scenario && (
+                {currentCard.alternativeMeanings && currentCard.alternativeMeanings.length > 0 && (
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left">
                     <button
                       type="button"
@@ -669,10 +669,14 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                     {showExample && (
                       <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
                         <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-indigo-500">
-                          {t("additionalMeaning")}
+                          {t("alternativeMeanings")}
                         </p>
                         <div className="text-xs font-medium leading-relaxed text-slate-700 whitespace-pre-line">
-                          {currentCard.scenario}
+                          <ul className="list-disc space-y-1 pl-4">
+                            {currentCard.alternativeMeanings.map((meaning) => (
+                              <li key={meaning}>{meaning}</li>
+                            ))}
+                          </ul>
                         </div>
                       </div>
                     )}
