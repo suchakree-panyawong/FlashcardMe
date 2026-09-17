@@ -635,7 +635,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                 {currentCard.vocabThai && (
                   <div className="text-center rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
                     <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-400">
-                      Meaning
+                      {t("primaryMeaning")}
                     </div>
                     <h4 className="mt-1 text-3xl font-black text-indigo-700 thai-text">
                       {currentCard.vocabThai}
@@ -662,13 +662,18 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
                     >
                       <span className="flex items-center gap-1.5">
                         <FileText className="h-3.5 w-3.5 text-slate-500" />
-                        {showExample ? t("hideExample") : t("showExample")}
+                        {showExample ? t("hideAdditionalMeaning") : t("showAdditionalMeaning")}
                       </span>
                       {showExample ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </button>
                     {showExample && (
-                      <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-xs font-medium leading-relaxed text-slate-700 whitespace-pre-line">
-                        {currentCard.scenario}
+                      <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
+                        <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-indigo-500">
+                          {t("additionalMeaning")}
+                        </p>
+                        <div className="text-xs font-medium leading-relaxed text-slate-700 whitespace-pre-line">
+                          {currentCard.scenario}
+                        </div>
                       </div>
                     )}
                   </div>
