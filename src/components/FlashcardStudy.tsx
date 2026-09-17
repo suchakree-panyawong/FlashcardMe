@@ -205,10 +205,8 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
 
   const currentCard = studyList[currentIndex];
   const isFinished = currentIndex >= studyList.length || !currentCard;
-  const isTranslationPrompt = currentCard ? promptDirections[currentCard.id] === true : false;
-  const promptText = currentCard && isTranslationPrompt
-    ? currentCard.vocabThai || currentCard.meaning
-    : currentCard?.vocab;
+  const isTranslationPrompt = false;
+  const promptText = currentCard?.vocab;
 
   useEffect(() => {
     if (isFinished && studyList.length > 0) {
