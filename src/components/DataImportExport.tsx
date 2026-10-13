@@ -133,71 +133,105 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
   return (
     <div className="space-y-4 animate-fadeIn">
       {pendingImport && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="import-preview-title">
-          <div className="w-full max-w-md space-y-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
-            <div>
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/50 px-3 backdrop-blur-sm sm:px-4"
+          style={{
+            paddingTop: 'max(0.75rem, env(safe-area-inset-top))',
+            paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="import-preview-title"
+        >
+          <div
+            className="my-auto flex w-full max-w-lg flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
+            style={{
+              maxHeight: 'calc(100dvh - max(0.75rem, env(safe-area-inset-top)) - max(0.75rem, env(safe-area-inset-bottom)))',
+            }}
+          >
+            <div className="shrink-0 px-5 pt-5">
               <h3 id="import-preview-title" className="text-lg font-black text-slate-900">{t('importPreviewTitle')}</h3>
               <p className="mt-1 truncate text-xs text-slate-500">{pendingImport.fileName}</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{t('importFormat')}</p>
-                <p className="mt-1 text-xl font-black text-slate-800">{pendingImport.format}</p>
-              </div>
-              <div className="rounded-2xl bg-emerald-50 p-3">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-600">{t('importCards')}</p>
-                <p className="mt-1 text-xl font-black text-emerald-700">{pendingImport.cards.length}</p>
-              </div>
-            </div>
-            {importPlan && (
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-2">
-                  <p className="text-[10px] font-bold text-emerald-600">{t('added')}</p>
-                  <p className="text-lg font-black text-emerald-700">{importPlan.added.length}</p>
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{t('importFormat')}</p>
+                  <p className="mt-1 text-xl font-black text-slate-800">{pendingImport.format}</p>
                 </div>
-                <div className="rounded-xl border border-sky-100 bg-sky-50 p-2">
-                  <p className="text-[10px] font-bold text-sky-600">{t('updated')}</p>
-                  <p className="text-lg font-black text-sky-700">{importPlan.updated.length}</p>
-                </div>
-                <div className="rounded-xl border border-amber-100 bg-amber-50 p-2">
-                  <p className="text-[10px] font-bold text-amber-600">{t('skipped')}</p>
-                  <p className="text-lg font-black text-amber-700">{importPlan.skipped.length}</p>
+                <div className="rounded-2xl bg-emerald-50 p-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-600">{t('importCards')}</p>
+                  <p className="mt-1 text-xl font-black text-emerald-700">{pendingImport.cards.length}</p>
                 </div>
               </div>
-            )}
-            {importPlan && (
-              <div className="max-h-56 space-y-2 overflow-y-auto rounded-2xl border border-slate-200 p-2">
-                {importPlan.items.map(({ card, action, reason }) => (
-                  <div key={card.id} className="flex items-center gap-2 rounded-xl bg-slate-50 p-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-black text-slate-700">{card.vocab}</p>
-                      <p className="truncate text-[10px] text-slate-400">{reason === 'id-match' ? 'ID match' : reason === 'duplicate-word' ? 'Duplicate word' : 'New card'}</p>
-                    </div>
-                    <select
-                      value={action}
-                      onChange={(event) => setImportDecisions((previous) => ({ ...previous, [card.id]: event.target.value as ImportAction }))}
-                      aria-label={`${card.vocab} import action`}
-                      className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[10px] font-bold text-slate-600"
-                    >
-                      <option value="add">{t('importAdd')}</option>
-                      <option value="update">{t('importUpdate')}</option>
-                      <option value="skip">{t('importSkip')}</option>
-                    </select>
+              {importPlan && (
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-2">
+                    <p className="text-[10px] font-bold text-emerald-600">{t('added')}</p>
+                    <p className="text-lg font-black text-emerald-700">{importPlan.added.length}</p>
                   </div>
-                ))}
-              </div>
-            )}
-            <div className="max-h-40 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-3">
-              {pendingImport.cards.slice(0, 5).map((card) => (
-                <div key={card.id} className="flex items-center justify-between border-b border-slate-200 py-2 text-xs last:border-0">
-                  <span className="font-bold text-slate-700">{card.vocab}</span>
-                  <span className="max-w-[45%] truncate text-slate-500">{card.vocabThai}</span>
+                  <div className="rounded-xl border border-sky-100 bg-sky-50 p-2">
+                    <p className="text-[10px] font-bold text-sky-600">{t('updated')}</p>
+                    <p className="text-lg font-black text-sky-700">{importPlan.updated.length}</p>
+                  </div>
+                  <div className="rounded-xl border border-amber-100 bg-amber-50 p-2">
+                    <p className="text-[10px] font-bold text-amber-600">{t('skipped')}</p>
+                    <p className="text-lg font-black text-amber-700">{importPlan.skipped.length}</p>
+                  </div>
                 </div>
-              ))}
-              {pendingImport.cards.length > 5 && <p className="pt-2 text-center text-[11px] text-slate-400">+ {pendingImport.cards.length - 5}</p>}
+              )}
+              {importPlan && (
+                <div className="max-h-56 space-y-2 overflow-y-auto rounded-2xl border border-slate-200 p-2">
+                  {importPlan.items.map(({ card, action, reason }) => (
+                    <div key={card.id} className="flex items-center gap-2 rounded-xl bg-slate-50 p-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="break-words text-xs font-black text-slate-700">{card.vocab}</p>
+                        <p className="text-[10px] text-slate-500">
+                          {reason === 'id-match' ? t('importReasonIdMatch') : reason === 'duplicate-word' ? t('importReasonDuplicate') : t('importReasonNew')}
+                        </p>
+                      </div>
+                      <select
+                        value={action}
+                        onChange={(event) => setImportDecisions((previous) => ({ ...previous, [card.id]: event.target.value as ImportAction }))}
+                        aria-label={`${card.vocab} import action`}
+                        className="shrink-0 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[10px] font-bold text-slate-600"
+                      >
+                        <option value="add">{t('importAdd')}</option>
+                        <option value="update">{t('importUpdate')}</option>
+                        <option value="skip">{t('importSkip')}</option>
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {importPlan && (
+                <section className="rounded-2xl border border-amber-200 bg-amber-50/70 p-3" aria-labelledby="import-skipped-title">
+                  <h4 id="import-skipped-title" className="text-sm font-black text-amber-900">
+                    {t('importSkippedDetails')} ({importPlan.skipped.length})
+                  </h4>
+                  {importPlan.skipped.length > 0 ? (
+                    <ul className="mt-2 divide-y divide-amber-200">
+                      {importPlan.skipped.map((card) => {
+                        const reason = importPlan.items.find((item) => item.card.id === card.id)?.reason;
+                        return (
+                          <li key={card.id} className="py-2 first:pt-0 last:pb-0">
+                            <p className="break-words text-sm font-bold text-slate-800">{card.vocab}</p>
+                            <p className="break-words text-xs text-slate-600">{card.vocabThai}</p>
+                            <p className="mt-0.5 text-[11px] text-amber-800">
+                              {reason === 'id-match' ? t('importReasonIdMatch') : reason === 'duplicate-word' ? t('importReasonDuplicate') : t('importReasonManualSkip')}
+                            </p>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    <p className="mt-1 text-xs text-slate-600">{t('importSkippedEmpty')}</p>
+                  )}
+                </section>
+              )}
+              <p className="text-xs leading-relaxed text-slate-600">{t('importPreviewHint')}</p>
             </div>
-            <p className="text-xs leading-relaxed text-slate-500">{t('importPreviewHint')}</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-slate-100 bg-white px-5 pb-5 pt-3">
               <button onClick={() => setPendingImport(null)} className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-200">{t('cancel')}</button>
               <button
                 onClick={() => {
@@ -206,7 +240,7 @@ export const DataImportExport: React.FC<DataImportExportProps> = ({
                   setImportDecisions({});
                   showToast(t('importSuccess'), `${t('added')}: ${result.addedCount} · ${t('updated')}: ${result.updatedCount} · ${t('skipped')}: ${result.skippedCount}`, result.skippedCount > 0 ? 'info' : 'success');
                 }}
-                className="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-black text-white hover:bg-indigo-700"
+                className="rounded-2xl bg-indigo-600 px-3 py-3 text-sm font-black text-white hover:bg-indigo-700"
               >{t('confirmImport')}</button>
             </div>
           </div>
