@@ -259,6 +259,27 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setCanUndo(Boolean(onUndoReview));
   };
 
+  const handleSwipeStart = () => {
+    setIsDragging(true);
+    lastDragAt.current = Date.now();
+    setSwipeDirection(null);
+  };
+
+  const handleSwipeMove = (offsetX: number) => {
+    setSwipeDirection(offsetX < -24 ? "left" : offsetX > 24 ? "right" : null);
+  };
+
+  const handleSwipeEnd = (offsetX: number) => {
+    setIsDragging(false);
+    if (offsetX <= -110) {
+      handleRating("hard");
+    } else if (offsetX >= 110) {
+      handleRating("easy");
+    } else {
+      setSwipeDirection(null);
+    }
+  };
+
   const finishStudy = () => {
     clearStudySession();
     onFinishStudy();
@@ -520,8 +541,25 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               animate={{ rotateY: 0, opacity: 1 }}
               exit={{ rotateY: 90, opacity: 0 }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="relative flex min-h-[460px] w-full flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-b from-white via-slate-50 to-white p-5 shadow-[0_18px_38px_rgba(15,23,42,0.08)]"
+              drag="x"
+              dragDirectionLock
+              dragConstraints={{ left: -180, right: 180 }}
+              dragElastic={0.7}
+              dragTransition={{ bounceStiffness: 420, bounceDamping: 28 }}
+              whileDrag={{ scale: 1.02, cursor: "grabbing" }}
+              onDragStart={handleSwipeStart}
+              onDrag={(_, info) => handleSwipeMove(info.offset.x)}
+              onDragEnd={(_, info) => handleSwipeEnd(info.offset.x)}
+              className="relative flex min-h-[460px] w-full touch-pan-y flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-b from-white via-slate-50 to-white p-5 shadow-[0_18px_38px_rgba(15,23,42,0.08)]"
             >
+              {swipeDirection && (
+                <div className={`pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-[28px] border-2 ${swipeDirection === "left" ? "border-slate-300 bg-slate-100/45" : "border-emerald-300 bg-emerald-100/45"}`}>
+                  <div className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black shadow-sm ${swipeDirection === "left" ? "bg-slate-700 text-white" : "bg-emerald-600 text-white"}`}>
+                    {swipeDirection === "left" ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+                    <span>{swipeDirection === "left" ? t("reviewAgain") : t("gotIt")}</span>
+                  </div>
+                </div>
+              )}
               <div className="flex items-center justify-between gap-3">
                 <span className={`inline-flex max-w-[85%] truncate rounded-full border px-2.5 py-1 text-[10px] font-bold tracking-[0.12em] ${getDomainTagClassName(currentCard.domain || "General Vocabulary")}`}>
                   {currentCard.domain || "General Vocabulary"}
@@ -579,25 +617,9 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
               dragElastic={0.7}
               dragTransition={{ bounceStiffness: 420, bounceDamping: 28 }}
               whileDrag={{ scale: 1.02, cursor: "grabbing" }}
-              onDragStart={() => {
-                setIsDragging(true);
-                lastDragAt.current = Date.now();
-                setSwipeDirection(null);
-              }}
-              onDrag={(_, info) => {
-                setSwipeDirection(info.offset.x < -24 ? "left" : info.offset.x > 24 ? "right" : null);
-              }}
-              onDragEnd={(_, info) => {
-                const swipeDistance = info.offset.x;
-                setIsDragging(false);
-                if (swipeDistance <= -110) {
-                  handleRating("hard");
-                } else if (swipeDistance >= 110) {
-                  handleRating("easy");
-                } else {
-                  setSwipeDirection(null);
-                }
-              }}
+              onDragStart={handleSwipeStart}
+              onDrag={(_, info) => handleSwipeMove(info.offset.x)}
+              onDragEnd={(_, info) => handleSwipeEnd(info.offset.x)}
               className="relative flex min-h-[460px] w-full touch-pan-y flex-col justify-between overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-b from-indigo-50/60 via-white to-white p-5 shadow-[0_18px_38px_rgba(79,70,229,0.08)]"
             >
               {swipeDirection && (

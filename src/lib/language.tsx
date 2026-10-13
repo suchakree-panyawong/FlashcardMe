@@ -149,7 +149,7 @@ const translations = {
     quickReview: "เร็ว",
     reviewInDays: "2-3 วัน",
     reviewInLongerDays: "5-7 วัน",
-    tapToReveal: "แตะการ์ดเพื่อดูเฉลย",
+    tapToReveal: "แตะเพื่อดูเฉลย หรือปัดซ้าย/ขวาเพื่อตอบ",
     primaryMeaning: "คำแปลหลัก",
     alternativeMeanings: "ความหมายอื่นของคำ",
     showAdditionalMeaning: "ดูความหมายอื่น",
@@ -196,7 +196,7 @@ const translations = {
     domainInsights: "ภาพรวมตาม Domain",
     difficultCards: "คำที่ควรทบทวนเพิ่ม",
     noDifficultCards: "ยังไม่มีคำที่ตอบผิด",
-    swipeHint: "เฉลยแล้วปัดซ้ายเพื่อทวนอีกครั้ง หรือปัดขวาเมื่อเข้าใจแล้ว",
+    swipeHint: "ปัดซ้ายหรือขวาได้ทั้งด้านคำศัพท์และด้านเฉลย: ซ้ายเพื่อทวนอีกครั้ง ขวาเมื่อเข้าใจแล้ว",
   },
   en: {
     home: "Home",
@@ -340,7 +340,7 @@ const translations = {
     quickReview: "Quick",
     reviewInDays: "2-3 days",
     reviewInLongerDays: "5-7 days",
-    tapToReveal: "Tap the card to reveal",
+    tapToReveal: "Tap to reveal, or swipe left/right to review",
     primaryMeaning: "Primary meaning",
     alternativeMeanings: "Other meanings",
     showAdditionalMeaning: "Show other meanings",
@@ -387,7 +387,7 @@ const translations = {
     domainInsights: "Domain overview",
     difficultCards: "Cards needing attention",
     noDifficultCards: "No difficult cards yet",
-    swipeHint: "After revealing, swipe left to review again or right when you got it",
+    swipeHint: "Swipe on either side: left to review again, right when you got it",
   },
 } as const;
 
