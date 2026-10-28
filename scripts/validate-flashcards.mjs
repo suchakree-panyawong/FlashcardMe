@@ -109,7 +109,7 @@ for (const [index, card] of (Array.isArray(data) ? data : []).entries()) {
   if (typeof card.vocab === "string" && hasThai(card.vocab)) issues.push(`${label}: vocab contains Thai characters`);
   if (typeof card.vocab === "string" && !/[A-Za-z]/.test(card.vocab)) issues.push(`${label}: vocab has no English letters`);
   if (typeof card.vocabThai === "string" && !hasThai(card.vocabThai)) issues.push(`${label}: vocabThai has no Thai characters`);
-  if (typeof card.meaning === "string" && !hasThai(card.meaning)) issues.push(`${label}: meaning has no Thai characters`);
+  if (typeof card.meaning === "string" && !/[A-Za-z]/.test(card.meaning)) issues.push(`${label}: meaning has no English example text`);
 
   if (ids.has(card.id)) issues.push(`${label}: duplicate id ${card.id}`);
   if (typeof card.id === "string") ids.add(card.id);
