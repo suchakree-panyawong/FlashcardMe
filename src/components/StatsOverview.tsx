@@ -144,7 +144,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
           >
             <BookOpen className="h-5 w-5" />
             <span>
-              {dueCount > 0 ? `${t('startReviewNow')}` : totalCards === 0 ? t('addNewCard') : `${t('allReviewedShort')} 🎉`}
+              {dueCount > 0 ? `${t('startReviewNow')}` : totalCards === 0 ? t('importJson') : `${t('allReviewedShort')} 🎉`}
             </span>
             {dueCount > 0 && <ArrowRight className="h-4 w-4" />}
           </motion.button>

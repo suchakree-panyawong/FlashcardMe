@@ -9,7 +9,7 @@ import {
   getSafetyBackup,
   getStudyStats,
   saveStudyStats,
-  resetToDefaultFlashcards,
+  clearStoredFlashcards,
 } from "@/lib/storage";
 import { calculateNextReview } from "@/lib/spacedRepetition";
 import { HeaderNav, NavTab } from "@/components/HeaderNav";
@@ -256,8 +256,7 @@ function FlashcardApp() {
 
   const handleResetCards = useCallback(() => {
     createSafetyBackup(cards);
-    const resetCards = resetToDefaultFlashcards();
-    setCards(resetCards);
+    setCards(clearStoredFlashcards());
     addToast(t("resetDone"));
   }, [addToast, t]);
 
@@ -389,8 +388,7 @@ function FlashcardApp() {
               notificationsSupported={typeof window !== "undefined" && "Notification" in window}
               onStartStudy={() => {
                 if (activeModeCards.length === 0) {
-                  setEditingCard(null);
-                  setIsModalOpen(true);
+                  setActiveTab("backup");
                 } else {
                   setActiveTab("study");
                 }
