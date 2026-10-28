@@ -536,7 +536,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           {!isFlipped ? (
             /* FRONT CARD (หน้าการ์ด: โจทย์ / คำศัพท์) */
             <motion.div
-              key="front"
+              key={`front-${currentCard.id}`}
               initial={{ rotateY: -90, opacity: 0 }}
               animate={{ rotateY: 0, opacity: 1 }}
               exit={{ rotateY: 90, opacity: 0 }}
@@ -606,7 +606,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           ) : (
             /* BACK CARD (คำแปล รายละเอียด และสถานการณ์ประกอบ) */
             <motion.div
-              key="back"
+              key={`back-${currentCard.id}`}
               initial={{ rotateY: 90, opacity: 0 }}
               animate={{ rotateY: 0, opacity: 1 }}
               exit={{ rotateY: -90, opacity: 0 }}
