@@ -38,6 +38,9 @@ interface FlashcardStudyProps {
   onToggleFavorite?: (cardId: string) => void;
 }
 
+const STUDY_CHUNK_SIZE = 100;
+const RETRY_AFTER_CARDS = 7;
+
 function shuffleList<T>(arr: T[]): T[] {
   const copy = [...arr];
   for (let i = copy.length - 1; i > 0; i--) {
@@ -67,6 +70,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
   const { t } = useLanguage();
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
+  const [chunkTotal, setChunkTotal] = useState(0);
   const [canUndo, setCanUndo] = useState(false);
   const [resumePrompt, setResumePrompt] = useState<StudySession | null>(null);
   const [studyList, setStudyList] = useState<Flashcard[]>([]);
@@ -102,7 +106,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     oscillator.addEventListener("ended", () => { void context.close(); });
   };
 
-  const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean, nextRetryCards: Flashcard[] = [], nextPromptDirections: Record<string, boolean> = promptDirections) => {
+  const persistSession = (nextList: Flashcard[], nextSessionCount: number, shuffled: boolean, nextRetryCards: Flashcard[] = [], nextPromptDirections: Record<string, boolean> = promptDirections, nextChunkTotal = chunkTotal) => {
     if (nextList.length === 0) {
       clearStudySession();
       return;
@@ -113,6 +117,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       retryCards: nextRetryCards,
       promptDirections: nextPromptDirections,
       sessionCount: nextSessionCount,
+      chunkTotal: nextChunkTotal,
       isShuffled: shuffled,
       savedAt: new Date().toISOString(),
     });
@@ -134,15 +139,17 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         sessionInitialized.current = true;
         return;
       }
-      const nextList = savedCards.length > 0 ? savedCards : shuffleList(dueCards.slice(0, 50));
+      const nextList = savedCards.length > 0 ? savedCards : shuffleList(dueCards.slice(0, STUDY_CHUNK_SIZE));
       const nextShuffled = savedCards.length > 0 ? Boolean(savedSession?.isShuffled) : true;
+      const nextChunkTotal = savedCards.length > 0 ? savedSession?.chunkTotal ?? nextList.length : nextList.length;
       const nextPromptDirections = savedCards.length > 0 ? savedPromptDirections : createPromptDirections(nextList);
       setStudyList(nextList);
       setRetryQueue(savedRetryCards.map((card) => card.id));
       setPromptDirections(nextPromptDirections);
       setIsShuffled(nextShuffled);
       setSessionCount(savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0);
-      persistSession(nextList, savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0, nextShuffled, savedRetryCards, nextPromptDirections);
+      setChunkTotal(nextChunkTotal);
+      persistSession(nextList, savedCards.length > 0 ? savedSession?.sessionCount ?? 0 : 0, nextShuffled, savedRetryCards, nextPromptDirections, nextChunkTotal);
       sessionInitialized.current = true;
       return;
     }
@@ -155,7 +162,13 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setIsShuffled(shuffle);
     const nextList = shuffle ? shuffleList(studyList) : [...studyList];
     setStudyList(nextList);
-    persistSession(nextList, sessionCount, shuffle);
+    persistSession(
+      nextList,
+      sessionCount,
+      shuffle,
+      nextList.filter((card) => retryQueue.includes(card.id)),
+      promptDirections,
+    );
     setIsFlipped(false);
     setShowExample(false);
     setSwipeDirection(null);
@@ -171,7 +184,8 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
         .filter((card): card is Flashcard => Boolean(card))
       : [];
     const nextShuffled = resume && savedSession ? savedSession.isShuffled : true;
-    const nextList = restoredCards.length > 0 ? restoredCards : shuffleList(dueCards.slice(0, 50));
+    const nextList = restoredCards.length > 0 ? restoredCards : shuffleList(dueCards.slice(0, STUDY_CHUNK_SIZE));
+    const nextChunkTotal = resume && savedSession ? savedSession.chunkTotal ?? nextList.length : nextList.length;
     const nextCount = resume && savedSession ? savedSession.sessionCount : 0;
     const nextPromptDirections = resume && savedSession ? savedSession.promptDirections ?? createPromptDirections(nextList) : createPromptDirections(nextList);
 
@@ -180,19 +194,22 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setIsShuffled(nextShuffled);
     setStudyList(nextList);
     setSessionCount(nextCount);
+    setChunkTotal(nextChunkTotal);
     setCurrentIndex(0);
     setIsFlipped(false);
     setSwipeDirection(null);
     setRetryQueue(resume && savedSession ? savedSession.retryCards?.map((card) => card.id) ?? [] : []);
     setPromptDirections(nextPromptDirections);
     setIsChunkComplete(false);
-    persistSession(nextList, nextCount, nextShuffled, resume && savedSession ? savedSession.retryCards ?? [] : [], nextPromptDirections);
+    persistSession(nextList, nextCount, nextShuffled, resume && savedSession ? savedSession.retryCards ?? [] : [], nextPromptDirections, nextChunkTotal);
   };
 
   const startNextChunk = () => {
-    const nextList = isShuffled ? shuffleList(dueCards.slice(0, 50)) : dueCards.slice(0, 50);
+    const nextList = isShuffled ? shuffleList(dueCards.slice(0, STUDY_CHUNK_SIZE)) : dueCards.slice(0, STUDY_CHUNK_SIZE);
+    const nextChunkTotal = nextList.length;
     const nextPromptDirections = createPromptDirections(nextList);
     setStudyList(nextList);
+    setChunkTotal(nextChunkTotal);
     setCurrentIndex(0);
     setIsFlipped(false);
     setShowExample(false);
@@ -200,7 +217,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     setRetryQueue([]);
     setPromptDirections(nextPromptDirections);
     setIsChunkComplete(false);
-    persistSession(nextList, sessionCount, isShuffled, [], nextPromptDirections);
+    persistSession(nextList, sessionCount, isShuffled, [], nextPromptDirections, nextChunkTotal);
   };
 
   const currentCard = studyList[currentIndex];
@@ -243,7 +260,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
       ? [...retryQueue.filter((id) => id !== currentCard.id), currentCard.id]
       : retryQueue.filter((id) => id !== currentCard.id);
     if (rating === "hard") {
-      const retryPosition = Math.min(3, remainingCards.length);
+      const retryPosition = Math.min(RETRY_AFTER_CARDS, remainingCards.length);
       remainingCards.splice(retryPosition, 0, currentCard);
     }
     setRetryQueue(nextRetryQueue);
@@ -457,7 +474,9 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
     );
   }
 
-  const progressPercent = Math.round(((currentIndex + 1) / studyList.length) * 100);
+  const pendingFirstReviews = studyList.filter((card) => !retryQueue.includes(card.id)).length;
+  const studiedCount = Math.max(0, chunkTotal - pendingFirstReviews);
+  const progressPercent = chunkTotal > 0 ? Math.round((studiedCount / chunkTotal) * 100) : 0;
 
   return (
     <div className="space-y-5 animate-fadeIn">
@@ -494,7 +513,7 @@ export const FlashcardStudy: React.FC<FlashcardStudyProps> = ({
           <div className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-slate-600">
             <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
             <span>
-              {currentIndex + 1}/{studyList.length}
+              {t("studiedProgress")} {studiedCount}/{chunkTotal}
             </span>
           </div>
         </div>

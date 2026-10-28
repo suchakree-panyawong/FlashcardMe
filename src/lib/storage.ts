@@ -19,6 +19,7 @@ export interface StudySession {
   retryCards?: Flashcard[];
   promptDirections?: Record<string, boolean>;
   sessionCount: number;
+  chunkTotal?: number;
   isShuffled: boolean;
   savedAt: string;
 }
@@ -40,7 +41,13 @@ export function getStudySession(): StudySession | null {
       mode: parsed.mode,
       cardIds: parsed.cardIds.filter((id): id is string => typeof id === 'string'),
       retryCards: Array.isArray(parsed.retryCards) ? parsed.retryCards as Flashcard[] : [],
+      promptDirections: parsed.promptDirections && typeof parsed.promptDirections === 'object'
+        ? parsed.promptDirections as Record<string, boolean>
+        : undefined,
       sessionCount: parsed.sessionCount,
+      chunkTotal: typeof parsed.chunkTotal === 'number' && Number.isFinite(parsed.chunkTotal) && parsed.chunkTotal >= 0
+        ? parsed.chunkTotal
+        : undefined,
       isShuffled: parsed.isShuffled,
       savedAt: parsed.savedAt,
     };
