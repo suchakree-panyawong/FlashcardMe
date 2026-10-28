@@ -403,7 +403,7 @@
   {
     "id": "cc-master-017",
     "vocab": "Quantitative",
-    "vocabThai": "การประเมินความเสี่ยงเป็นตัวเลขหรือเงิน",
+    "vocabThai": "เชิงปริมาณ / ที่วัดหรือแสดงเป็นตัวเลข",
     "alternativeMeanings": [],
     "meaning": "The analyst used a quantitative method to estimate the financial impact.",
     "domain": "Domain 2: Security Governance",
@@ -422,7 +422,7 @@
   {
     "id": "cc-master-018",
     "vocab": "Qualitative",
-    "vocabThai": "การประเมินความเสี่ยงเชิงระดับ",
+    "vocabThai": "เชิงคุณภาพ / ประเมินตามคุณลักษณะหรือระดับ",
     "alternativeMeanings": [],
     "meaning": "The team used a qualitative scale to rate the likelihood of each threat.",
     "domain": "Domain 2: Security Governance",
@@ -1889,7 +1889,7 @@
   {
     "id": "cc-master-096",
     "vocab": "Exploit",
-    "vocabThai": "ช่องโหว่หรือวิธีการที่ใช้โจมตีช่องโหว่",
+    "vocabThai": "โค้ดหรือวิธีการที่ใช้ประโยชน์จากช่องโหว่",
     "alternativeMeanings": [
       "ใช้ประโยชน์จากช่องโหว่ (คำกริยา)"
     ],
@@ -2651,7 +2651,7 @@
   {
     "id": "cc-master-136",
     "vocab": "SaaS (Software as a Service)",
-    "vocabThai": "ซอฟต์แวร์สำเร็จรูปบนเว็บ",
+    "vocabThai": "ซอฟต์แวร์ในรูปแบบบริการผ่านคลาวด์",
     "alternativeMeanings": [],
     "meaning": "The team uses software as a service (SaaS) to manage customer support.",
     "domain": "Domain 1: Security Principles",
@@ -3052,7 +3052,7 @@
     "vocab": "Consequently / Therefore",
     "vocabThai": "ผลที่ตามมาคือ / ดังนั้น",
     "alternativeMeanings": [],
-    "meaning": "The update failed; consequently, the server remained offline, and therefore users could not connect.",
+    "meaning": "The update failed; consequently, the server remained offline, leaving users unable to connect.",
     "domain": "Domain 1: Security Principles",
     "pattern": "Result; conclusion; cause and effect",
     "scenario": "Exam cue: หาเหตุที่ทำให้เกิด consequence ก่อนเลือกคำตอบ. Real-world: key ถูกขโมย ดังนั้นต้อง revoke certificate และ rotate key.",
@@ -3090,7 +3090,7 @@
     "vocab": "Solely / Exclusively",
     "vocabThai": "เพียงเท่านั้น / โดยเฉพาะแต่เพียงผู้เดียว",
     "alternativeMeanings": [],
-    "meaning": "Access to the archive is granted solely—and exclusively—to authorized investigators.",
+    "meaning": "Access to the archive is granted solely to authorized investigators.",
     "domain": "Domain 1: Security Principles",
     "pattern": "Absolute trap word; only; no alternatives",
     "scenario": "Exam cue: คำ absolute เช่น solely/exclusively มักต้องอ่านบริบทอย่างระวัง. Real-world: ไม่ควรพึ่ง control เดียว solely เพราะ defense-in-depth ต้องมีหลายชั้น.",
@@ -3506,7 +3506,7 @@
   {
     "id": "cc-master-181",
     "vocab": "Model Drift",
-    "vocabThai": "ประสิทธิภาพของโมเดล AI ลดลงตามเวลา",
+    "vocabThai": "การเปลี่ยนแปลงของข้อมูลหรือพฤติกรรมของโมเดลเมื่อเวลาผ่านไป",
     "alternativeMeanings": [],
     "meaning": "The team retrained the model after model drift reduced its detection accuracy.",
     "domain": "Domain 2: Security Governance",
@@ -3696,7 +3696,7 @@
   {
     "id": "cc-master-191",
     "vocab": "Containment",
-    "vocabThai": "การกักบริเวณใน Incident Response",
+    "vocabThai": "การจำกัดขอบเขตเหตุการณ์เพื่อไม่ให้ลุกลาม",
     "alternativeMeanings": [],
     "meaning": "The response team began containment by isolating the infected laptop.",
     "domain": "Domain 5: Security Operations and Incident Response",
@@ -3962,7 +3962,7 @@
   {
     "id": "cc-study-006",
     "vocab": "Harness",
-    "vocabThai": "ควบคุมและใช้ประโยชน์",
+    "vocabThai": "นำมาใช้ประโยชน์อย่างเต็มที่",
     "alternativeMeanings": [],
     "meaning": "The team harnessed threat intelligence to improve its detection rules.",
     "domain": "Domain 1: Security Principles",
@@ -4000,7 +4000,7 @@
   {
     "id": "cc-study-008",
     "vocab": "Certain",
-    "vocabThai": "บางอย่าง / เฉพาะเจาะจง",
+    "vocabThai": "บาง / เฉพาะบางรายการ",
     "alternativeMeanings": [
       "แน่นอน (เมื่อหมายถึง sure)"
     ],
@@ -4996,7 +4996,7 @@
     "vocab": "Scarcity",
     "vocabThai": "ความขาดแคลน / จำนวนจำกัด",
     "alternativeMeanings": [],
-    "meaning": "The scammer claimed that a limited-time offer created scarcity and demanded immediate payment.",
+    "meaning": "The scammer created a false sense of scarcity by claiming that only a few discounted licenses remained.",
     "domain": "Domain 1: Security Principles",
     "pattern": "Meaning cue: ความหายาก; จำนวนจำกัด; ภาวะขาดแคลน. Interpret Scarcity in context.",
     "scenario": "ตัวอย่างบริบท: พบคำว่า “Scarcity” ในโจทย์ด้านความปลอดภัย ให้พิจารณาความหมายว่า ความขาดแคลน / จำนวนจำกัด ตามประโยครอบข้าง",
@@ -7545,7 +7545,7 @@
   {
     "id": "cc-add-20261028-033",
     "vocab": "Authority",
-    "vocabThai": "อำนาจหรือสิทธิ์ในการอนุมัติ",
+    "vocabThai": "อำนาจหน้าที่ / สิทธิ์ในการตัดสินใจหรือดำเนินการ",
     "alternativeMeanings": [
       "หน่วยงานผู้มีอำนาจ (คำนาม)"
     ],
@@ -7604,7 +7604,7 @@
   {
     "id": "cc-add-20261028-036",
     "vocab": "Granted",
-    "vocabThai": "ได้รับอนุญาตหรือมอบให้แล้ว",
+    "vocabThai": "มอบให้แล้ว / อนุญาตให้แล้ว",
     "alternativeMeanings": [
       "ยอมรับว่า แม้จะมีข้อโต้แย้ง (คำเชื่อม)"
     ],
@@ -7855,7 +7855,7 @@
   {
     "id": "cc-add-20261028-049",
     "vocab": "Provision",
-    "vocabThai": "จัดเตรียมบัญชีหรือทรัพยากร; ข้อกำหนดในสัญญา",
+    "vocabThai": "ข้อกำหนดในสัญญา / จัดเตรียมบัญชีหรือทรัพยากร",
     "alternativeMeanings": [],
     "meaning": "The contract includes a provision requiring prompt breach notification.",
     "domain": "Domain 3: Identity and Access Management (IAM) Concepts",
